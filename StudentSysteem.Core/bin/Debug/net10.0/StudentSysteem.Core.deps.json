@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "StudentSysteem.Core/1.0.0": {
+        "runtime": {
+          "StudentSysteem.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "StudentSysteem.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
