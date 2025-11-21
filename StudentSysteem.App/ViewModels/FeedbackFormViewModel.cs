@@ -26,6 +26,20 @@ namespace StudentSysteem.App.ViewModels
 
         public List<string> PrestatieNiveaus { get; }
 
+        private bool _isLeeruitkomstInvalid;
+        public bool IsLeeruitkomstInvalid
+        {
+            get => _isLeeruitkomstInvalid;
+            set { _isLeeruitkomstInvalid = value; Notify(nameof(IsLeeruitkomstInvalid)); }
+        }
+
+        private bool _isPrestatieNiveauInvalid;
+        public bool IsPrestatieNiveauInvalid
+        {
+            get => _isPrestatieNiveauInvalid;
+            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
+        }
+
         private string _leeruitkomst;
         public string Leeruitkomst
         {
@@ -58,8 +72,25 @@ namespace StudentSysteem.App.ViewModels
 
         private async Task SaveReflection()
         {
-            if (string.IsNullOrWhiteSpace(Leeruitkomst) ||
-                string.IsNullOrWhiteSpace(PrestatieNiveau))
+            IsLeeruitkomstInvalid = false;
+            IsPrestatieNiveauInvalid = false;
+
+            bool isValid = true;
+
+            // Validatie
+            if (string.IsNullOrWhiteSpace(Leeruitkomst))
+            {
+                IsLeeruitkomstInvalid = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(PrestatieNiveau))
+            {
+                IsPrestatieNiveauInvalid = true;
+                isValid = false;
+            }
+
+            if (!isValid)
             {
                 StatusMelding = "Vul alle verplichte velden in.";
                 return;
@@ -91,6 +122,9 @@ namespace StudentSysteem.App.ViewModels
             Leeruitkomst = string.Empty;
             PrestatieNiveau = null;
             Toelichting = string.Empty;
+
+            IsLeeruitkomstInvalid = false;
+            IsPrestatieNiveauInvalid = false;
         }
 
         private void Notify(string prop) =>
