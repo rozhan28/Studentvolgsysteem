@@ -21,10 +21,10 @@ public static class MauiProgram
         // Services
         builder.Services.AddSingleton<ISelfReflectionService, MockSelfReflectionService>();
 
-        // ViewModels (blijven bestaan)
+        // ViewModels 
         builder.Services.AddSingleton<FeedbackFormViewModel>();
 
-        
+        // Views 
         builder.Services.AddSingleton<StartView>();
         builder.Services.AddSingleton<FeedbackFormView>();
 
