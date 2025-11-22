@@ -25,29 +25,58 @@
             <Label Text="Het maken van een domeinmodel volgens een UML klassendiagram" />
 
             <Label Text="Prestatiedoel" FontSize="20"/>
-
-            <!-- Leeruitkomst entry met rode border bij fout -->
-            <Frame BorderColor="{Binding IsLeeruitkomstInvalid, Converter={StaticResource BoolToColorConverter}}"
-                   BackgroundColor="White"
-                   Padding="0"
-                   HasShadow="False">
-                <Entry 
-                    Placeholder="Leeruitkomst"
-                    Text="{Binding Leeruitkomst}" 
-                    Margin="5"/>
-            </Frame>
+            <Label Text="Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten" />
 
             <!-- Picker met rode border -->
             <Frame BorderColor="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
-                   BackgroundColor="White"
-                   Padding="0"
-                   HasShadow="False">
-                <Picker 
-                    Title="Selecteer prestatie niveau"
-                    ItemsSource="{Binding PrestatieNiveaus}"
-                    SelectedItem="{Binding PrestatieNiveau}"
-                    Margin="5" />
-            </Frame>
+           BackgroundColor="White"
+           Padding="10"
+           HasShadow="False">
+        <StackLayout Spacing="10">
+
+        <!-- Vak 1: In ontwikkeling -->
+    <Frame BackgroundColor="#f0f0f0" Padding="10" CornerRadius="5">
+        <StackLayout Spacing="5">
+            <Label Text="In ontwikkeling" FontAttributes="Bold"/>
+        </StackLayout>
+    </Frame>
+
+    <!-- Vak 2: Op niveau -->
+    <Frame BackgroundColor="#f0f0f0" Padding="10" CornerRadius="5">
+        <StackLayout Spacing="5">
+            <Label Text="Op niveau" FontAttributes="Bold"/>
+            <StackLayout Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding OpNiveauOptie1}" />
+                    <Label Text="Het domeinmodel weerspiegelt het domein" VerticalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding OpNiveauOptie2}" />
+                    <Label Text="De syntax van het domeinmodel is correct volgens UML" VerticalOptions="Center"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding OpNiveauOptie3}" />
+                    <Label Text="Het domeinmodel is op een logische locatie vastgelegd" VerticalOptions="Center"/>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </Frame>
+
+    <!-- Vak 3: Boven niveau -->
+    <Frame BackgroundColor="#f0f0f0" Padding="10" CornerRadius="5">
+        <StackLayout Spacing="5">
+            <Label Text="Boven niveau" FontAttributes="Bold"/>
+            <StackLayout Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="10">
+                    <CheckBox IsChecked="{Binding BovenNiveauOptie1}" />
+                    <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context van het project" VerticalOptions="Center"/>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </Frame>
+
+    </StackLayout>
+</Frame>
 
             <Editor HeightRequest="150"
                     Placeholder="Voeg toelichting toe..."
