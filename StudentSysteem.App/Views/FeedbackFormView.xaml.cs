@@ -5,13 +5,17 @@ namespace StudentSysteem.App.Views
 {
     public partial class FeedbackFormView : ContentPage
     {
-        public FeedbackFormView(FeedbackFormViewModel vm)
+        public FeedbackFormView()
         {
             InitializeComponent();
-            BindingContext = vm;
 
-            BindingContext = new FeedbackFormViewModel(new MockSelfReflectionService());
+            var service = App.Current.Handler.MauiContext.Services.GetService<ISelfReflectionService>();
+
+            bool isDocent = UserSession.HuidigeRol == "Docent";
+
+            BindingContext = new FeedbackFormViewModel(service, isDocent);
         }
     }
 }
+
 

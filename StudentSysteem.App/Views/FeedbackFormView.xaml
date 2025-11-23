@@ -5,16 +5,19 @@
              x:Class="StudentSysteem.App.Views.FeedbackFormView"
              Title="Feedbackformulier">
 
-
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
             <!-- Header -->
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <Button Text="Dashboard" />
-                <Label Text="Feedbackformulier" Grid.Column="1"
-                       FontSize="22" HorizontalOptions="Center" />
-                <Image Source="person_icon.png" Grid.Column="2" HeightRequest="40"/>
+                <Label Text="Feedbackformulier"
+                       Grid.Column="1"
+                       FontSize="22"
+                       HorizontalOptions="Center" />
+                <Image Source="person_icon.png"
+                       Grid.Column="2"
+                       HeightRequest="40"/>
             </Grid>
 
             <Line Stroke="Black" X2="2000" />
@@ -26,18 +29,18 @@
 
             <Label Text="Prestatiedoel" FontSize="20"/>
 
-            <!-- Leeruitkomst entry met rode border bij fout -->
+            <!-- Leeruitkomst -->
             <Frame BorderColor="{Binding IsLeeruitkomstInvalid, Converter={StaticResource BoolToColorConverter}}"
                    BackgroundColor="White"
                    Padding="0"
                    HasShadow="False">
                 <Entry 
                     Placeholder="Leeruitkomst"
-                    Text="{Binding Leeruitkomst}" 
+                    Text="{Binding Leeruitkomst}"
                     Margin="5"/>
             </Frame>
 
-            <!-- Picker met rode border -->
+            <!-- Niveau -->
             <Frame BorderColor="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
                    BackgroundColor="White"
                    Padding="0"
@@ -49,9 +52,16 @@
                     Margin="5" />
             </Frame>
 
-            <Editor HeightRequest="150"
-                    Placeholder="Voeg toelichting toe..."
-                    Text="{Binding Toelichting}" />
+            <!-- Toelichting -->
+            <Frame BorderColor="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
+                   BackgroundColor="White"
+                   Padding="0"
+                   HasShadow="False">
+                <Editor HeightRequest="150"
+                        Placeholder="Voeg toelichting toe..."
+                        Text="{Binding Toelichting}"
+                        Margin="5"/>
+            </Frame>
 
             <Label Text="{Binding StatusMelding}" 
                    TextColor="Red"
@@ -64,6 +74,5 @@
 
         </VerticalStackLayout>
     </ScrollView>
+
 </ContentPage>
-
-

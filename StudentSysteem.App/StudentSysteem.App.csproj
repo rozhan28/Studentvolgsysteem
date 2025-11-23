@@ -40,6 +40,12 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <MauiCss Remove="Resources\Styles\feedbackform.css" />
+	  <MauiCss Remove="Resources\Styles\FeedbackFormView.css" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)" />

@@ -10,10 +10,13 @@ namespace StudentSysteem.App.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly ISelfReflectionService _service;
+        private readonly bool _isDocent;
 
-        public FeedbackFormViewModel(ISelfReflectionService service)
+        public FeedbackFormViewModel(ISelfReflectionService service, bool isDocent)
         {
             _service = service;
+            _isDocent = isDocent;
+
             SaveCommand = new Command(async () => await SaveReflection());
 
             PrestatieNiveaus = new List<string>
@@ -26,19 +29,9 @@ namespace StudentSysteem.App.ViewModels
 
         public List<string> PrestatieNiveaus { get; }
 
-        private bool _isLeeruitkomstInvalid;
-        public bool IsLeeruitkomstInvalid
-        {
-            get => _isLeeruitkomstInvalid;
-            set { _isLeeruitkomstInvalid = value; Notify(nameof(IsLeeruitkomstInvalid)); }
-        }
-
-        private bool _isPrestatieNiveauInvalid;
-        public bool IsPrestatieNiveauInvalid
-        {
-            get => _isPrestatieNiveauInvalid;
-            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
-        }
+        public bool IsLeeruitkomstInvalid { get; set; }
+        public bool IsPrestatieNiveauInvalid { get; set; }
+        public bool IsToelichtingInvalid { get; set; }
 
         private string _leeruitkomst;
         public string Leeruitkomst
@@ -72,12 +65,18 @@ namespace StudentSysteem.App.ViewModels
 
         private async Task SaveReflection()
         {
+            // Reset kleuren
             IsLeeruitkomstInvalid = false;
             IsPrestatieNiveauInvalid = false;
+            IsToelichtingInvalid = false;
+
+            Notify(nameof(IsLeeruitkomstInvalid));
+            Notify(nameof(IsPrestatieNiveauInvalid));
+            Notify(nameof(IsToelichtingInvalid));
 
             bool isValid = true;
 
-            // Validatie
+            // --- Validatie ---
             if (string.IsNullOrWhiteSpace(Leeruitkomst))
             {
                 IsLeeruitkomstInvalid = true;
@@ -90,12 +89,23 @@ namespace StudentSysteem.App.ViewModels
                 isValid = false;
             }
 
+            if (_isDocent && string.IsNullOrWhiteSpace(Toelichting))
+            {
+                IsToelichtingInvalid = true;
+                isValid = false;
+            }
+
+            Notify(nameof(IsLeeruitkomstInvalid));
+            Notify(nameof(IsPrestatieNiveauInvalid));
+            Notify(nameof(IsToelichtingInvalid));
+
             if (!isValid)
             {
                 StatusMelding = "Vul alle verplichte velden in.";
                 return;
             }
 
+            // Opslaan
             var reflection = new SelfReflection
             {
                 StudentId = 1,
@@ -106,13 +116,14 @@ namespace StudentSysteem.App.ViewModels
             };
 
             _service.Add(reflection);
-            StatusMelding = "Feedback opgeslagen.";
 
             await Application.Current.MainPage.DisplayAlert(
                 "Succes",
                 "Feedback succesvol opgeslagen!",
                 "OK"
             );
+
+            await Application.Current.MainPage.Navigation.PopAsync();
 
             ClearFields();
         }
@@ -125,6 +136,11 @@ namespace StudentSysteem.App.ViewModels
 
             IsLeeruitkomstInvalid = false;
             IsPrestatieNiveauInvalid = false;
+            IsToelichtingInvalid = false;
+
+            Notify(nameof(IsLeeruitkomstInvalid));
+            Notify(nameof(IsPrestatieNiveauInvalid));
+            Notify(nameof(IsToelichtingInvalid));
         }
 
         private void Notify(string prop) =>
