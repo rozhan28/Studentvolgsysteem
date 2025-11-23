@@ -8,8 +8,6 @@ namespace StudentVolgSysteem.Core.Services
 
         public void Add(SelfReflection reflection)
         {
-            if (string.IsNullOrWhiteSpace(reflection.Leeruitkomst))
-                throw new ArgumentException("Leeruitkomst mag niet leeg zijn.");
 
             if (string.IsNullOrWhiteSpace(reflection.PrestatieNiveau))
                 throw new ArgumentException("Selecteer een prestatieniveau.");

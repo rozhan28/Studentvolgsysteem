@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 using StudentVolgSysteem.Core.Services;
@@ -27,6 +28,8 @@ public static class MauiProgram
         // Views 
         builder.Services.AddSingleton<StartView>();
         builder.Services.AddSingleton<FeedbackFormView>();
+
+        builder.UseMauiCommunityToolkit();
 
 #if DEBUG
         builder.Logging.AddDebug();

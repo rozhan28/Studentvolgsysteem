@@ -1,78 +1,108 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodels="clr-namespace:StudentSysteem.App.ViewModels"
              x:Class="StudentSysteem.App.Views.FeedbackFormView"
              Title="Feedbackformulier">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-            <!-- Header -->
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <Button Text="Dashboard" />
-                <Label Text="Feedbackformulier"
-                       Grid.Column="1"
-                       FontSize="22"
-                       HorizontalOptions="Center" />
-                <Image Source="person_icon.png"
-                       Grid.Column="2"
-                       HeightRequest="40"/>
-            </Grid>
+            <CollectionView ItemsSource="{Binding Beoordelingen}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <toolkit:Expander>
+                            <!-- Header -->
+                            <toolkit:Expander.Header>
+                                <Grid ColumnDefinitions="*,Auto" Padding="5">
+                                    <Label Text="{Binding Titel}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
+                                    <Label Text="{Binding PrestatieNiveau}" Grid.Column="1" FontSize="14" VerticalOptions="Center"/>
+                                </Grid>
+                            </toolkit:Expander.Header>
 
-            <Line Stroke="Black" X2="2000" />
+                            <!-- Content -->
+                            <toolkit:Expander.Content>
+                                <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20" Padding="0,10,0,10">
 
-            <Label Text="Requirementsanalyseproces - Definiëren probleemdomein" />
-            <Label Text="Analyseren" FontAttributes="Italic" />
-            <Label Text="Maken domeinmodel" FontAttributes="Bold" />
-            <Label Text="Het maken van een domeinmodel volgens een UML klassendiagram" />
+                                    <!-- beschrijving -->
+                                    <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                        <Label Text="{Binding SubTitel}" FontSize="14" TextColor="#555"/>
+                                        <Label Text="{Binding Domein}" FontAttributes="Italic" FontSize="14" TextColor="#777"/>
+                                        <Label Text="{Binding MakenDomeinmodel}" FontAttributes="Bold" FontSize="16"/>
+                                        <Label Text="{Binding Beschrijving}" FontSize="14" TextColor="#666"/>
+                                        <Label Text="Prestatiedoel" FontSize="20" FontAttributes="Bold" Margin="0,10,0,0"/>
+                                    </VerticalStackLayout>
 
-            <Label Text="Prestatiedoel" FontSize="20"/>
+                                    <!-- niveau + toelichting -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="10">
 
-            <!-- Leeruitkomst -->
-            <Frame BorderColor="{Binding IsLeeruitkomstInvalid, Converter={StaticResource BoolToColorConverter}}"
-                   BackgroundColor="White"
-                   Padding="0"
-                   HasShadow="False">
-                <Entry 
-                    Placeholder="Leeruitkomst"
-                    Text="{Binding Leeruitkomst}"
-                    Margin="5"/>
-            </Frame>
+                                        <Frame BorderColor="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
+                                               BackgroundColor="White"
+                                               Padding="10"
+                                               HasShadow="False">
+                                            <VerticalStackLayout Spacing="15">
+                                                
+                                                <Picker Title="Selecteer prestatie niveau"
+                                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedbackFormViewModel}}, Path=PrestatieNiveaus}"
+                                                        SelectedItem="{Binding PrestatieNiveau}" />
 
-            <!-- Niveau -->
-            <Frame BorderColor="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
-                   BackgroundColor="White"
-                   Padding="0"
-                   HasShadow="False">
-                <Picker 
-                    Title="Selecteer prestatie niveau"
-                    ItemsSource="{Binding PrestatieNiveaus}"
-                    SelectedItem="{Binding PrestatieNiveau}"
-                    Margin="5" />
-            </Frame>
+                                                <!-- Checkboxes -->
+                                                <VerticalStackLayout Spacing="10" BackgroundColor="#F5F5F5" Padding="10">
+                                                    <Label Text="Op niveau" FontAttributes="Bold"/>
+                                                    <HorizontalStackLayout Spacing="10">
+                                                        <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
+                                                        <Label Text="Het domeinmodel weerspiegelt het domein" VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
+                                                    <HorizontalStackLayout Spacing="10">
+                                                        <CheckBox IsChecked="{Binding OpNiveauSyntaxCorrect}" />
+                                                        <Label Text="De syntax van het domeinmodel is correct volgens UML" VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
+                                                    <HorizontalStackLayout Spacing="10">
+                                                        <CheckBox IsChecked="{Binding OpNiveauVastgelegd}" />
+                                                        <Label Text="Het domeinmodel is op een logische locatie vastgelegd" VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
 
-            <!-- Toelichting -->
-            <Frame BorderColor="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
-                   BackgroundColor="White"
-                   Padding="0"
-                   HasShadow="False">
-                <Editor HeightRequest="150"
-                        Placeholder="Voeg toelichting toe..."
-                        Text="{Binding Toelichting}"
-                        Margin="5"/>
-            </Frame>
+                                                    <Label Text="Boven niveau" FontAttributes="Bold" Margin="0,10,0,0"/>
+                                                    <HorizontalStackLayout Spacing="10">
+                                                        <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
+                                                        <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context van het project." VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
+                                                </VerticalStackLayout>
+                                            </VerticalStackLayout>
+                                        </Frame>
 
-            <Label Text="{Binding StatusMelding}" 
-                   TextColor="Red"
-                   FontAttributes="Bold"/>
+                                        <!-- Toelichting -->
+                                        <Frame BorderColor="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
+                                               BackgroundColor="White"
+                                               Padding="10"
+                                               HasShadow="False">
+                                            <Editor HeightRequest="120"
+                                                    Placeholder="Voeg toelichting toe..."
+                                                    Text="{Binding Toelichting}" />
+                                        </Frame>
 
-            <Button Text="Opslaan"
-                    Command="{Binding SaveCommand}"
-                    BackgroundColor="#0066cc"
-                    TextColor="White"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </toolkit:Expander.Content>
+                        </toolkit:Expander>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="{Binding StatusMelding}" TextColor="Red" FontAttributes="Bold"/>
+
+            <!-- Opslaan knop -->
+            <HorizontalStackLayout HorizontalOptions="End">
+                <Button Text="Opslaan"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#0066cc"
+                        TextColor="White"
+                        CornerRadius="5"
+                        HeightRequest="40"
+                        WidthRequest="120"/>
+            </HorizontalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
