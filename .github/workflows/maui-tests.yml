@@ -14,35 +14,18 @@ on:
       - develop
 
 jobs:
-  test-linux:
+  test-core:
     runs-on: ubuntu-latest
     steps:
-      - name: Haal de repository op
-        uses: actions/checkout@v4
-
-      - name: Installeer .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Installeer MAUI workload (Android)
-        run: dotnet workload install maui-android
-
-      - name: Herstel afhankelijkheden
-        run: dotnet restore
-
-      - name: Build Core
-        run: dotnet build ./StudentSysteem.Core/StudentSysteem.Core.csproj --configuration Release --no-restore
-
-      - name: Build Data
-        run: dotnet build ./StudentSysteem.Core.Data/StudentSysteem.Core.Data.csproj --configuration Release --no-restore
-
-      - name: Voer unit tests uit
-        run: dotnet test ./StudentSysteem.Tests/StudentSysteem.Tests.csproj --configuration Release --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
-
-      - name: Upload test results as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
+      - run: dotnet restore
+      - run: dotnet build ./StudentSysteem.Core/StudentSysteem.Core.csproj --configuration Release
+      - run: dotnet build ./StudentSysteem.Core.Data/StudentSysteem.Core.Data.csproj --configuration Release
+      - run: dotnet test ./StudentSysteem.Tests/StudentSysteem.Tests.csproj --configuration Release --logger "trx;LogFileName=test_results.trx"
+      - uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: '**/TestResults/*.trx'
@@ -51,35 +34,21 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Installeer .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Installeer MAUI workload (Windows)
-        run: dotnet workload install maui-windows
-
-      - name: Restore & Build Windows
-        run: |
-          dotnet restore
-          dotnet build ./StudentSysteem.App/StudentSysteem.App.csproj -f net10.0-windows10.0.19041.0 --configuration Release
+      - run: dotnet workload install maui-windows
+      - run: dotnet restore
+      - run: dotnet build ./StudentSysteem.App/StudentSysteem.App.csproj -f net10.0-windows10.0.19041.0 --configuration Release
 
   build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Installeer .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Installeer MAUI workloads (macOS/iOS)
-        run: dotnet workload install maui ios macos
-
-      - name: Restore & Build macOS/iOS
-        run: |
-          dotnet restore
-          dotnet build ./StudentSysteem.App/StudentSysteem.App.csproj -f net10.0-ios --configuration Release
+      - run: dotnet workload install maui ios macos
+      - run: dotnet restore
+      - run: dotnet build ./StudentSysteem.App/StudentSysteem.App.csproj -f net10.0-ios --configuration Release
 
