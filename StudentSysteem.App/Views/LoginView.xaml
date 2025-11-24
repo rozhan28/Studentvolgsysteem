@@ -9,11 +9,11 @@
 
         <Label Text="Kies uw rol" FontSize="26" />
 
-        <Button Text="Ik ben Student"
+        <Button Text="Ik ben student"
                 WidthRequest="250"
                 Clicked="OnStudentClicked"/>
 
-        <Button Text="Ik ben Docent"
+        <Button Text="Ik ben docent"
                 WidthRequest="250"
                 Clicked="OnDocentClicked"/>
 

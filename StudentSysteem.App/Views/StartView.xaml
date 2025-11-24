@@ -7,12 +7,12 @@
     <VerticalStackLayout Padding="20" Spacing="25"
                          VerticalOptions="Center" HorizontalOptions="Center">
 
-        <Label Text="Welkom in het Studentvolgsysteem"
+        <Label Text="Welkom in het studentvolgsysteem"
                FontSize="24"
                HorizontalOptions="Center"/>
 
         <Button x:Name="BtnZelfreview"
-        Text="Geef Zelfreview"
+        Text="Geef zelfreview"
         WidthRequest="250"
         HeightRequest="55"
         BackgroundColor="#0066cc"
@@ -20,7 +20,7 @@
         Clicked="OnSelfReviewClicked"/>
 
         <Button x:Name="BtnFeedback"
-        Text="Geef Feedback"
+        Text="Geef feedback"
         WidthRequest="250"
         HeightRequest="55"
         BackgroundColor="#00aa55"
