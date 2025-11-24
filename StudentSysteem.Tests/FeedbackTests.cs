@@ -4,6 +4,7 @@ using StudentVolgSysteem.Core.Services;
 using Assert = NUnit.Framework.Assert;
 using Moq;
 using System;
+using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.Tests
 {

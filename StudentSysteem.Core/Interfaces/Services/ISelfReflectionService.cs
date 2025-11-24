@@ -1,6 +1,6 @@
 ﻿using StudentVolgSysteem.Core.Models;
 
-namespace StudentVolgSysteem.Core.Services
+namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface ISelfReflectionService
     {

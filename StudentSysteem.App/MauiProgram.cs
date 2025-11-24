@@ -4,6 +4,7 @@ using StudentVolgSysteem.App.Services;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 using StudentVolgSysteem.Core.Services;
+using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.App
 {

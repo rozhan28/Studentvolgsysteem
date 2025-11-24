@@ -1,4 +1,5 @@
-﻿using StudentVolgSysteem.Core.Models;
+﻿using StudentSysteem.Core.Interfaces.Services;
+using StudentVolgSysteem.Core.Models;
 
 namespace StudentVolgSysteem.Core.Services
 {
