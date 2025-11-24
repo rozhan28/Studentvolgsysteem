@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StudentSysteem.Core.Interfaces
+namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface INavigationService
     {

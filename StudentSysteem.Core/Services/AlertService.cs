@@ -1,4 +1,4 @@
-﻿using StudentSysteem.Core.Interfaces;
+﻿using StudentSysteem.Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
