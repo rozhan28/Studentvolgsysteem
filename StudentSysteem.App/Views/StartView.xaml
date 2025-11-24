@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentSysteem.App.Views.StartView"
+             Title="Home">
+
+    <VerticalStackLayout Padding="20" Spacing="25"
+                         VerticalOptions="Center" HorizontalOptions="Center">
+
+        <Label Text="Welkom in het studentvolgsysteem"
+               FontSize="24"
+               HorizontalOptions="Center"/>
+
+        <Button x:Name="BtnZelfreview"
+        Text="Geef zelfreview"
+        WidthRequest="250"
+        HeightRequest="55"
+        BackgroundColor="#0066cc"
+        TextColor="White"
+        Clicked="OnSelfReviewClicked"/>
+
+        <Button x:Name="BtnFeedback"
+        Text="Geef feedback"
+        WidthRequest="250"
+        HeightRequest="55"
+        BackgroundColor="#00aa55"
+        TextColor="White"
+        Clicked="OnFeedbackClicked"/>
+
+
+    </VerticalStackLayout>
+</ContentPage>
