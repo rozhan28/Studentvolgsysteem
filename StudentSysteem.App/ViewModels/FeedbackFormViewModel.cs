@@ -1,5 +1,6 @@
 ﻿using StudentVolgSysteem.Core.Models;
 using StudentVolgSysteem.Core.Services;
+using StudentVolgSysteem.App.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -10,12 +11,20 @@ namespace StudentSysteem.App.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly ISelfReflectionService _service;
+        private readonly ISelfReflectionService _reflectionService;
+        private readonly INavigationService _navigationService;
+        private readonly IAlertService _alertService;
         private readonly bool _isDocent;
 
-        public FeedbackFormViewModel(ISelfReflectionService service, bool isDocent = false)
+        public FeedbackFormViewModel(
+            ISelfReflectionService reflectionService,
+            INavigationService navigationService,
+            IAlertService alertService,
+            bool isDocent = false)
         {
-            _service = service;
+            _reflectionService = reflectionService;
+            _navigationService = navigationService;
+            _alertService = alertService;
             _isDocent = isDocent;
 
             SaveCommand = new Command(async () => await SaveReflection());
@@ -43,7 +52,7 @@ namespace StudentSysteem.App.ViewModels
                 },
                 new BeoordelingItem {
                     Titel = "Requirementsanalyseproces – Verzamelen requirements",
-                    Domein = "Analyseren", 
+                    Domein = "Analyseren",
                     MakenDomeinmodel = "Beschrijven stakeholders",
                     Beschrijving = "Het maken van een stakeholderanalyse"
                 }
@@ -51,7 +60,6 @@ namespace StudentSysteem.App.ViewModels
         }
 
         public List<string> PrestatieNiveaus { get; }
-
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
 
         private string _statusmelding;
@@ -70,44 +78,15 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var item in Beoordelingen)
             {
-                bool itemValid = true;
-
-                // Geen niveau gekozen
-                if (string.IsNullOrWhiteSpace(item.PrestatieNiveau))
-                    itemValid = false;
-
-                // "In ontwikkeling
-                else if (item.PrestatieNiveau == "In ontwikkeling")
-                {
-                    if (item.OpNiveauDomeinWeerspiegelt ||
-                        item.OpNiveauSyntaxCorrect ||
-                        item.OpNiveauVastgelegd ||
-                        item.BovenNiveauVolledig)
-                        itemValid = false;
-                }
-
-                // Op niveau
-                else if (item.PrestatieNiveau == "Op niveau")
-                {
-                    if (!item.OpNiveauDomeinWeerspiegelt &&
-                        !item.OpNiveauSyntaxCorrect &&
-                        !item.OpNiveauVastgelegd)
-                        itemValid = false;
-                }
-
-                // Boven niveau
-                else if (item.PrestatieNiveau == "Boven niveau")
-                {
-                    if (!item.BovenNiveauVolledig)
-                        itemValid = false;
-                }
-
+                bool itemValid = ValidateItem(item);
                 item.IsPrestatieNiveauInvalid = !itemValid;
-                if (!itemValid) allValid = false;
 
-                // Toelichting verplicht voor docenten
-                item.IsToelichtingInvalid = string.IsNullOrWhiteSpace(item.Toelichting) && _isDocent;
-                if (item.IsToelichtingInvalid) allValid = false;
+                // toelichting is verplicht voor student
+                item.IsToelichtingInvalid =
+                    string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent;
+
+                if (!itemValid || item.IsToelichtingInvalid)
+                    allValid = false;
             }
 
             if (!allValid)
@@ -118,7 +97,7 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var item in Beoordelingen)
             {
-                _service.Add(new SelfReflection
+                _reflectionService.Add(new SelfReflection
                 {
                     StudentId = 1,
                     PrestatieNiveau = item.PrestatieNiveau,
@@ -127,10 +106,35 @@ namespace StudentSysteem.App.ViewModels
                 });
             }
 
-            await Application.Current.MainPage.DisplayAlert("Succes", "Alle feedback succesvol opgeslagen!", "OK");
-            await Application.Current.MainPage.Navigation.PopAsync();
+            await _alertService.ShowAlertAsync("Succes", "Alle feedback succesvol opgeslagen!");
+            await _navigationService.NavigateBackAsync();
 
             ClearFields();
+        }
+
+        private bool ValidateItem(BeoordelingItem item)
+        {
+            if (string.IsNullOrWhiteSpace(item.PrestatieNiveau))
+                return false;
+
+            return item.PrestatieNiveau switch
+            {
+                "In ontwikkeling" =>
+                    !(item.OpNiveauDomeinWeerspiegelt ||
+                      item.OpNiveauSyntaxCorrect ||
+                      item.OpNiveauVastgelegd ||
+                      item.BovenNiveauVolledig),
+
+                "Op niveau" =>
+                    (item.OpNiveauDomeinWeerspiegelt ||
+                     item.OpNiveauSyntaxCorrect ||
+                     item.OpNiveauVastgelegd),
+
+                "Boven niveau" =>
+                    item.BovenNiveauVolledig,
+
+                _ => false
+            };
         }
 
         private void ClearFields()
@@ -220,6 +224,7 @@ namespace StudentSysteem.App.ViewModels
             set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
         }
 
-        private void Notify(string p) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+        private void Notify(string p) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
     }
 }

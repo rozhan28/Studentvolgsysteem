@@ -1,3 +1,4 @@
+using StudentVolgSysteem.App.Services;
 using StudentSysteem.App.ViewModels;
 using StudentVolgSysteem.Core.Services;
 
@@ -5,17 +6,22 @@ namespace StudentSysteem.App.Views
 {
     public partial class FeedbackFormView : ContentPage
     {
-        public FeedbackFormView()
+        public FeedbackFormView(
+            ISelfReflectionService reflectionService,
+            INavigationService navigationService,
+            IAlertService alertService)
         {
             InitializeComponent();
 
-            var service = App.Current.Handler.MauiContext.Services.GetService<ISelfReflectionService>();
-
             bool isDocent = UserSession.HuidigeRol == "Docent";
 
-            BindingContext = new FeedbackFormViewModel(service, isDocent);
+            BindingContext = new FeedbackFormViewModel(
+                reflectionService,
+                navigationService,
+                alertService,
+                isDocent
+            );
         }
     }
 }
-
 
