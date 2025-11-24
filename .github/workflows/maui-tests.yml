@@ -20,25 +20,28 @@ jobs:
       - name: Haal de repository op
         uses: actions/checkout@v4
  
-      - name: Installeer .NET SDK
+      - name: Installeer .NET SDK 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' 
+          dotnet-version: '10.0.x'
 
-      - name: Installeer MAUI workload (Android)
-        run: dotnet workload install maui-android
-
-      - name: Herstel afhankelijkheden
-        run: dotnet restore
+      - name: Restore Core
+        run: dotnet restore StudentSysteem.Core/StudentSysteem.Core.csproj
+       
+      - name: Restore Data
+        run: dotnet restore StudentSysteem.Core.Data/StudentSysteem.Core.Data.csproj
+       
+      - name: Restore Tests
+        run: dotnet restore StudentSysteem.Tests/StudentSysteem.Tests.csproj
 
       - name: Build Core
-        run: dotnet build ./StudentSysteem.Core/StudentSysteem.Core.csproj --configuration Release --no-restore
+        run: dotnet build StudentSysteem.Core/StudentSysteem.Core.csproj --configuration Release --no-restore
 
       - name: Build Data
-        run: dotnet build ./StudentSysteem.Core.Data/StudentSysteem.Core.Data.csproj --configuration Release --no-restore
+        run: dotnet build StudentSysteem.Core.Data/StudentSysteem.Core.Data.csproj --configuration Release --no-restore
 
       - name: Voer unit tests uit
-        run: dotnet test ./StudentSysteem.Tests/StudentSysteem.Tests.csproj --configuration Release --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
+        run: dotnet test StudentSysteem.Tests/StudentSysteem.Tests.csproj --configuration Release --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
  
       - name: Upload test results as artifact
         if: always()  
@@ -46,4 +49,5 @@ jobs:
         with:
           name: test-results
           path: '**/TestResults/*.trx'
+
 
