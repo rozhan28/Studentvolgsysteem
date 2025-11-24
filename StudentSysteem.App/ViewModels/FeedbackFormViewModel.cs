@@ -81,7 +81,7 @@ namespace StudentSysteem.App.ViewModels
                 bool itemValid = ValidateItem(item);
                 item.IsPrestatieNiveauInvalid = !itemValid;
 
-                // toelichting is verplicht voor student
+                // toelichting is verplicht voor studenten
                 item.IsToelichtingInvalid =
                     string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent;
 
@@ -95,6 +95,7 @@ namespace StudentSysteem.App.ViewModels
                 return;
             }
 
+            //Data wordt opgeslagen
             foreach (var item in Beoordelingen)
             {
                 _reflectionService.Add(new SelfReflection
@@ -106,11 +107,10 @@ namespace StudentSysteem.App.ViewModels
                 });
             }
 
-            await _alertService.ShowAlertAsync("Succes", "Alle feedback succesvol opgeslagen!");
-            await _navigationService.NavigateBackAsync();
+            await _alertService.ShowAlertAsync("Succes", "Feedback succesvol opgeslagen!");
 
-            ClearFields();
         }
+
 
         private bool ValidateItem(BeoordelingItem item)
         {
@@ -135,23 +135,6 @@ namespace StudentSysteem.App.ViewModels
 
                 _ => false
             };
-        }
-
-        private void ClearFields()
-        {
-            foreach (var item in Beoordelingen)
-            {
-                item.PrestatieNiveau = null;
-                item.Toelichting = string.Empty;
-                item.OpNiveauDomeinWeerspiegelt = false;
-                item.OpNiveauSyntaxCorrect = false;
-                item.OpNiveauVastgelegd = false;
-                item.BovenNiveauVolledig = false;
-                item.IsPrestatieNiveauInvalid = false;
-                item.IsToelichtingInvalid = false;
-            }
-
-            StatusMelding = string.Empty;
         }
 
         private void Notify(string prop) =>
