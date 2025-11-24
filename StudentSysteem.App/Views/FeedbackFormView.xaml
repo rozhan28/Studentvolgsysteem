@@ -180,11 +180,7 @@
                                                 <HorizontalStackLayout Spacing="5">
                                                     <Label Text="Toelichting"
                                                      FontAttributes="Bold" />
-
-                                                    <Label Text="(verplicht)"
-                                                       FontAttributes="Bold"
-                                                       TextColor="Black"
-                                                       IsVisible="{Binding Source={x:Reference Page}, Path=BindingContext.IsStudent}" />                
+              
                                                 </HorizontalStackLayout>
 
                                                 <Editor HeightRequest="120"

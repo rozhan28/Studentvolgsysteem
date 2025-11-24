@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentSysteem.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 

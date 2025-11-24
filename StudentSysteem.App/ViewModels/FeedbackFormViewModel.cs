@@ -1,10 +1,10 @@
 ﻿using StudentSysteem.App.Models;
 using StudentVolgSysteem.Core.Models;
-using StudentVolgSysteem.App.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Interfaces;
 
 namespace StudentSysteem.App.ViewModels
 {
