@@ -4,6 +4,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodels="clr-namespace:StudentSysteem.App.ViewModels"
              x:Class="StudentSysteem.App.Views.FeedbackFormView"
+             x:Name="Page"
              Title="Feedbackformulier">
 
     <ScrollView>
@@ -81,69 +82,114 @@
                                             <VerticalStackLayout Spacing="15">
 
                                                 <!-- In ontwikkeling -->
-                                                <VerticalStackLayout Spacing="10"
-                                                                     BackgroundColor="#F5F5F5"
-                                                                     Padding="10"
-                                                                     Margin="0,10,0,0">
-                                                    <Label Text="In ontwikkeling" 
-                                                           FontAttributes="Bold"
-                                                           Margin="0,5,0,0"/>
-                                                    <HorizontalStackLayout Spacing="10">
-                                                        <CheckBox IsChecked="{Binding InOntwikkeling}" />
-                                                        <Label Text="" />
-                                                    </HorizontalStackLayout>
-                                                </VerticalStackLayout>
+                                                <Frame BorderColor="#D0D0D0"
+                                                   CornerRadius="10"
+                                                   HasShadow="False"
+                                                   Padding="0"
+                                                   BackgroundColor="Transparent"
+                                                   Margin="0,10,0,0">
+
+                                                        <VerticalStackLayout Spacing="10"
+                                                         BackgroundColor="{Binding InOntwikkelingColor}"
+                                                         Padding="10">
+
+                                                        <Label Text="In ontwikkeling"
+                                                         FontAttributes="Bold" />     
+
+                                                        <HorizontalStackLayout Spacing="10">
+                                                            <CheckBox IsChecked="{Binding InOntwikkeling}" />
+                                                            <Label Text="Student laat nog onvoldoende beheersing zien." />
+                                                        </HorizontalStackLayout>
+
+                                                    </VerticalStackLayout>
+                                                </Frame>
+
+
 
                                                 <!-- Op niveau -->
-                                                <VerticalStackLayout Spacing="10"
-                                                                     BackgroundColor="#F5F5F5"
-                                                                     Padding="10"
-                                                                     Margin="0,10,0,0">
+                                                <Frame BorderColor="#D0D0D0"
+                                                   CornerRadius="10"
+                                                   HasShadow="False"
+                                                   Padding="0"
+                                                   BackgroundColor="Transparent"
+                                                   Margin="0,10,0,0">
 
-                                                    <Label Text="Op niveau" FontAttributes="Bold"/>
+                                                    <VerticalStackLayout Spacing="10"
+                                                     BackgroundColor="{Binding OpNiveauColor}"
+                                                     Padding="10">              
 
-                                                    <HorizontalStackLayout Spacing="10">
-                                                        <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
-                                                        <Label Text="Het domeinmodel weerspiegelt het domein"/>
-                                                    </HorizontalStackLayout>
+                                                        <Label Text="Op niveau"
+                                                         FontAttributes="Bold" />
 
-                                                    <HorizontalStackLayout Spacing="10">
-                                                        <CheckBox IsChecked="{Binding OpNiveauSyntaxCorrect}" />
-                                                        <Label Text="De syntax van het domeinmodel is correct volgens UML"/>
-                                                    </HorizontalStackLayout>
+                                                        <HorizontalStackLayout Spacing="10">
+                                                            <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
+                                                            <Label Text="Het domeinmodel weerspiegelt het domein" />
+                                                        </HorizontalStackLayout>
 
-                                                    <HorizontalStackLayout Spacing="10">
-                                                        <CheckBox IsChecked="{Binding OpNiveauVastgelegd}" />
-                                                        <Label Text="Het domeinmodel is op een logische locatie vastgelegd"/>
-                                                    </HorizontalStackLayout>
-                                                </VerticalStackLayout>
+                                                        <HorizontalStackLayout Spacing="10">
+                                                            <CheckBox IsChecked="{Binding OpNiveauSyntaxCorrect}" />
+                                                            <Label Text="De syntax van het domeinmodel is correct volgens UML" />
+                                                        </HorizontalStackLayout>
+
+                                                        <HorizontalStackLayout Spacing="10">
+                                                            <CheckBox IsChecked="{Binding OpNiveauVastgelegd}" />
+                                                            <Label Text="Het domeinmodel is op een logische locatie vastgelegd" />
+                                                        </HorizontalStackLayout>
+
+                                                    </VerticalStackLayout>
+                                                </Frame>
+
+
 
                                                 <!-- Boven niveau -->
-                                                <VerticalStackLayout Spacing="10"
-                                                                     BackgroundColor="#F5F5F5"
-                                                                     Padding="10">
-                                                    <Label Text="Boven niveau" FontAttributes="Bold"/>
+                                                <Frame BorderColor="#D0D0D0"
+                                                  CornerRadius="10"
+                                                  HasShadow="False"
+                                                  Padding="0"
+                                                  BackgroundColor="Transparent"
+                                                  Margin="0,10,0,0">
 
-                                                    <HorizontalStackLayout Spacing="10">
-                                                        <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
-                                                        <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context."/>
-                                                    </HorizontalStackLayout>
-                                                </VerticalStackLayout>
+                                                    <VerticalStackLayout Spacing="10"
+                                                     BackgroundColor="{Binding BovenNiveauColor}"
+                                                     Padding="10">              
+
+                                                        <Label Text="Boven niveau"
+                                                         FontAttributes="Bold" />
+
+                                                        <HorizontalStackLayout Spacing="10">
+                                                            <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
+                                                            <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context." />
+                                                        </HorizontalStackLayout>
+
+                                                    </VerticalStackLayout>
+                                                </Frame>
+
+
 
                                             </VerticalStackLayout>
                                         </Frame>
 
                                         <!-- Toelichting -->
                                         <Frame BorderColor="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
-                                               BackgroundColor="White"
-                                               Padding="10"
-                                               Margin="0,10,0,0">
+                                           BackgroundColor="White"
+                                           Padding="10"
+                                           Margin="0,10,0,0">       
 
-                                            <VerticalStackLayout>
-                                                <Label Text="Toelichting" FontAttributes="Bold" Margin="0,0,0,5"/>
+                                            <VerticalStackLayout Spacing="5">
+
+                                                <HorizontalStackLayout Spacing="5">
+                                                    <Label Text="Toelichting"
+                                                     FontAttributes="Bold" />
+
+                                                    <Label Text="(verplicht)"
+                                                       FontAttributes="Bold"
+                                                       TextColor="Black"
+                                                       IsVisible="{Binding Source={x:Reference Page}, Path=BindingContext.IsStudent}" />                
+                                                </HorizontalStackLayout>
+
                                                 <Editor HeightRequest="120"
-                                                        Placeholder="Voeg toelichting toe..."
-                                                        Text="{Binding Toelichting}" />
+                                                    Placeholder="Voeg toelichting toe..."
+                                                    Text="{Binding Toelichting}" />     
                                             </VerticalStackLayout>
 
                                         </Frame>

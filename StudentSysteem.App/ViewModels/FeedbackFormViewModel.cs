@@ -1,4 +1,5 @@
-﻿using StudentVolgSysteem.Core.Models;
+﻿using StudentSysteem.App.Models;
+using StudentVolgSysteem.Core.Models;
 using StudentVolgSysteem.App.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -29,6 +30,7 @@ namespace StudentSysteem.App.ViewModels
 
             SaveCommand = new Command(async () => await SaveReflection());
 
+            // ⭐ STARTDATA
             Beoordelingen = new ObservableCollection<BeoordelingItem>
             {
                 new BeoordelingItem {
@@ -52,6 +54,7 @@ namespace StudentSysteem.App.ViewModels
             };
         }
 
+        // ⭐ Lijst van beoordelingsitems
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
 
         private string _statusmelding;
@@ -63,6 +66,7 @@ namespace StudentSysteem.App.ViewModels
 
         public ICommand SaveCommand { get; }
 
+        // ⭐ Opslaan feedback
         private async Task SaveReflection()
         {
             StatusMelding = string.Empty;
@@ -91,7 +95,7 @@ namespace StudentSysteem.App.ViewModels
                 _reflectionService.Add(new SelfReflection
                 {
                     StudentId = 1,
-                    PrestatieNiveau = item.CurrentLevel,
+                    PrestatieNiveau = item.PrestatieNiveau,
                     Toelichting = item.Toelichting,
                     Datum = DateTime.Now
                 });
@@ -100,9 +104,9 @@ namespace StudentSysteem.App.ViewModels
             await _alertService.ShowAlertAsync("Succes", "Feedback succesvol opgeslagen!");
         }
 
+        // ⭐ Validatie per item
         private bool ValidateItem(BeoordelingItem item)
         {
-            // Minimaal 1 checkbox verplicht
             return item.InOntwikkeling ||
                    item.OpNiveauSyntaxCorrect ||
                    item.OpNiveauVastgelegd ||
@@ -113,128 +117,4 @@ namespace StudentSysteem.App.ViewModels
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
-
-    public class BeoordelingItem : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Titel { get; set; }
-        public string Domein { get; set; }
-        public string MakenDomeinmodel { get; set; }
-        public string Beschrijving { get; set; }
-
-        private string _toelichting;
-        public string Toelichting
-        {
-            get => _toelichting;
-            set { _toelichting = value; Notify(nameof(Toelichting)); }
-        }
-
-
-        // In ontwikkeling checkbox
-        private bool _inOntwikkeling;
-        public bool InOntwikkeling
-        {
-            get => _inOntwikkeling;
-            set { _inOntwikkeling = value; UpdateColor(); Notify(nameof(InOntwikkeling)); }
-        }
-
-        // Op niveau checkboxes
-        private bool _opNiveauDomeinWeerspiegelt;
-        public bool OpNiveauDomeinWeerspiegelt
-        {
-            get => _opNiveauDomeinWeerspiegelt;
-            set { _opNiveauDomeinWeerspiegelt = value; UpdateColor(); Notify(nameof(OpNiveauDomeinWeerspiegelt)); }
-        }
-
-        private bool _opNiveauSyntaxCorrect;
-        public bool OpNiveauSyntaxCorrect
-        {
-            get => _opNiveauSyntaxCorrect;
-            set { _opNiveauSyntaxCorrect = value; UpdateColor(); Notify(nameof(OpNiveauSyntaxCorrect)); }
-        }
-
-        private bool _opNiveauVastgelegd;
-        public bool OpNiveauVastgelegd
-        {
-            get => _opNiveauVastgelegd;
-            set { _opNiveauVastgelegd = value; UpdateColor(); Notify(nameof(OpNiveauVastgelegd)); }
-        }
-
-        // Boven niveau checkbox
-        private bool _bovenNiveauVolledig;
-        public bool BovenNiveauVolledig
-        {
-            get => _bovenNiveauVolledig;
-            set { _bovenNiveauVolledig = value; UpdateColor(); Notify(nameof(BovenNiveauVolledig)); }
-        }
-
-        // -----------------------
-
-        private string _containerColor = "White";
-        public string ContainerColor
-        {
-            get => _containerColor;
-            set { _containerColor = value; Notify(nameof(ContainerColor)); }
-        }
-
-        public string CurrentLevel
-        {
-            get
-            {
-                if (BovenNiveauVolledig)
-                    return "Boven niveau";
-
-                if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
-                    return "Op niveau";
-
-                if (InOntwikkeling)
-                    return "In ontwikkeling";
-
-                return "";
-            }
-        }
-
-        private void UpdateColor()
-        {
-            if (BovenNiveauVolledig)
-            {
-                ContainerColor = "#348000";
-            }
-            else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
-            {
-                ContainerColor = "#68ca26"; 
-            }
-            else if (InOntwikkeling)
-            {
-                ContainerColor = "#2e95d4"; 
-            }
-            else
-            {
-                ContainerColor = "White"; 
-            }
-
-            Notify(nameof(ContainerColor));
-            Notify(nameof(CurrentLevel));
-        }
-
-        // Validatie flags
-        private bool _isPrestatieNiveauInvalid;
-        public bool IsPrestatieNiveauInvalid
-        {
-            get => _isPrestatieNiveauInvalid;
-            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
-        }
-
-        private bool _isToelichtingInvalid;
-        public bool IsToelichtingInvalid
-        {
-            get => _isToelichtingInvalid;
-            set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
-        }
-
-        private void Notify(string p) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
-    }
-
 }
