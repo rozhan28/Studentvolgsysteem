@@ -27,12 +27,26 @@ namespace StudentSysteem.App.ViewModels
                 "Boven niveau"
             };
 
-            // beoordelingsitems
             Beoordelingen = new ObservableCollection<BeoordelingItem>
             {
-                new BeoordelingItem { Titel = "Maken domeinmodel", Beschrijving = "" },
-                new BeoordelingItem { Titel = "Analyseren proces", Beschrijving = "" },
-                new BeoordelingItem { Titel = "Ontwikkelen ontwerp", Beschrijving = "" }
+                new BeoordelingItem {
+                    Titel = "Requirementsanalyseproces – Definiëren probleemdomein",
+                    Domein = "Analyseren",
+                    MakenDomeinmodel = "Maken domeinmodel",
+                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
+                },
+                new BeoordelingItem {
+                    Titel = "Requirementsanalyseproces – Definiëren probleemdomein",
+                    Domein = "Analyseren",
+                    MakenDomeinmodel = "Bestuderen probleemstelling",
+                    Beschrijving = "Het probleem achterhalen"
+                },
+                new BeoordelingItem {
+                    Titel = "Requirementsanalyseproces – Verzamelen requirements",
+                    Domein = "Analyseren", 
+                    MakenDomeinmodel = "Beschrijven stakeholders",
+                    Beschrijving = "Het maken van een stakeholderanalyse"
+                }
             };
         }
 
@@ -58,21 +72,40 @@ namespace StudentSysteem.App.ViewModels
             {
                 bool itemValid = true;
 
-                // --- Prestatie niveau validatie ---
+                // Geen niveau gekozen
                 if (string.IsNullOrWhiteSpace(item.PrestatieNiveau))
                     itemValid = false;
-                else if (item.PrestatieNiveau == "Op niveau" &&
-                         !item.OpNiveauDomeinWeerspiegelt &&
-                         !item.OpNiveauSyntaxCorrect &&
-                         !item.OpNiveauVastgelegd)
-                    itemValid = false;
-                else if (item.PrestatieNiveau == "Boven niveau" && !item.BovenNiveauVolledig)
-                    itemValid = false;
+
+                // "In ontwikkeling
+                else if (item.PrestatieNiveau == "In ontwikkeling")
+                {
+                    if (item.OpNiveauDomeinWeerspiegelt ||
+                        item.OpNiveauSyntaxCorrect ||
+                        item.OpNiveauVastgelegd ||
+                        item.BovenNiveauVolledig)
+                        itemValid = false;
+                }
+
+                // Op niveau
+                else if (item.PrestatieNiveau == "Op niveau")
+                {
+                    if (!item.OpNiveauDomeinWeerspiegelt &&
+                        !item.OpNiveauSyntaxCorrect &&
+                        !item.OpNiveauVastgelegd)
+                        itemValid = false;
+                }
+
+                // Boven niveau
+                else if (item.PrestatieNiveau == "Boven niveau")
+                {
+                    if (!item.BovenNiveauVolledig)
+                        itemValid = false;
+                }
 
                 item.IsPrestatieNiveauInvalid = !itemValid;
                 if (!itemValid) allValid = false;
 
-                // --- Toelichting validatie ---
+                // Toelichting verplicht voor docenten
                 item.IsToelichtingInvalid = string.IsNullOrWhiteSpace(item.Toelichting) && _isDocent;
                 if (item.IsToelichtingInvalid) allValid = false;
             }
@@ -83,7 +116,6 @@ namespace StudentSysteem.App.ViewModels
                 return;
             }
 
-            // Opslaan
             foreach (var item in Beoordelingen)
             {
                 _service.Add(new SelfReflection
@@ -95,7 +127,6 @@ namespace StudentSysteem.App.ViewModels
                 });
             }
 
-            // Popup 
             await Application.Current.MainPage.DisplayAlert("Succes", "Alle feedback succesvol opgeslagen!", "OK");
             await Application.Current.MainPage.Navigation.PopAsync();
 
@@ -127,38 +158,68 @@ namespace StudentSysteem.App.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _titel;
-        public string Titel { get => _titel; set { _titel = value; Notify(nameof(Titel)); } }
-
-        private string _beschrijving;
-        public string Beschrijving { get => _beschrijving; set { _beschrijving = value; Notify(nameof(Beschrijving)); } }
+        public string Titel { get; set; }
+        public string SubTitel { get; set; }
+        public string Domein { get; set; }
+        public string MakenDomeinmodel { get; set; }
+        public string Beschrijving { get; set; }
 
         private string _toelichting;
-        public string Toelichting { get => _toelichting; set { _toelichting = value; Notify(nameof(Toelichting)); } }
+        public string Toelichting
+        {
+            get => _toelichting;
+            set { _toelichting = value; Notify(nameof(Toelichting)); }
+        }
 
         private string _prestatieNiveau;
-        public string PrestatieNiveau { get => _prestatieNiveau; set { _prestatieNiveau = value; Notify(nameof(PrestatieNiveau)); } }
+        public string PrestatieNiveau
+        {
+            get => _prestatieNiveau;
+            set { _prestatieNiveau = value; Notify(nameof(PrestatieNiveau)); }
+        }
 
         private bool _opNiveauDomeinWeerspiegelt;
-        public bool OpNiveauDomeinWeerspiegelt { get => _opNiveauDomeinWeerspiegelt; set { _opNiveauDomeinWeerspiegelt = value; Notify(nameof(OpNiveauDomeinWeerspiegelt)); } }
+        public bool OpNiveauDomeinWeerspiegelt
+        {
+            get => _opNiveauDomeinWeerspiegelt;
+            set { _opNiveauDomeinWeerspiegelt = value; Notify(nameof(OpNiveauDomeinWeerspiegelt)); }
+        }
 
         private bool _opNiveauSyntaxCorrect;
-        public bool OpNiveauSyntaxCorrect { get => _opNiveauSyntaxCorrect; set { _opNiveauSyntaxCorrect = value; Notify(nameof(OpNiveauSyntaxCorrect)); } }
+        public bool OpNiveauSyntaxCorrect
+        {
+            get => _opNiveauSyntaxCorrect;
+            set { _opNiveauSyntaxCorrect = value; Notify(nameof(OpNiveauSyntaxCorrect)); }
+        }
 
         private bool _opNiveauVastgelegd;
-        public bool OpNiveauVastgelegd { get => _opNiveauVastgelegd; set { _opNiveauVastgelegd = value; Notify(nameof(OpNiveauVastgelegd)); } }
+        public bool OpNiveauVastgelegd
+        {
+            get => _opNiveauVastgelegd;
+            set { _opNiveauVastgelegd = value; Notify(nameof(OpNiveauVastgelegd)); }
+        }
 
         private bool _bovenNiveauVolledig;
-        public bool BovenNiveauVolledig { get => _bovenNiveauVolledig; set { _bovenNiveauVolledig = value; Notify(nameof(BovenNiveauVolledig)); } }
+        public bool BovenNiveauVolledig
+        {
+            get => _bovenNiveauVolledig;
+            set { _bovenNiveauVolledig = value; Notify(nameof(BovenNiveauVolledig)); }
+        }
 
-        // Validatie flags
         private bool _isPrestatieNiveauInvalid;
-        public bool IsPrestatieNiveauInvalid { get => _isPrestatieNiveauInvalid; set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); } }
+        public bool IsPrestatieNiveauInvalid
+        {
+            get => _isPrestatieNiveauInvalid;
+            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
+        }
 
         private bool _isToelichtingInvalid;
-        public bool IsToelichtingInvalid { get => _isToelichtingInvalid; set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); } }
+        public bool IsToelichtingInvalid
+        {
+            get => _isToelichtingInvalid;
+            set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
+        }
 
-        private void Notify(string prop) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        private void Notify(string p) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
     }
 }
