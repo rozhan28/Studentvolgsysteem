@@ -17,13 +17,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly bool _isDocent;
-        public List<string> Opties { get; } = new List<string>
-        {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
+
 
         public FeedbackFormViewModel(
             IZelfReflectieService zelfreflectieService,

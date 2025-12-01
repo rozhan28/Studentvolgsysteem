@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
 namespace StudentSysteem.App.Models
 {
@@ -11,6 +13,7 @@ namespace StudentSysteem.App.Models
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
         private bool _isExpanded;
+
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -24,9 +27,36 @@ namespace StudentSysteem.App.Models
             }
         }
 
+        public List<string> Opties { get; } = new List<string>
+        {
+            "Algemeen",
+            "Criteria 1",
+            "Criteria 2",
+            "Criteria 3"
+        };
+
+        private string _geselecteerdeOptie = "Algemeen";
+
+        public string GeselecteerdeOptie
+        {
+            get => _geselecteerdeOptie;
+            set
+            {
+                _geselecteerdeOptie = value;
+                Notify(nameof(GeselecteerdeOptie));
+            }
+        }
+
+        public ICommand OptiesCommand { get; }
+
+        public BeoordelingItem()
+        {
+            OptiesCommand = new Command(ShowOptiesPicker);
+        }
+
         // ---- Toelichting ----
         private string _toelichting;
-        
+
         public string Toelichting
         {
             get => _toelichting;
@@ -39,17 +69,27 @@ namespace StudentSysteem.App.Models
 
         // ---- Validatie ----
         private bool _isPrestatieNiveauInvalid;
+
         public bool IsPrestatieNiveauInvalid
         {
             get => _isPrestatieNiveauInvalid;
-            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
+            set
+            {
+                _isPrestatieNiveauInvalid = value;
+                Notify(nameof(IsPrestatieNiveauInvalid));
+            }
         }
 
         private bool _isToelichtingInvalid;
+
         public bool IsToelichtingInvalid
         {
             get => _isToelichtingInvalid;
-            set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
+            set
+            {
+                _isToelichtingInvalid = value;
+                Notify(nameof(IsToelichtingInvalid));
+            }
         }
 
         public string InOntwikkelingColor { get; set; } = "White";
@@ -57,13 +97,19 @@ namespace StudentSysteem.App.Models
         public string BovenNiveauColor { get; set; } = "White";
 
         private string _containerColor = "White";
+
         public string ContainerColor
         {
             get => _containerColor;
-            set { _containerColor = value; Notify(nameof(ContainerColor)); }
+            set
+            {
+                _containerColor = value;
+                Notify(nameof(ContainerColor));
+            }
         }
 
         private bool _inOntwikkeling;
+
         public bool InOntwikkeling
         {
             get => _inOntwikkeling;
@@ -88,6 +134,7 @@ namespace StudentSysteem.App.Models
         }
 
         private bool _opNiveauDomeinWeerspiegelt;
+
         public bool OpNiveauDomeinWeerspiegelt
         {
             get => _opNiveauDomeinWeerspiegelt;
@@ -108,6 +155,7 @@ namespace StudentSysteem.App.Models
         }
 
         private bool _opNiveauSyntaxCorrect;
+
         public bool OpNiveauSyntaxCorrect
         {
             get => _opNiveauSyntaxCorrect;
@@ -128,6 +176,7 @@ namespace StudentSysteem.App.Models
         }
 
         private bool _opNiveauVastgelegd;
+
         public bool OpNiveauVastgelegd
         {
             get => _opNiveauVastgelegd;
@@ -148,6 +197,7 @@ namespace StudentSysteem.App.Models
         }
 
         private bool _bovenNiveauVolledig;
+
         public bool BovenNiveauVolledig
         {
             get => _bovenNiveauVolledig;
@@ -219,5 +269,20 @@ namespace StudentSysteem.App.Models
 
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+ 
+        private async void ShowOptiesPicker()
+        {
+            var result = await Application.Current.MainPage.DisplayActionSheet(
+                "Selecteer een optie",
+                "Annuleren",
+                null,
+                Opties.ToArray()
+            );
+
+            if (result != null && result != "Annuleren")
+            {
+                GeselecteerdeOptie = result;
+            }
+        }
     }
 }
