@@ -183,7 +183,7 @@ namespace StudentSysteem.App.Models
                 if (InOntwikkeling)
                     return "In ontwikkeling";
 
-                return "Geen";
+                return "";
             }
         }
 
@@ -197,17 +197,14 @@ namespace StudentSysteem.App.Models
             if (BovenNiveauVolledig)
             {
                 BovenNiveauColor = "#78D97F";
-                ContainerColor = "#E2FFE4";
             }
             else if (OpNiveauDomeinWeerspiegelt || OpNiveauSyntaxCorrect || OpNiveauVastgelegd)
             {
                 OpNiveauColor = "#BFF8C6";
-                ContainerColor = "#F2FFF3";
             }
             else if (InOntwikkeling)
             {
                 InOntwikkelingColor = "#BFD7FF";
-                ContainerColor = "#E8F1FF";
             }
             else
             {

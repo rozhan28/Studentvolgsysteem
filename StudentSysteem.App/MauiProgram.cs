@@ -18,15 +18,15 @@ namespace StudentSysteem.App
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit();
 
-            // Services
-            builder.Services.AddSingleton<ISelfReflectionService, MockSelfReflectionService>();
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
-            builder.Services.AddSingleton<IAlertService, AlertService>();
+            // ⭐ Services
+            builder.Services.AddSingleton<IZelfReflectieService, MockZelfReflectieService>();
+            builder.Services.AddSingleton<INavigatieService, NavigatieService>();
+            builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
-            // Viewmodels
+            // ⭐ Viewmodels
             builder.Services.AddTransient<FeedbackFormViewModel>();
 
-            // Viems
+            // ⭐ Views
             builder.Services.AddTransient<FeedbackFormView>();
 
 #if DEBUG

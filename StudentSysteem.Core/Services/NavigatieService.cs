@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StudentVolgSysteem.App.Services
 {
-    public class NavigationService : INavigationService
+    public class NavigatieService : INavigatieService
     {
         public Task NavigateBackAsync()
         {

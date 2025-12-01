@@ -13,12 +13,12 @@ public partial class StartView : ContentPage
 
     private void PasKnoppenAanOpRol()
     {
-        if (UserSession.HuidigeRol == "Student")
+        if (GebruikerSessie.HuidigeRol == "Student")
         {
             BtnZelfreview.IsVisible = true;
             BtnFeedback.IsVisible = true;
         }
-        else if (UserSession.HuidigeRol == "Docent")
+        else if (GebruikerSessie.HuidigeRol == "Docent")
         {
             BtnZelfreview.IsVisible = false;
             BtnFeedback.IsVisible = true;
