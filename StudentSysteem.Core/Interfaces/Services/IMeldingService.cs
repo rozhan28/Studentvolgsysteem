@@ -4,9 +4,9 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface IAlertService
+    public interface IMeldingService
     {
-        Task ShowAlertAsync(string title, string message, string okText = "OK");
+        Task ToonMeldingAsync(string title, string message, string okText = "OK");
     }
 }
 

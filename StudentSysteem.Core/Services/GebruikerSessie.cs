@@ -1,6 +1,6 @@
 ﻿namespace StudentVolgSysteem.Core.Services
 {
-    public static class UserSession
+    public static class GebruikerSessie
     {
         public static string HuidigeRol { get; private set; } = "";
 

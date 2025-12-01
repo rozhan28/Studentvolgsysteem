@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface INavigationService
+    public interface INavigatieService
     {
         Task NavigateBackAsync();
         Task NavigateToAsync(Page page);

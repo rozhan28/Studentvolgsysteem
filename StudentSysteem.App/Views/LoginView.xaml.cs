@@ -11,13 +11,13 @@ public partial class LoginView : ContentPage
 
     private async void OnStudentClicked(object sender, EventArgs e)
     {
-        UserSession.LoginAls("Student");
+        GebruikerSessie.LoginAls("Student");
         await Navigation.PushAsync(new StartView());
     }
 
     private async void OnDocentClicked(object sender, EventArgs e)
     {
-        UserSession.LoginAls("Docent");
+        GebruikerSessie.LoginAls("Docent");
         await Navigation.PushAsync(new StartView());
     }
 }

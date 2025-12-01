@@ -7,21 +7,20 @@ namespace StudentSysteem.App.Views
     public partial class FeedbackFormView : ContentPage
     {
         public FeedbackFormView(
-            ISelfReflectionService reflectionService,
-            INavigationService navigationService,
-            IAlertService alertService)
+            IZelfReflectieService zelfReflectieService,
+            INavigatieService navigatieService,
+            IMeldingService meldingService)
         {
             InitializeComponent();
 
-            bool isDocent = UserSession.HuidigeRol == "Docent";
+            bool isDocent = GebruikerSessie.HuidigeRol == "Docent";
 
             BindingContext = new FeedbackFormViewModel(
-                reflectionService,
-                navigationService,
-                alertService,
+                zelfReflectieService,
+                navigatieService,
+                meldingService,
                 isDocent
             );
         }
     }
 }
-
