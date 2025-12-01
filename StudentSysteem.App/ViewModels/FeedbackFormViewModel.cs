@@ -17,12 +17,20 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly bool _isDocent;
+        public List<string> Opties { get; } = new List<string>
+        {
+            "Algemeen",
+            "Criteria 1",
+            "Criteria 2",
+            "Criteria 3"
+        };
 
         public FeedbackFormViewModel(
             IZelfReflectieService zelfreflectieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             bool isDocent = false)
+        
         {
             _zelfreflectieService = zelfreflectieService;
             _navigatieService = navigatieService;
@@ -31,26 +39,23 @@ namespace StudentSysteem.App.ViewModels
 
             OpslaanCommand = new Command(async () => await BewaarReflectie());
 
-            // ⭐ STARTDATA
+            // STARTDATA
             Beoordelingen = new ObservableCollection<BeoordelingItem>
             {
                 new BeoordelingItem {
-                    Titel = "Requirementsanalyseproces – Definiëren van het probleemdomein",
-                    Domein = "Analyseren",
-                    MakenDomeinmodel = "Maken van een domeinmodel",
-                    Beschrijving = "Het maken van een domeinmodel volgens een UML-klassendiagram"
+                    Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Maken domeinmodel",
+                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
                 },
                 new BeoordelingItem {
-                    Titel = "Requirementsanalyseproces – Definiëren van het probleemdomein",
-                    Domein = "Analyseren",
-                    MakenDomeinmodel = "Bestuderen van de probleemstelling",
-                    Beschrijving = "Het achterhalen van het probleem"
+                    Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Bestuderen probleemstelling",
+                    Beschrijving = "Het probleem achterhalen"
                 },
                 new BeoordelingItem {
-                    Titel = "Requirementsanalyseproces – Verzamelen van requirements",
-                    Domein = "Analyseren",
-                    MakenDomeinmodel = "Beschrijven van stakeholders",
-                    Beschrijving = "Het opstellen van een stakeholderanalyse"
+                    Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Beschrijven stakeholders",
+                    Beschrijving = "Het maken van een stakeholderanalyse"
                 }
             };
         }
