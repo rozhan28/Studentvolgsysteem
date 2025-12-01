@@ -10,7 +10,7 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseConnection()
         {
-            databaseName = ConnectionHelper.ConnectionStringValue("StepWise");
+            databaseName = "StepWiseDbs.sqlite";
             //string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string dbpath = "Data Source=" + Path.Combine(projectDirectory + databaseName);
