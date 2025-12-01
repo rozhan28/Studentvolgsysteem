@@ -93,7 +93,7 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var item in Beoordelingen)
             {
-                _zelfreflectieService.Add(new ZelfReflectie
+                _zelfreflectieService.Add(new ZelfEvaluatie
                 {
                     StudentId = 1,
                     PrestatieNiveau = item.PrestatieNiveau,

@@ -48,6 +48,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\FeedbackFormulierView.xaml.cs">
+      <DependentUpon>FeedbackFormulierView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- XAML bestanden -->
     <MauiXaml Update="Views\LoginView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -55,7 +61,7 @@
     <MauiXaml Update="Views\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\FeedbackFormView.xaml">
+    <MauiXaml Update="Views\FeedbackFormulierView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
