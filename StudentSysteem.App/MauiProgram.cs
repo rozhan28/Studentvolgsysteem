@@ -23,7 +23,7 @@ namespace StudentSysteem.App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // ⭐ Servicesff
+            // ⭐ Services
             builder.Services.AddSingleton<IZelfReflectieService, MockZelfReflectieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
