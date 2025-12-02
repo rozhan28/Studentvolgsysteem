@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0-android;net10.0-windows10.0.19041.0;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFramework>net10.0-maccatalyst</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>StudentSysteem.App</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -48,12 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\FeedbackFormulierView.xaml.cs">
-      <DependentUpon>FeedbackFormulierView.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- XAML bestanden -->
     <MauiXaml Update="Views\LoginView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -61,7 +55,7 @@
     <MauiXaml Update="Views\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\FeedbackFormulierView.xaml">
+    <MauiXaml Update="Views\FeedbackFormView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
