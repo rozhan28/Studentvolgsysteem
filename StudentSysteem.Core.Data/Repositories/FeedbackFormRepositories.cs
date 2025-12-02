@@ -2,11 +2,11 @@
 
 namespace StudentSysteem.Core.Data.Repositories
 {
-    public class FeedbackFormRepositories : DatabaseConnection, IFeedbackFormRepositories
+    public class FeedbackFormRepositories : DatabaseVerbinding, IFeedbackFormulierRepositories
     {
         public FeedbackFormRepositories()
         {
-            CreateTable(@"CREATE TABLE IF NOT EXISTS Feedback (
+            MaakTabel(@"CREATE TABLE IF NOT EXISTS Feedback (
                     [feedback_id] INTEGER PRIMARY KEY AUTOINCREMENT,
                     [niveauaanduiding] VARCHAR(255),
                     [toelichting] TEXT,
@@ -18,7 +18,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
             List<string> insertQueries = [@"INSERT OR IGNORE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
                                         VALUES('MockData1', 'MockData2', NULL, NULL, NULL, NULL, NULL)"];
-            InsertMultipleWithTransaction(insertQueries);
+            VoegMeerdereInMetTransactie(insertQueries);
         }
     }
 }

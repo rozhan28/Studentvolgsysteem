@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\StudentSysteem.Core\StudentSysteem.Core.csproj" />
+    <Compile Remove="Database\**" />
+    <EmbeddedResource Remove="Database\**" />
+    <MauiCss Remove="Database\**" />
+    <MauiXaml Remove="Database\**" />
+    <None Remove="Database\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Database\" />
+    <ProjectReference Include="..\StudentSysteem.Core\StudentSysteem.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
