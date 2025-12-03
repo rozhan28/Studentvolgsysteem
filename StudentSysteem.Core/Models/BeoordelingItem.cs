@@ -35,7 +35,7 @@ namespace StudentSysteem.App.Models
             "Criteria 3"
         };
 
-        private string _geselecteerdeOptie = "Algemeen";
+        private string _geselecteerdeOptie = "Toelichting gekoppeld aan...";
 
         public string GeselecteerdeOptie
         {
@@ -273,7 +273,7 @@ namespace StudentSysteem.App.Models
         private async void ShowOptiesPicker()
         {
             var result = await Application.Current.MainPage.DisplayActionSheet(
-                "Selecteer een optie",
+                "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
                 Opties.ToArray()

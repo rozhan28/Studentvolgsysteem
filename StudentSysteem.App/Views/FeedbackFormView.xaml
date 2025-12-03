@@ -187,6 +187,7 @@
                                             <Button
                                                 Text="{Binding GeselecteerdeOptie}"
                                                 Command="{Binding OptiesCommand}"
+                                                HorizontalOptions="Start"
                                             />
                                             
                                             <Editor HeightRequest="120"
@@ -211,7 +212,7 @@
             <HorizontalStackLayout HorizontalOptions="End">
                 <Button Text="Opslaan"
                         Command="{Binding SaveCommand}"
-                        BackgroundColor="#0066cc"
+                        BackgroundColor="#246FB5"
                         TextColor="White"/>
             </HorizontalStackLayout>
 
