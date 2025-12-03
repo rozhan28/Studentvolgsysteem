@@ -27,13 +27,13 @@ public partial class StartView : ContentPage
 
     private async void OnSelfReviewClicked(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormView>();
+        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
         await Navigation.PushAsync(page);
     }
 
     private async void OnFeedbackClicked(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormView>();
+        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
         await Navigation.PushAsync(page);
     }
 }

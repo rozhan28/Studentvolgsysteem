@@ -2,9 +2,9 @@
 
 namespace StudentSysteem.Core.Data.Repositories
 {
-    public class FeedbackFormRepositories : DatabaseVerbinding, IFeedbackFormulierRepositories
+    public class FeedbackRepository : DatabaseVerbinding, IFeedbackRepository
     {
-        public FeedbackFormRepositories()
+        public FeedbackRepository()
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Feedback (
                     [feedback_id] INTEGER PRIMARY KEY AUTOINCREMENT,

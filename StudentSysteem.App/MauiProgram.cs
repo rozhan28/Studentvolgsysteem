@@ -24,10 +24,10 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
             // ⭐ Viewmodels
-            builder.Services.AddTransient<FeedbackFormViewModel>();
+            builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
             // ⭐ Views
-            builder.Services.AddTransient<FeedbackFormView>();
+            builder.Services.AddTransient<FeedbackFormulierView>();
 
 #if DEBUG
             builder.Logging.AddDebug();

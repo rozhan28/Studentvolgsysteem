@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class FeedbackFormViewModel : INotifyPropertyChanged
+    public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -25,7 +25,7 @@ namespace StudentSysteem.App.ViewModels
             "Criteria 3"
         };
 
-        public FeedbackFormViewModel(
+        public FeedbackFormulierViewModel(
             IZelfReflectieService zelfreflectieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,

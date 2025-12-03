@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
-    public interface IFeedbackFormulierRepositories
+    public interface IDocentRepository
     {
         public void MaakTabel(string sqlOpdracht);
         public void VoegMeerdereInMetTransactie(List<string> regels);

@@ -4,9 +4,9 @@ using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.App.Views
 {
-    public partial class FeedbackFormView : ContentPage
+    public partial class FeedbackFormulierView : ContentPage
     {
-        public FeedbackFormView(
+        public FeedbackFormulierView(
             IZelfReflectieService zelfReflectieService,
             INavigatieService navigatieService,
             IMeldingService meldingService)
@@ -15,7 +15,7 @@ namespace StudentSysteem.App.Views
 
             bool isDocent = GebruikerSessie.HuidigeRol == "Docent";
 
-            BindingContext = new FeedbackFormViewModel(
+            BindingContext = new FeedbackFormulierViewModel(
                 zelfReflectieService,
                 navigatieService,
                 meldingService,
