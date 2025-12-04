@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.Models
 {
@@ -13,7 +15,19 @@ namespace StudentSysteem.App.Models
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
         private bool _isExpanded;
+        private ObservableCollection<ExtraToelichting> _extraToelichtingVak = new ObservableCollection<ExtraToelichting>();
 
+        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak 
+        { 
+            get => _extraToelichtingVak;
+            set
+            {
+                _extraToelichtingVak = value;
+                Notify(nameof(ExtraToelichtingVak));
+            }
+        }
+        public ICommand VoegExtraToelichtingToeCommand { get; }
+        
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -50,8 +64,35 @@ namespace StudentSysteem.App.Models
         public ICommand OptiesCommand { get; }
 
         public BeoordelingItem()
-        {
+        { 
+            ExtraToelichtingVak.Add(new ExtraToelichting { Tekst = "TEST ITEM - als je dit ziet werkt de CollectionView!" });
+    
+            VoegExtraToelichtingToeCommand = new Command(() =>
+            {
+                ExtraToelichtingVak.Add(new ExtraToelichting());
+            });
+    
             OptiesCommand = new Command(ShowOptiesPicker);
+        }
+        
+        public void RefreshExtraToelichtingVak()
+        {
+            Notify(nameof(ExtraToelichtingVak));
+        }
+        
+        public void VoegExtraToelichtingToe()
+        {
+            ExtraToelichtingVak.Add(new ExtraToelichting());
+    
+            // Force complete refresh by replacing the collection
+            var temp = new ObservableCollection<ExtraToelichting>(ExtraToelichtingVak);
+            ExtraToelichtingVak.Clear();
+            foreach (var item in temp)
+            {
+                ExtraToelichtingVak.Add(item);
+            }
+    
+            Notify(nameof(ExtraToelichtingVak));
         }
 
         // ---- Toelichting ----

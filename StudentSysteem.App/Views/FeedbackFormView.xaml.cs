@@ -1,6 +1,9 @@
+using System.ComponentModel;
+using StudentSysteem.App.Models;
 using StudentSysteem.App.ViewModels;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.Views
 {
@@ -21,6 +24,17 @@ namespace StudentSysteem.App.Views
                 meldingService,
                 isDocent
             );
+        }
+
+        private void OnVoegExtraFeedbackToeClicked(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+            var parent = button?.Parent;
+    
+            if (parent?.BindingContext is BeoordelingItem item)
+            {
+                item.VoegExtraToelichtingToe(); // Gebruik de nieuwe method
+            }
         }
     }
 }

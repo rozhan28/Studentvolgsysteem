@@ -3,6 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                  xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                  xmlns:viewmodels="clr-namespace:StudentSysteem.App.ViewModels"
+                 xmlns:models="clr-namespace:StudentSysteem.App.Models;assembly=StudentSysteem.Core"
                  x:Class="StudentSysteem.App.Views.FeedbackFormView"
                  x:Name="Page">
 
@@ -45,7 +46,7 @@
             <!-- Beoordelingitems -->
             <CollectionView ItemsSource="{Binding Beoordelingen}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:BeoordelingItem">
                         <toolkit:Expander Margin="0,0,0,20"
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
 
@@ -184,24 +185,56 @@
                                             <Label Text="Toelichting"
                                                    FontAttributes="Bold" />
                                             
+                                            <!-- Dropdown -->
                                             <Button
                                                 Text="{Binding GeselecteerdeOptie}"
                                                 Command="{Binding OptiesCommand}"
                                                 HorizontalOptions="Start"
                                             />
                                             
+                                            <!-- Toelichtingsvak -->
                                             <Editor HeightRequest="120"
                                                     Placeholder="Voeg toelichting toe..."
                                                     Text="{Binding Toelichting}" />
-                                            <Button Text="+ Voeg extra feedback toe"/>
+                                            
+                                            <!-- Extra feedback knop -->
+                                            <Button Text="+ Voeg extra feedback toe"
+                                                    HorizontalOptions="Center"
+                                                    MaximumWidthRequest="250"
+                                                    Clicked="OnVoegExtraFeedbackToeClicked"/>
+                                            
+                                            <!-- test
+                                                    Command="{Binding VoegExtraToelichtingToeCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    -->
+                                            
+                                            <CollectionView ItemsSource="{Binding ExtraToelichtingVak}">
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <VerticalStackLayout Spacing="10">
+
+                                                            <!-- Dropdown -->
+                                                            <Button
+                                                                Text="{Binding GeselecteerdeOptie}"
+                                                                Command="{Binding OptiesCommand}"
+                                                                HorizontalOptions="Start"
+                                                            />
+
+                                                            <!-- Toelichtingsvak -->
+                                                            <Editor
+                                                                Text="{Binding Tekst}"
+                                                                HeightRequest="100"
+                                                                Placeholder="Extra toelichting..."
+                                                            />
+
+                                                        </VerticalStackLayout>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
                                         </VerticalStackLayout>
-
                                     </Border>
-
                                 </VerticalStackLayout>
-
                             </toolkit:Expander.Content>
-
                         </toolkit:Expander>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
