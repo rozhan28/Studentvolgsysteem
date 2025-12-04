@@ -59,6 +59,24 @@ namespace StudentSysteem.Core.Data
             }
         }
 
+        public void VerwijderInhoud(string tableName)
+        {
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new ArgumentException("Table name cannot be empty.", nameof(tableName));
+
+            OpenVerbinding();
+            try
+            {
+                using var command = Verbinding.CreateCommand();
+                command.CommandText = $"DELETE FROM {tableName};";
+                command.ExecuteNonQuery();
+            }
+            finally
+            {
+                SluitVerbinding();
+            } 
+        }
+
         public void Dispose()
         {
             SluitVerbinding();
