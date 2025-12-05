@@ -6,7 +6,9 @@ namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IFeedbackRepository
     {
-        public void MaakTabel(string sqlOpdracht);
-        public void VoegMeerdereInMetTransactie(List<string> regels);
+        void MaakTabel(string sqlOpdracht);
+        void VoegMeerdereInMetTransactie(List<string> regels);
+
+        void VoegToelichtingToe(string toelichting, int studentId);
     }
 }

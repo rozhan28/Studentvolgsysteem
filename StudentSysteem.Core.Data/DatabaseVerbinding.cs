@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace StudentSysteem.Core.Data
 {
@@ -12,20 +13,20 @@ namespace StudentSysteem.Core.Data
         {
             databaseNaam = "StepWiseDbs.sqlite";
 
-            string projectMap = AppDomain.CurrentDomain.BaseDirectory;
-            string padNaarDb = "Data Source=" + Path.Combine(projectMap + databaseNaam);
+            string projectMap = AppDomain.CurrentDomain.BaseDirectory ?? "";
+            string padNaarDb = "Data Source=" + Path.Combine(projectMap, databaseNaam);
 
             Verbinding = new SqliteConnection(padNaarDb);
         }
 
         protected void OpenVerbinding()
         {
-            if (Verbinding.State != System.Data.ConnectionState.Open) Verbinding.Open();
+            if (Verbinding.State != ConnectionState.Open) Verbinding.Open();
         }
 
         protected void SluitVerbinding()
         {
-            if (Verbinding.State != System.Data.ConnectionState.Closed) Verbinding.Close();
+            if (Verbinding.State != ConnectionState.Closed) Verbinding.Close();
         }
 
         public void MaakTabel(string sqlOpdracht)
@@ -36,26 +37,38 @@ namespace StudentSysteem.Core.Data
                 command.CommandText = sqlOpdracht;
                 command.ExecuteNonQuery();
             }
+            SluitVerbinding();
+        }
+
+        protected void ExecuteNonQuery(string sql, SqliteTransaction? transaction = null)
+        {
+            using var command = Verbinding.CreateCommand();
+            command.CommandText = sql;
+            if (transaction != null) command.Transaction = transaction;
+            command.ExecuteNonQuery();
         }
 
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             OpenVerbinding();
-            var transactie = Verbinding.BeginTransaction();
 
+            using var transactie = Verbinding.BeginTransaction();
             try
             {
-                regels.ForEach(r => Verbinding.ExecuteNonQuery(r));
+                foreach (var r in regels)
+                {
+                    ExecuteNonQuery(r, transactie);
+                }
                 transactie.Commit();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                transactie.Rollback();
+                try { transactie.Rollback(); } catch { /* ignore */ }
             }
             finally
             {
-                transactie.Dispose();
+                SluitVerbinding();
             }
         }
 
@@ -74,12 +87,13 @@ namespace StudentSysteem.Core.Data
             finally
             {
                 SluitVerbinding();
-            } 
+            }
         }
 
         public void Dispose()
         {
             SluitVerbinding();
+            Verbinding?.Dispose();
         }
     }
 }

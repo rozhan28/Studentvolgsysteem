@@ -4,8 +4,9 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public class IFeedbackFormulierService
+    public interface IFeedbackFormulierService
     {
-
+        void SlaToelichtingOp(string toelichting, int studentId = 1);
     }
 }
+

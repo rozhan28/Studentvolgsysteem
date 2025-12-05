@@ -20,21 +20,24 @@ namespace StudentSysteem.App
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit();
 
-            // ⭐ Services
-            builder.Services.AddSingleton<IZelfReflectieService, MockZelfReflectieService>();
+            // Services
+            builder.Services.AddSingleton<IZelfEvaluatieService, MockZelfevaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
-            // ⭐ Viewmodels
+            // Repository & Formulierservice
+            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Repository.IFeedbackRepository, StudentSysteem.Core.Data.Repositories.FeedbackRepository>();
+            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Services.IFeedbackFormulierService, StudentSysteem.Core.Services.FeedbackFormulierService>();
+
+            // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
-            // ⭐ Views
+            // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
             //Laad database vuller
             DatabaseVuller vulTabel = new();
             vulTabel.TabelVuller();
-            CriteriumRepository maakTabel = new();
 
 #if DEBUG
             builder.Logging.AddDebug();

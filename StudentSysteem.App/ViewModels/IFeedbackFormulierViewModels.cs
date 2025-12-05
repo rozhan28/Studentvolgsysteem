@@ -13,10 +13,12 @@ namespace StudentSysteem.App.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly IZelfReflectieService _zelfreflectieService;
+        private readonly IZelfEvaluatieService _zelfreflectieService;
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
+        private readonly IFeedbackFormulierService _feedbackFormulierService;
         private readonly bool _isDocent;
+
         public List<string> Opties { get; } = new List<string>
         {
             "Algemeen",
@@ -26,20 +28,21 @@ namespace StudentSysteem.App.ViewModels
         };
 
         public FeedbackFormulierViewModel(
-            IZelfReflectieService zelfreflectieService,
+            IZelfEvaluatieService zelfreflectieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
+            IFeedbackFormulierService feedbackFormulierService,
             bool isDocent = false)
-        
         {
             _zelfreflectieService = zelfreflectieService;
             _navigatieService = navigatieService;
-            _meldingService = meldingService;   // ✔ bugfix: puntkomma verwijderd
+            _meldingService = meldingService;
+            _feedbackFormulierService = feedbackFormulierService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectie());
 
-            // STARTDATA
+            // Startdata voor beoordelingitems
             Beoordelingen = new ObservableCollection<BeoordelingItem>
             {
                 new BeoordelingItem {
@@ -98,16 +101,21 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var item in Beoordelingen)
             {
-                _zelfreflectieService.Add(new ZelfReflectie
+                if (!string.IsNullOrWhiteSpace(item.Toelichting))
                 {
-                    StudentId = 1,
-                    PrestatieNiveau = item.PrestatieNiveau,
-                    Toelichting = item.Toelichting,
-                    Datum = DateTime.Now
-                });
+                    try
+                    {
+                        _feedbackFormulierService.SlaToelichtingOp(item.Toelichting, 1); // studentId = 1
+                    }
+                    catch (Exception ex)
+                    {
+                        StatusMelding = "Fout bij opslaan: " + ex.Message;
+                        return;
+                    }
+                }
             }
 
-            await _meldingService.ToonMeldingAsync("Succes", "Feedback is succesvol opgeslagen!");
+            await _meldingService.ToonMeldingAsync("Succes", "Feedback (toelichting) is succesvol opgeslagen!");
         }
 
         // ⭐ Validatie per item
@@ -124,4 +132,3 @@ namespace StudentSysteem.App.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(eigenschap));
     }
 }
-
