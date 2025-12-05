@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
-    <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-                 xmlns:viewmodels="clr-namespace:StudentSysteem.App.ViewModels"
-                 xmlns:models="clr-namespace:StudentSysteem.App.Models;assembly=StudentSysteem.Core"
-                 x:Class="StudentSysteem.App.Views.FeedbackFormView"
-                 x:Name="Page">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodels="clr-namespace:StudentSysteem.App.ViewModels"
+             xmlns:models="clr-namespace:StudentSysteem.App.Models;assembly=StudentSysteem.Core"
+             x:Class="StudentSysteem.App.Views.FeedbackFormView"
+             x:Name="Page">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
             <!-- Header -->
             <VerticalStackLayout Spacing="0">
+
                 <Grid ColumnDefinitions="Auto,*,Auto" Padding="10" BackgroundColor="#246FB5">
 
                     <Border Stroke="#ccc" Padding="5" VerticalOptions="Center">
@@ -33,7 +34,7 @@
                            TextColor="White"
                            HorizontalOptions="End"
                            VerticalOptions="Center"/>
-                    
+
                     <Image Source="person_icon.png"
                            Grid.Column="2"
                            HeightRequest="35"
@@ -44,41 +45,41 @@
             </VerticalStackLayout>
 
             <!-- Beoordelingitems -->
-            <CollectionView ItemsSource="{Binding Beoordelingen}">
-                <CollectionView.ItemTemplate>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Beoordelingen}" Spacing="20">
+                <BindableLayout.ItemTemplate>
                     <DataTemplate x:DataType="models:BeoordelingItem">
                         <toolkit:Expander Margin="0,0,0,20"
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
 
                             <!-- Header -->
-                                <toolkit:Expander.Header>
-                                    <Border Stroke="#ccc"
-                                           BackgroundColor="White"
-                                           Padding="10">
-                                        <Grid ColumnDefinitions="*,Auto" Padding="5">
-                                            <Label Text="{Binding Titel}" FontSize="16" FontAttributes="Bold"/>
-                
-                                            <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                                <Label Text="{Binding PrestatieNiveau}" VerticalOptions="Center"/>
-                    
-                                                <Image Source="chevron.png" HeightRequest="16" WidthRequest="16">
-                                                    <Image.Triggers>
-                                                        <DataTrigger TargetType="Image" Binding="{Binding IsExpanded}" Value="True">
-                                                            <Setter Property="Rotation" Value="180"/>
-                                                        </DataTrigger>
-                                                    </Image.Triggers>
-                                                </Image>
-                                            </HorizontalStackLayout>
-                                        </Grid>
-                                    </Border>
-                                </toolkit:Expander.Header>
+                            <toolkit:Expander.Header>
+                                <Border Stroke="#ccc"
+                                       BackgroundColor="White"
+                                       Padding="10">
+                                    <Grid ColumnDefinitions="*,Auto" Padding="5">
+                                        <Label Text="{Binding Titel}" FontSize="16" FontAttributes="Bold"/>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <Label Text="{Binding PrestatieNiveau}" VerticalOptions="Center"/>
+
+                                            <Image Source="chevron.png" HeightRequest="16" WidthRequest="16">
+                                                <Image.Triggers>
+                                                    <DataTrigger TargetType="Image" Binding="{Binding IsExpanded}" Value="True">
+                                                        <Setter Property="Rotation" Value="180"/>
+                                                    </DataTrigger>
+                                                </Image.Triggers>
+                                            </Image>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </toolkit:Expander.Header>
 
                             <!-- Content -->
                             <toolkit:Expander.Content>
 
                                 <VerticalStackLayout Spacing="20">
 
-                                    <!-- Grid met linker + rechter kolom -->
+                                    <!-- GRID twee kolommen -->
                                     <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20" Padding="0,10,0,10">
 
                                         <!-- Linkerkolom -->
@@ -86,7 +87,7 @@
                                             <Label Text="Vaardigheid" FontAttributes="Italic"/>
                                             <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
                                             <Label Text="{Binding Beschrijving}"/>
-                                            
+
                                             <Label Text="Prestatiedoel" FontAttributes="Italic" Margin="0,15,0,0"/>
                                             <Label Text="{Binding Beschrijving}"/>
                                             <HorizontalStackLayout Spacing="5">
@@ -96,11 +97,12 @@
                                         </VerticalStackLayout>
 
                                         <!-- Rechterkolom -->
-                                        <VerticalStackLayout Grid.Column="1" Spacing="10">
+                                        <VerticalStackLayout Grid.Column="1"
+                                                             Spacing="10">
 
                                             <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
-                                                   BackgroundColor="{Binding ContainerColor}"
-                                                   Padding="10">
+                                                    BackgroundColor="{Binding ContainerColor}"
+                                                    Padding="10">
 
                                                 <VerticalStackLayout Spacing="15">
 
@@ -113,7 +115,7 @@
                                                                              BackgroundColor="{Binding InOntwikkelingColor}"
                                                                              Padding="10">
 
-                                                            <Label Text="In ontwikkeling" FontAttributes="Bold"/>     
+                                                            <Label Text="In ontwikkeling" FontAttributes="Bold"/>
 
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding InOntwikkeling}"/>
@@ -130,7 +132,7 @@
 
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding OpNiveauColor}"
-                                                                             Padding="10">              
+                                                                             Padding="10">
 
                                                             <Label Text="Op niveau" FontAttributes="Bold"/>
 
@@ -159,7 +161,7 @@
 
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding BovenNiveauColor}"
-                                                                             Padding="10">              
+                                                                             Padding="10">
 
                                                             <Label Text="Boven niveau" FontAttributes="Bold"/>
 
@@ -203,42 +205,35 @@
                                                     MaximumWidthRequest="250"
                                                     Clicked="OnVoegExtraFeedbackToeClicked"/>
                                             
-                                            <!-- test
-                                                    Command="{Binding VoegExtraToelichtingToeCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    -->
-                                            
-                                            <CollectionView ItemsSource="{Binding ExtraToelichtingVak}">
-                                                <CollectionView.ItemTemplate>
+                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExtraToelichtingVak}"
+                                                                 Spacing="15">
+
+                                                <BindableLayout.ItemTemplate>
                                                     <DataTemplate>
                                                         <VerticalStackLayout Spacing="10">
 
                                                             <!-- Dropdown -->
-                                                            <Button
-                                                                Text="{Binding GeselecteerdeOptie}"
-                                                                Command="{Binding OptiesCommand}"
-                                                                HorizontalOptions="Start"
-                                                            />
+                                                            <Button Text="{Binding GeselecteerdeOptie}"
+                                                                    Command="{Binding OptiesCommand}"
+                                                                    HorizontalOptions="Start"/>
 
                                                             <!-- Toelichtingsvak -->
-                                                            <Editor
-                                                                Text="{Binding Tekst}"
-                                                                HeightRequest="100"
-                                                                Placeholder="Extra toelichting..."
-                                                            />
+                                                            <Editor Text="{Binding Tekst}"
+                                                                    HeightRequest="100"
+                                                                    Placeholder="Extra toelichting..."/>
 
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
-                                                </CollectionView.ItemTemplate>
-                                            </CollectionView>
+                                                </BindableLayout.ItemTemplate>
+                                            </VerticalStackLayout>
                                         </VerticalStackLayout>
                                     </Border>
                                 </VerticalStackLayout>
                             </toolkit:Expander.Content>
                         </toolkit:Expander>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
 
             <Label Text="{Binding StatusMelding}" TextColor="Red" FontAttributes="Bold"/>
 
