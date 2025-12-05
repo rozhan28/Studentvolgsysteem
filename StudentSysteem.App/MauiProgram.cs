@@ -5,6 +5,7 @@ using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Data;
 
 namespace StudentSysteem.App
 {
@@ -28,6 +29,10 @@ namespace StudentSysteem.App
 
             // ⭐ Views
             builder.Services.AddTransient<FeedbackFormulierView>();
+
+            //Laad database vuller
+            DatabaseVuller vulTabel = new();
+            vulTabel.TabelVuller();
 
 #if DEBUG
             builder.Logging.AddDebug();

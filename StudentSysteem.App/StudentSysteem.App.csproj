@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <!-- Projectreferenties -->
+    <ProjectReference Include="..\StudentSysteem.Core.Data\StudentSysteem.Core.Data.csproj" />
     <ProjectReference Include="..\StudentSysteem.Core\StudentSysteem.Core.csproj" />
   </ItemGroup>
 

@@ -11,24 +11,28 @@ namespace StudentSysteem.Core.Data
 
 
         //CriteriumRepository data
-        CriteriumRepository db = new();
-        List<string> VoegCriterium = [@"INSERT OR IGNORE INTO Criterium(criterium_id, beschrijving) VALUES(NULL, 'Het domeinmodel weerspiegelt de belangrijke onderdelen van het domein')",
-                                          @"INSERT OR IGNORE INTO Criterium(criterium_id, beschrijving) VALUES(NULL, 'De syntax van het domeinmodel is correct volgens UML')",
-                                          @"INSERT OR IGNORE INTO Criterium(criterium_id, beschrijving) VALUES(NULL, 'Het domeinmodel is op een logische locatie vastgelegd')"];
+        List<string> VoegCriterium = [@"INSERT OR REPLACE  INTO Criterium(criterium_id, beschrijving) VALUES(1, 'Het domeinmodel weerspiegelt de belangrijke onderdelen van het domein')",
+                                          @"INSERT OR REPLACE  INTO Criterium(criterium_id, beschrijving) VALUES(2, 'De syntax van het domeinmodel is correct volgens UML')",
+                                          @"INSERT OR REPLACE  INTO Criterium(criterium_id, beschrijving) VALUES(3, 'De syntax van het domeinmodel is correct volgens UML')",
+                                          @"INSERT OR REPLACE  INTO Criterium(criterium_id, beschrijving) VALUES(4, ' Het domeinmodel is volledig, helder en sluit logisch aan bij de context van het project')"];
 
-        //Ect
+        //Feedback
+        List<string> VoegFeedback = [@"INSERT OR REPLACE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
+                                        VALUES('1', 'MockData2', NULL, NULL, NULL, NULL, NULL)"];
+        
 
         //Vult database tabellen met standaard waarden
         public void TabelVuller()
         {
-            //Cluster
-
-            //db.VerwijderInhoud("Cluster");
+            
+            
             //VoegMeerdereInMetTransactie(VoegCluster);
 
             //Criterium
-            db.VerwijderInhoud("Criterium");
             VoegMeerdereInMetTransactie(VoegCriterium);
+
+            //Feedback
+            VoegMeerdereInMetTransactie(VoegFeedback);
 
             //Ect
         }
