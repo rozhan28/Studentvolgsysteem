@@ -6,6 +6,7 @@ using StudentSysteem.App.Views;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Data;
+using StudentSysteem.Core.Data.Repositories;
 
 namespace StudentSysteem.App
 {
@@ -33,6 +34,7 @@ namespace StudentSysteem.App
             //Laad database vuller
             DatabaseVuller vulTabel = new();
             vulTabel.TabelVuller();
+            CriteriumRepository maakTabel = new();
 
 #if DEBUG
             builder.Logging.AddDebug();
