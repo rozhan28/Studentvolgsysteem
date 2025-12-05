@@ -1,24 +1,44 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
-using StudentSysteem.Core.Models;
 
-namespace StudentSysteem.App.Models
+public enum PrestatieNiveauKleur
+{
+    NietIngeleverd,
+    InOntwikkeling,
+    OpNiveau,
+    BovenNiveau
+}
+
+namespace StudentSysteem.Core.Models
 {
     public class BeoordelingItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private bool _isUpdating;
+
         public string Titel { get; set; }
-        public string Domein { get; set; }
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
-        private bool _isExpanded;
-        private ObservableCollection<ExtraToelichting> _extraToelichtingVak = new ObservableCollection<ExtraToelichting>();
 
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak 
-        { 
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value) return;
+                _isExpanded = value;
+                Notify(nameof(IsExpanded));
+            }
+        }
+
+        private ObservableCollection<ExtraToelichting> _extraToelichtingVak = new ObservableCollection<ExtraToelichting>();
+        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak
+        {
             get => _extraToelichtingVak;
             set
             {
@@ -26,291 +46,266 @@ namespace StudentSysteem.App.Models
                 Notify(nameof(ExtraToelichtingVak));
             }
         }
+
         public ICommand VoegExtraToelichtingToeCommand { get; }
-        
-        public bool IsExpanded
-        {
-            get => _isExpanded;
-            set
-            {
-                if (_isExpanded != value)
-                {
-                    _isExpanded = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExpanded)));
-                }
-            }
-        }
-
-        public List<string> Opties { get; } = new List<string>
-        {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
-
+        public List<string> Opties { get; } = new() { "Algemeen", "Criteria 1", "Criteria 2", "Criteria 3" };
         private string _geselecteerdeOptie = "Toelichting gekoppeld aan...";
-
         public string GeselecteerdeOptie
         {
             get => _geselecteerdeOptie;
-            set
-            {
-                _geselecteerdeOptie = value;
-                Notify(nameof(GeselecteerdeOptie));
-            }
+            set { _geselecteerdeOptie = value; Notify(nameof(GeselecteerdeOptie)); }
         }
-
         public ICommand OptiesCommand { get; }
 
-        public BeoordelingItem()
-        { 
-            ExtraToelichtingVak.Add(new ExtraToelichting { Tekst = "TEST ITEM - als je dit ziet werkt de CollectionView!" });
-    
-            VoegExtraToelichtingToeCommand = new Command(() =>
-            {
-                ExtraToelichtingVak.Add(new ExtraToelichting());
-            });
-    
-            OptiesCommand = new Command(ShowOptiesPicker);
-        }
-        
-        public void RefreshExtraToelichtingVak()
+        // --- PrestatieNiveau ---
+        private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
+        public PrestatieNiveauKleur Kleur
         {
-            Notify(nameof(ExtraToelichtingVak));
-        }
-        
-        public void VoegExtraToelichtingToe()
-        {
-            ExtraToelichtingVak.Add(new ExtraToelichting());
-    
-            // Force complete refresh by replacing the collection
-            var temp = new ObservableCollection<ExtraToelichting>(ExtraToelichtingVak);
-            ExtraToelichtingVak.Clear();
-            foreach (var item in temp)
+            get => _kleur;
+            private set
             {
-                ExtraToelichtingVak.Add(item);
-            }
-    
-            Notify(nameof(ExtraToelichtingVak));
-        }
-
-        // ---- Toelichting ----
-        private string _toelichting;
-
-        public string Toelichting
-        {
-            get => _toelichting;
-            set
-            {
-                _toelichting = value;
-                Notify(nameof(Toelichting));
-            }
-        }
-
-        // ---- Validatie ----
-        private bool _isPrestatieNiveauInvalid;
-
-        public bool IsPrestatieNiveauInvalid
-        {
-            get => _isPrestatieNiveauInvalid;
-            set
-            {
-                _isPrestatieNiveauInvalid = value;
-                Notify(nameof(IsPrestatieNiveauInvalid));
-            }
-        }
-
-        private bool _isToelichtingInvalid;
-
-        public bool IsToelichtingInvalid
-        {
-            get => _isToelichtingInvalid;
-            set
-            {
-                _isToelichtingInvalid = value;
-                Notify(nameof(IsToelichtingInvalid));
-            }
-        }
-
-        public string InOntwikkelingColor { get; set; } = "White";
-        public string OpNiveauColor { get; set; } = "White";
-        public string BovenNiveauColor { get; set; } = "White";
-
-        private string _containerColor = "White";
-
-        public string ContainerColor
-        {
-            get => _containerColor;
-            set
-            {
-                _containerColor = value;
-                Notify(nameof(ContainerColor));
+                if (_kleur == value) return;
+                _kleur = value;
+                Notify(nameof(Kleur));
             }
         }
 
         private bool _inOntwikkeling;
-
         public bool InOntwikkeling
         {
             get => _inOntwikkeling;
             set
             {
                 if (_inOntwikkeling == value) return;
-
+                if (_isUpdating) return;
+                
+                _isUpdating = true;
                 _inOntwikkeling = value;
-
+                
                 if (value)
                 {
-                    OpNiveauDomeinWeerspiegelt = false;
-                    OpNiveauSyntaxCorrect = false;
-                    OpNiveauVastgelegd = false;
-                    BovenNiveauVolledig = false;
+                    _opNiveauDomeinWeerspiegelt = false;
+                    _opNiveauSyntaxCorrect = false;
+                    _opNiveauVastgelegd = false;
+                    _bovenNiveauVolledig = false;
                 }
 
                 UpdateColor();
+                _isUpdating = false;
+                
                 Notify(nameof(InOntwikkeling));
+                Notify(nameof(IsOpNiveau));
+                Notify(nameof(IsBovenNiveau));
+                Notify(nameof(IsInOntwikkeling));
                 Notify(nameof(PrestatieNiveau));
             }
         }
 
         private bool _opNiveauDomeinWeerspiegelt;
-
         public bool OpNiveauDomeinWeerspiegelt
         {
             get => _opNiveauDomeinWeerspiegelt;
             set
             {
+                if (_opNiveauDomeinWeerspiegelt == value) return;
+                if (_isUpdating) return;
+                
+                _isUpdating = true;
                 _opNiveauDomeinWeerspiegelt = value;
-
+                
                 if (value)
                 {
-                    InOntwikkeling = false;
-                    BovenNiveauVolledig = false;
+                    _inOntwikkeling = false;
+                    _bovenNiveauVolledig = false;
                 }
 
                 UpdateColor();
+                _isUpdating = false;
+                
                 Notify(nameof(OpNiveauDomeinWeerspiegelt));
+                Notify(nameof(PrestatieNiveau));
+                Notify(nameof(IsOpNiveau));
+                Notify(nameof(IsBovenNiveau));
+                Notify(nameof(IsInOntwikkeling));
                 Notify(nameof(PrestatieNiveau));
             }
         }
 
         private bool _opNiveauSyntaxCorrect;
-
         public bool OpNiveauSyntaxCorrect
         {
             get => _opNiveauSyntaxCorrect;
             set
             {
+                if (_opNiveauSyntaxCorrect == value) return;
+                if (_isUpdating) return;
+                
+                _isUpdating = true;
                 _opNiveauSyntaxCorrect = value;
-
+                
                 if (value)
                 {
-                    InOntwikkeling = false;
-                    BovenNiveauVolledig = false;
+                    _inOntwikkeling = false;
+                    _bovenNiveauVolledig = false;
                 }
 
                 UpdateColor();
+                _isUpdating = false;
+                
                 Notify(nameof(OpNiveauSyntaxCorrect));
+                Notify(nameof(PrestatieNiveau));
+                Notify(nameof(IsOpNiveau));
+                Notify(nameof(IsBovenNiveau));
+                Notify(nameof(IsInOntwikkeling));
                 Notify(nameof(PrestatieNiveau));
             }
         }
 
         private bool _opNiveauVastgelegd;
-
         public bool OpNiveauVastgelegd
         {
             get => _opNiveauVastgelegd;
             set
             {
+                if (_opNiveauVastgelegd == value) return;
+                if (_isUpdating) return;
+                
+                _isUpdating = true;
                 _opNiveauVastgelegd = value;
-
+                
                 if (value)
                 {
-                    InOntwikkeling = false;
-                    BovenNiveauVolledig = false;
+                    _inOntwikkeling = false;
+                    _bovenNiveauVolledig = false;
                 }
 
                 UpdateColor();
+                _isUpdating = false;
+                
                 Notify(nameof(OpNiveauVastgelegd));
+                Notify(nameof(PrestatieNiveau));
+                Notify(nameof(IsOpNiveau));
+                Notify(nameof(IsBovenNiveau));
+                Notify(nameof(IsInOntwikkeling));
                 Notify(nameof(PrestatieNiveau));
             }
         }
 
         private bool _bovenNiveauVolledig;
-
         public bool BovenNiveauVolledig
         {
             get => _bovenNiveauVolledig;
             set
             {
+                if (_bovenNiveauVolledig == value) return;
+                if (_isUpdating) return;
+                
+                _isUpdating = true;
                 _bovenNiveauVolledig = value;
-
+                
                 if (value)
                 {
-                    InOntwikkeling = false;
-                    OpNiveauDomeinWeerspiegelt = false;
-                    OpNiveauSyntaxCorrect = false;
-                    OpNiveauVastgelegd = false;
+                    _inOntwikkeling = false;
+                    _opNiveauDomeinWeerspiegelt = false;
+                    _opNiveauSyntaxCorrect = false;
+                    _opNiveauVastgelegd = false;
                 }
 
                 UpdateColor();
+                _isUpdating = false;
+                
                 Notify(nameof(BovenNiveauVolledig));
+                Notify(nameof(PrestatieNiveau));
+                Notify(nameof(IsOpNiveau));
+                Notify(nameof(IsBovenNiveau));
+                Notify(nameof(IsInOntwikkeling));
                 Notify(nameof(PrestatieNiveau));
             }
         }
 
-        // ---- PrestatieNiveau ----
         public string PrestatieNiveau
         {
             get
             {
-                if (BovenNiveauVolledig)
-                    return "Boven niveau";
-
-                if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
-                    return "Op niveau";
-
-                if (InOntwikkeling)
-                    return "In ontwikkeling";
-
-                return "";
+                if (BovenNiveauVolledig) return "Boven niveau";
+                if (IsOpNiveau) return "Op niveau";
+                if (InOntwikkeling) return "In ontwikkeling";
+                return string.Empty;
             }
         }
 
-        // ---- Update UI kleuren ----
+        // --- Toelichting ---
+        private string _toelichting;
+        public string Toelichting
+        {
+            get => _toelichting;
+            set { _toelichting = value; Notify(nameof(Toelichting)); }
+        }
+
+        // --- Validatie ---
+        private bool _isPrestatieNiveauInvalid;
+        public bool IsPrestatieNiveauInvalid
+        {
+            get => _isPrestatieNiveauInvalid;
+            set { _isPrestatieNiveauInvalid = value; Notify(nameof(IsPrestatieNiveauInvalid)); }
+        }
+
+        private bool _isToelichtingInvalid;
+        public bool IsToelichtingInvalid
+        {
+            get => _isToelichtingInvalid;
+            set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
+        }
+        
+        public bool IsOpNiveau =>
+            OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd;
+
+        public bool IsInOntwikkeling => InOntwikkeling;
+
+        public bool IsBovenNiveau => BovenNiveauVolledig;
+
+        // --- Constructor ---
+        public BeoordelingItem()
+        {
+            ExtraToelichtingVak.Add(new ExtraToelichting { Tekst = "TEST ITEM - als je dit ziet werkt de CollectionView!" });
+
+            VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
+            OptiesCommand = new Command(ShowOptiesPicker);
+        }
+
+        // --- Methods ---
+        public void VoegExtraToelichtingToe()
+        {
+            ExtraToelichtingVak.Add(new ExtraToelichting());
+            Notify(nameof(ExtraToelichtingVak));
+        }
+
         private void UpdateColor()
         {
-            InOntwikkelingColor = "White";
-            OpNiveauColor = "White";
-            BovenNiveauColor = "White";
-
+            if (_isUpdating) return;
+            
+            System.Diagnostics.Debug.WriteLine($"=== UpdateColor aangeroepen ===");
+            System.Diagnostics.Debug.WriteLine($"IsInOntwikkeling: {InOntwikkeling}");
+            System.Diagnostics.Debug.WriteLine($"IsOpNiveau: {IsOpNiveau}");
+            System.Diagnostics.Debug.WriteLine($"IsBovenNiveau: {BovenNiveauVolledig}");
+            
             if (BovenNiveauVolledig)
-            {
-                BovenNiveauColor = "#78D97F";
-            }
-            else if (OpNiveauDomeinWeerspiegelt || OpNiveauSyntaxCorrect || OpNiveauVastgelegd)
-            {
-                OpNiveauColor = "#BFF8C6";
-            }
+                Kleur = PrestatieNiveauKleur.BovenNiveau;
+            else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
+                Kleur = PrestatieNiveauKleur.OpNiveau;
             else if (InOntwikkeling)
-            {
-                InOntwikkelingColor = "#BFD7FF";
-            }
+                Kleur = PrestatieNiveauKleur.InOntwikkeling;
             else
-            {
-                ContainerColor = "White";
-            }
-
-
-            Notify(nameof(InOntwikkelingColor));
-            Notify(nameof(OpNiveauColor));
-            Notify(nameof(BovenNiveauColor));
+                Kleur = PrestatieNiveauKleur.NietIngeleverd;
+            
+            Notify(nameof(IsOpNiveau));
+            Notify(nameof(IsInOntwikkeling));
+            Notify(nameof(IsBovenNiveau));
         }
 
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
- 
+
         private async void ShowOptiesPicker()
         {
             var result = await Application.Current.MainPage.DisplayActionSheet(
@@ -320,10 +315,8 @@ namespace StudentSysteem.App.Models
                 Opties.ToArray()
             );
 
-            if (result != null && result != "Annuleren")
-            {
+            if (!string.IsNullOrEmpty(result) && result != "Annuleren")
                 GeselecteerdeOptie = result;
-            }
         }
     }
 }

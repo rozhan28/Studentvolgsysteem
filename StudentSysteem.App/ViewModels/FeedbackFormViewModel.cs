@@ -1,4 +1,4 @@
-﻿using StudentSysteem.App.Models;
+﻿using StudentSysteem.Core.Models;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentVolgSysteem.Core.Models;
 using System;
@@ -13,20 +13,20 @@ namespace StudentSysteem.App.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly IZelfReflectieService _zelfreflectieService;
+        private readonly IZelfevaluatieService _zelfreflectieService;
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly bool _isDocent;
 
 
         public FeedbackFormViewModel(
-            IZelfReflectieService zelfreflectieService,
+            IZelfevaluatieService zelfevaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             bool isDocent = false)
         
         {
-            _zelfreflectieService = zelfreflectieService;
+            _zelfreflectieService = zelfevaluatieService;
             _navigatieService = navigatieService;
             _meldingService = meldingService;   // ✔ bugfix: puntkomma verwijderd
             _isDocent = isDocent;
