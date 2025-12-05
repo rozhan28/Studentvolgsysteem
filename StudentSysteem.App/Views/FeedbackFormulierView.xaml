@@ -212,7 +212,7 @@
 
             <HorizontalStackLayout HorizontalOptions="End">
                 <Button Text="Opslaan"
-                        Command="{Binding SaveCommand}"
+                        Command="{Binding OpslaanCommand}"
                         BackgroundColor="#0066cc"
                         TextColor="White"/>
             </HorizontalStackLayout>
