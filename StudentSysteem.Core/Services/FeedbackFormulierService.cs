@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 
@@ -17,8 +15,12 @@ namespace StudentSysteem.Core.Services
 
         public void SlaToelichtingOp(string toelichting, int studentId = 1)
         {
+            if (string.IsNullOrWhiteSpace(toelichting))
+                throw new ArgumentException("Toelichting mag niet leeg zijn.");
+
             _feedbackRepository.VoegToelichtingToe(toelichting, studentId);
         }
     }
 }
+
 
