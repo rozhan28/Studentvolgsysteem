@@ -51,24 +51,27 @@ namespace StudentSysteem.App.ViewModels
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
+            // Startdata voor beoordelingitems
             Beoordelingen = new ObservableCollection<BeoordelingItem>
-            {
+{
                 new BeoordelingItem {
-                    Titel = "Maken domeinmodel | Definiëren probleemdomein",
+                    Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Maken domeinmodel",
-                    Beschrijving = "Het maken van een UML klassendiagram"
+                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
                 },
                 new BeoordelingItem {
-                    Titel = "Bestuderen probleemstelling",
+                    Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Bestuderen probleemstelling",
-                    Beschrijving = "Het achterhalen van het kernprobleem"
+                    Beschrijving = "Het probleem achterhalen"
                 },
                 new BeoordelingItem {
-                    Titel = "Beschrijven stakeholders",
-                    Vaardigheid = "Stakeholderanalyse",
-                    Beschrijving = "Het in kaart brengen van stakeholders"
+                    Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Beschrijven stakeholders",
+                    Beschrijving = "Het maken van een stakeholderanalyse"
                 }
             };
+
+        
         }
 
         private async Task BewaarReflectieAsync()
