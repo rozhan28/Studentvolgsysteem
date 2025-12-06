@@ -50,10 +50,11 @@
             </VerticalStackLayout>
 
             <!-- Beoordelingitems -->
-            <CollectionView ItemsSource="{Binding Beoordelingen}">
-                <CollectionView.ItemTemplate>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Beoordelingen}" Spacing="20">
+                <BindableLayout.ItemTemplate>
                     <DataTemplate x:DataType="models:BeoordelingItem">
-                        <toolkit:Expander Margin="0,0,0,20"
+
+                        <toolkit:Expander Margin="0,0,0,0"
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
 
                             <!-- Header -->
@@ -89,7 +90,7 @@
                                             <Label Text="Vaardigheid" FontAttributes="Italic"/>
                                             <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
                                             <Label Text="{Binding Beschrijving}"/>
-                                            
+
                                             <Label Text="Prestatiedoel" FontAttributes="Italic" Margin="0,15,0,0"/>
                                             <Label Text="{Binding Beschrijving}"/>
                                             <HorizontalStackLayout Spacing="5">
@@ -111,7 +112,7 @@
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsInOntwikkeling, Converter={StaticResource InOntwikkeling}}"
                                                                              Padding="10">
-                                                            <Label Text="In ontwikkeling" FontAttributes="Bold"/>     
+                                                            <Label Text="In ontwikkeling" FontAttributes="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding InOntwikkeling}"/>
                                                                 <Label Text="Student laat nog onvoldoende beheersing zien." VerticalOptions="Center"/>
@@ -123,7 +124,7 @@
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsOpNiveau, Converter={StaticResource OpNiveau}}"
-                                                                             Padding="10">              
+                                                                             Padding="10">
                                                             <Label Text="Op niveau" FontAttributes="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
@@ -144,7 +145,7 @@
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsBovenNiveau, Converter={StaticResource BovenNiveau}}"
-                                                                             Padding="10">              
+                                                                             Padding="10">
                                                             <Label Text="Boven niveau" FontAttributes="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
@@ -164,40 +165,40 @@
                                            Padding="10">
                                         <VerticalStackLayout Spacing="5">
                                             <Label Text="Toelichting" FontAttributes="Bold" />
-                                            
+
                                             <!-- Dropdown -->
                                             <Button Text="{Binding GeselecteerdeOptie}" Command="{Binding OptiesCommand}" HorizontalOptions="Start"/>
-                                            
+
                                             <!-- Toelichtingsvak -->
                                             <Editor HeightRequest="120"
                                                     Placeholder="Voeg toelichting toe..."
                                                     Text="{Binding Toelichting}" />
-                                            
+
                                             <!-- Extra feedback knop -->
                                             <Button Text="+ Voeg extra feedback toe"
                                                     HorizontalOptions="Center"
                                                     MaximumWidthRequest="250"
                                                     Clicked="OnVoegExtraFeedbackToeClicked"/>
-                                            
+
                                             <!-- Extra Toelichting CollectionView -->
-                                            <CollectionView ItemsSource="{Binding ExtraToelichtingVak}">
-                                                <CollectionView.ItemTemplate>
+                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExtraToelichtingVak}" Spacing="10">
+                                                <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="models:ExtraToelichting">
                                                         <VerticalStackLayout Spacing="10">
                                                             <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Extra toelichting..."/>
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
-                                                </CollectionView.ItemTemplate>
-                                            </CollectionView>
+                                                </BindableLayout.ItemTemplate>
+                                            </VerticalStackLayout>
                                         </VerticalStackLayout>
                                     </Border>
                                 </VerticalStackLayout>
                             </toolkit:Expander.Content>
                         </toolkit:Expander>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
             <Button Text="TEST: Knop buiten CollectionView"
                     Command="{Binding Beoordelingen[0].VoegExtraToelichtingToeCommand}"
                     HorizontalOptions="Center"
