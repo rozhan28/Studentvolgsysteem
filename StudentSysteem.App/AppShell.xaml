@@ -9,5 +9,4 @@
         Title="Login"
         ContentTemplate="{DataTemplate views:LoginView}"
         Route="LoginView" />
-
 </Shell>

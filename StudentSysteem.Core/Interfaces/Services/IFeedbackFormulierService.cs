@@ -4,9 +4,9 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface IAlertService
+    public interface IFeedbackFormulierService
     {
-        Task ShowAlertAsync(string title, string message, string okText = "OK");
+        void SlaToelichtingOp(string toelichting, int studentId = 1);
     }
 }
 

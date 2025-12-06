@@ -13,12 +13,12 @@ public partial class StartView : ContentPage
 
     private void PasKnoppenAanOpRol()
     {
-        if (UserSession.HuidigeRol == "Student")
+        if (GebruikerSessie.HuidigeRol == "Student")
         {
             BtnZelfreview.IsVisible = true;
             BtnFeedback.IsVisible = true;
         }
-        else if (UserSession.HuidigeRol == "Docent")
+        else if (GebruikerSessie.HuidigeRol == "Docent")
         {
             BtnZelfreview.IsVisible = false;
             BtnFeedback.IsVisible = true;
@@ -27,13 +27,13 @@ public partial class StartView : ContentPage
 
     private async void OnSelfReviewClicked(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormView>();
+        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
         await Navigation.PushAsync(page);
     }
 
     private async void OnFeedbackClicked(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormView>();
+        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
         await Navigation.PushAsync(page);
     }
 }

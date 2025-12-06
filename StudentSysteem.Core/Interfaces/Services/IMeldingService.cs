@@ -4,9 +4,9 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface INavigationService
+    public interface IMeldingService
     {
-        Task NavigateBackAsync();
-        Task NavigateToAsync(Page page);
+        Task ToonMeldingAsync(string title, string message, string okText = "OK");
     }
 }
+

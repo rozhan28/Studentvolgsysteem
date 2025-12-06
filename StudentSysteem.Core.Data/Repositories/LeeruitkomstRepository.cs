@@ -1,0 +1,19 @@
+﻿using StudentSysteem.Core.Interfaces.Repository;
+
+namespace StudentSysteem.Core.Data.Repositories
+{
+    public class LeeruitkomstRepository : DatabaseVerbinding, ILeeruitkomstRepository
+    {
+        public LeeruitkomstRepository()
+        {
+            MaakTabel(@"CREATE TABLE IF NOT EXISTS Leeruitkomst (
+                    [leeruitkomst_id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                    [naam] VARCHAR(50),
+                    [hboi_competentie] VARCHAR(50))");
+
+            List<string> insertQueries = [@"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_competentie) 
+                                        VALUES(NULL, 'MockData2', NULL)"];
+            VoegMeerdereInMetTransactie(insertQueries);
+        }
+    }
+}
