@@ -18,7 +18,7 @@ namespace StudentSysteem.Core.Data
 
         //Feedback
         List<string> VoegFeedback = [@"INSERT OR REPLACE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
-                                        VALUES('1', 'MockData2', NULL, NULL, NULL, NULL, NULL)"];
+                                        VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"];
         
 
         //Vult database tabellen met standaard waarden
