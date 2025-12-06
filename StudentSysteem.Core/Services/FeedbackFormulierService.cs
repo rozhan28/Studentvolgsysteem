@@ -16,7 +16,10 @@ namespace StudentSysteem.Core.Services
         public void SlaToelichtingOp(string toelichting, int studentId = 1)
         {
             if (string.IsNullOrWhiteSpace(toelichting))
-                throw new ArgumentException("Toelichting mag niet leeg zijn.");
+                throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
+
+            if (studentId <= 0)
+                throw new ArgumentException("StudentId moet groter zijn dan 0.", nameof(studentId));
 
             _feedbackRepository.VoegToelichtingToe(toelichting, studentId);
         }

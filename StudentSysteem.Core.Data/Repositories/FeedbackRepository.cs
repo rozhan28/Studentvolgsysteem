@@ -25,9 +25,6 @@ namespace StudentSysteem.Core.Data.Repositories
 
         public void VoegToelichtingToe(string toelichting, int studentId)
         {
-            if (string.IsNullOrWhiteSpace(toelichting))
-                throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
-
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();
             try
