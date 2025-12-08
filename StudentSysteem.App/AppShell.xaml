@@ -3,10 +3,44 @@
     x:Class="StudentSysteem.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views="clr-namespace:StudentSysteem.App.Views">
+    xmlns:views="clr-namespace:StudentSysteem.App.Views"
+    x:Name="StepWise">
+    
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*,Auto" 
+              BackgroundColor="{StaticResource Primary}">
+            
+            <Border Stroke="#ccc" 
+                    VerticalOptions="Center">
+                <Button Text="Dashboard"
+                        BackgroundColor="{StaticResource White}"
+                        TextColor="{StaticResource Primary}"
+                        Clicked="OnDashboardClicked"/>
+            </Border>
 
+            <Label Text="{Binding PaginaTitel}"
+                   Grid.Column="1"
+                   FontSize="22"
+                   TextColor="{StaticResource White}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+            <HorizontalStackLayout Grid.Column="2" 
+                                   Spacing="5" 
+                                   VerticalOptions="Center">
+                <Label Text="{Binding gebruikersNaam}"
+                       FontSize="16"
+                       TextColor="{StaticResource White}"
+                       VerticalOptions="Center"/>
+                <Image Source="person_icon.png"
+                       HeightRequest="35"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+    
     <ShellContent
-        Title="Login"
-        ContentTemplate="{DataTemplate views:LoginView}"
-        Route="LoginView" />
+        Title="Home"
+        ContentTemplate="{DataTemplate views:FeedbackFormView}"
+        Route="Dashboard" />
 </Shell>
