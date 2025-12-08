@@ -173,7 +173,7 @@
 
             <HorizontalStackLayout HorizontalOptions="End">
                 <Button Text="Opslaan"
-                        Command="{Binding SaveCommand}"
+                        Command="{Binding OpslaanCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource White}"/>
             </HorizontalStackLayout>
