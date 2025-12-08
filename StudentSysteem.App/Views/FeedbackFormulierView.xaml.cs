@@ -7,7 +7,7 @@ namespace StudentSysteem.App.Views
     public partial class FeedbackFormulierView : ContentPage
     {
         public FeedbackFormulierView(
-            IZelfevaluatieService zelfevaluatieService,
+            IZelfEvaluatieService zelfevaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackFormulierService)
