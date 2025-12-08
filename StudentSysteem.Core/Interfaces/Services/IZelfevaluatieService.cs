@@ -1,6 +1,4 @@
-﻿using StudentVolgSysteem.Core.Models;
-
-namespace StudentSysteem.Core.Interfaces.Services
+﻿namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IZelfevaluatieService
     {
