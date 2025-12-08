@@ -1,3 +1,8 @@
+﻿using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Interfaces.Services;
+using StudentVolgSysteem.Core.Models;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 ﻿using StudentSysteem.App.Models;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentVolgSysteem.Core.Models;
@@ -9,51 +14,33 @@ using System.Windows.Input;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class FeedbackFormulierViewModel : INotifyPropertyChanged
+    public class FeedbackFormViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private readonly IZelfevaluatieService _zelfreflectieService;
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
-        private readonly IFeedbackFormulierService _feedbackService;
         private readonly bool _isDocent;
 
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
 
-        public List<string> Opties { get; } = new()
-        {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
-
-        private string _statusMelding;
-        public string StatusMelding
-        {
-            get => _statusMelding;
-            set { _statusMelding = value; OnPropertyChanged(nameof(StatusMelding)); }
-        }
-
-        public ICommand OpslaanCommand { get; }
-
-        public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfreflectieService,
+        public FeedbackFormViewModel(
+            IZelfevaluatieService zelfevaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
-            IFeedbackFormulierService feedbackService,
             bool isDocent = false)
+        
         {
+            _zelfreflectieService = zelfevaluatieService;
             _navigatieService = navigatieService;
-            _meldingService = meldingService;
-            _feedbackService = feedbackService;
+            _meldingService = meldingService;   // ✔ bugfix: puntkomma verwijderd
             _isDocent = isDocent;
 
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
+            OpslaanCommand = new Command(async () => await BewaarReflectie());
 
-            // Startdata voor beoordelingitems
+            // STARTDATA
             Beoordelingen = new ObservableCollection<BeoordelingItem>
-{
+            {
                 new BeoordelingItem {
                     Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Maken domeinmodel",
