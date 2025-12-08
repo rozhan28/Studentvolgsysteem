@@ -7,6 +7,8 @@ using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Data;
 using StudentSysteem.Core.Data.Repositories;
+using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App
 {
@@ -21,13 +23,13 @@ namespace StudentSysteem.App
                 .UseMauiCommunityToolkit();
 
             // Services
-            builder.Services.AddSingleton<IZelfevaluatieService, MockZelfevaluatieService>();
+            builder.Services.AddSingleton<IZelfEvaluatieService, MockZelfEvaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
             // Repository & Formulierservice
-            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Repository.IFeedbackRepository, StudentSysteem.Core.Data.Repositories.FeedbackRepository>();
-            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Services.IFeedbackFormulierService, StudentSysteem.Core.Services.FeedbackFormulierService>();
+            builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
 
             // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
