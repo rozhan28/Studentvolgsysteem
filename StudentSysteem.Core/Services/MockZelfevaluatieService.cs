@@ -3,7 +3,7 @@ using StudentVolgSysteem.Core.Models;
 
 namespace StudentVolgSysteem.Core.Services
 {
-    public class MockZelfevaluatieService : IZelfEvaluatieService
+    public class MockZelfevaluatieService : IZelfevaluatieService
     {
         private static readonly List<ZelfEvaluatie> _reflecties = new();
 
