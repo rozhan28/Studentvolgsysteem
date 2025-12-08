@@ -7,6 +7,8 @@ using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Data;
 using StudentSysteem.Core.Data.Repositories;
+using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App
 {
@@ -19,15 +21,18 @@ namespace StudentSysteem.App
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit();
-
-            // Services
-            builder.Services.AddSingleton<IZelfEvaluatieService, MockZelfevaluatieService>();
+            
+            // Service Interfaces
+            builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
             // Repository & Formulierservice
-            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Repository.IFeedbackRepository, StudentSysteem.Core.Data.Repositories.FeedbackRepository>();
-            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Services.IFeedbackFormulierService, StudentSysteem.Core.Services.FeedbackFormulierService>();
+            builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
+
+            // Data registratie
+            builder.Services.AddSingleton<DatabaseVerbinding, DatabaseVuller>();
 
             // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
@@ -35,15 +40,18 @@ namespace StudentSysteem.App
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
-            //Laad database vuller
-            DatabaseVuller vulTabel = new();
-            vulTabel.TabelVuller();
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            
+            var app = builder.Build();
 
-            return builder.Build();
+            var databaseInitializer = app.Services.GetService<DatabaseVuller>();
+            if (databaseInitializer != null)
+            {
+                 databaseInitializer.TabelVuller(); 
+            }
+            return app;
         }
     }
 }
