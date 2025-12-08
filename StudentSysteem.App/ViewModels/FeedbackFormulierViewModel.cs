@@ -35,7 +35,7 @@ namespace StudentSysteem.App.ViewModels
         public ICommand OpslaanCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfEvaluatieService,
+            IZelfevaluatieService zelfevaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
