@@ -1,6 +1,6 @@
 ﻿namespace StudentVolgSysteem.Core.Models
 {
-    public class ZelfReflectie
+    public class ZelfEvaluatie
     {
         public int Id { get; set; }
         public int StudentId { get; set; }

@@ -5,9 +5,9 @@ namespace StudentVolgSysteem.Core.Services
 {
     public class MockZelfevaluatieService : IZelfevaluatieService
     {
-        private static readonly List<ZelfReflectie> _reflecties = new();
+        private static readonly List<ZelfEvaluatie> _reflecties = new();
 
-        public void Add(ZelfReflectie reflectie)
+        public void Add(ZelfEvaluatie reflectie)
         {
             if (string.IsNullOrWhiteSpace(reflectie.PrestatieNiveau))
                 throw new ArgumentException("Selecteer een prestatieniveau.");
@@ -15,7 +15,7 @@ namespace StudentVolgSysteem.Core.Services
             _reflecties.Add(reflectie);
         }
 
-        public List<ZelfReflectie> HaalOpVoorStudent(int studentId)
+        public List<ZelfEvaluatie> HaalOpVoorStudent(int studentId)
         {
             return _reflecties.Where(x => x.StudentId == studentId).ToList();
         }

@@ -3,6 +3,13 @@ using StudentSysteem.Core.Interfaces.Services;
 using StudentVolgSysteem.Core.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+﻿using StudentSysteem.App.Models;
+using StudentSysteem.Core.Interfaces.Services;
+using StudentVolgSysteem.Core.Models;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace StudentSysteem.App.ViewModels
@@ -50,60 +57,56 @@ namespace StudentSysteem.App.ViewModels
                     Beschrijving = "Het maken van een stakeholderanalyse"
                 }
             };
+
+        
         }
 
-        // ⭐ Lijst van beoordelingsitems
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
-
-        private string _statusmelding;
-        public string StatusMelding
-        {
-            get => _statusmelding;
-            set { _statusmelding = value; Notify(nameof(StatusMelding)); }
-        }
-
-        public ICommand OpslaanCommand { get; }
-
-        // ⭐ Opslaan van feedback
-        private async Task BewaarReflectie()
+        private async Task BewaarReflectieAsync()
         {
             StatusMelding = string.Empty;
-            bool allesGeldig = true;
 
-            foreach (var item in Beoordelingen)
-            {
-                bool itemGeldig = ValideerItem(item);
-                item.IsPrestatieNiveauInvalid = !itemGeldig;
-
-                item.IsToelichtingInvalid =
-                    string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent;
-
-                if (!itemGeldig || item.IsToelichtingInvalid)
-                    allesGeldig = false;
-            }
-
-            if (!allesGeldig)
+            if (!ValideerBeoordelingen())
             {
                 StatusMelding = "Controleer alle velden a.u.b.";
                 return;
             }
 
-            foreach (var item in Beoordelingen)
+            try
             {
-                _zelfreflectieService.Add(new ZelfReflectie
+                foreach (var item in Beoordelingen)
                 {
-                    StudentId = 1,
-                    PrestatieNiveau = item.PrestatieNiveau,
-                    Toelichting = item.Toelichting,
-                    Datum = DateTime.Now
-                });
-            }
+                    if (!string.IsNullOrWhiteSpace(item.Toelichting))
+                        _feedbackService.SlaToelichtingOp(item.Toelichting, 1);
+                }
 
-            await _meldingService.ToonMeldingAsync("Succes", "Feedback is succesvol opgeslagen!");
+                await _meldingService.ToonMeldingAsync("Succes", "Toelichting is opgeslagen!");
+            }
+            catch (Exception ex)
+            {
+                StatusMelding = $"Fout bij opslaan: {ex.Message}";
+            }
         }
 
-        // ⭐ Validatie per item
-        private bool ValideerItem(BeoordelingItem item)
+        private bool ValideerBeoordelingen()
+        {
+            bool allesGeldig = true;
+
+            foreach (var item in Beoordelingen)
+            {
+                bool prestatieOk = ValideerPrestatieNiveau(item);
+                item.IsPrestatieNiveauInvalid = !prestatieOk;
+
+                bool toelichtingOk = !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
+                item.IsToelichtingInvalid = !toelichtingOk;
+
+                if (!prestatieOk || !toelichtingOk)
+                    allesGeldig = false;
+            }
+
+            return allesGeldig;
+        }
+
+        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {
             return item.InOntwikkeling ||
                    item.OpNiveauSyntaxCorrect ||
@@ -112,8 +115,7 @@ namespace StudentSysteem.App.ViewModels
                    item.BovenNiveauVolledig;
         }
 
-        private void Notify(string eigenschap) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(eigenschap));
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
-

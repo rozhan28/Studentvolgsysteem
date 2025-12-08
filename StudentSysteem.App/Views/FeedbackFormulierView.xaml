@@ -60,7 +60,7 @@
                                             <Label Text="Vaardigheid" FontAttributes="Italic"/>
                                             <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
                                             <Label Text="{Binding Beschrijving}"/>
-
+                                            
                                             <Label Text="Prestatiedoel" FontAttributes="Italic" Margin="0,15,0,0"/>
                                             <Label Text="{Binding Beschrijving}"/>
                                             <HorizontalStackLayout Spacing="5">
@@ -73,6 +73,7 @@
                                         <VerticalStackLayout Grid.Column="1" Spacing="10">
 
                                             <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
+                                                   BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
 
                                                 <VerticalStackLayout Spacing="15">
