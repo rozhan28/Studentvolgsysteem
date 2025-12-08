@@ -7,10 +7,10 @@
     x:Name="StepWise">
     
     <Shell.TitleView>
-        <Grid ColumnDefinitions="Auto,*,Auto" 
-              BackgroundColor="{StaticResource Primary}">
+            <Grid ColumnDefinitions="Auto,*,Auto" 
+                  BackgroundColor="{StaticResource Primary}">
             
-            <Border Stroke="#ccc" 
+            <Border StrokeThickness="0"
                     VerticalOptions="Center">
                 <Button Text="Dashboard"
                         BackgroundColor="{StaticResource White}"
@@ -18,7 +18,8 @@
                         Clicked="OnDashboardClicked"/>
             </Border>
 
-            <Label Text="{Binding PaginaTitel}"
+            <Label BindingContext="{x:Reference StepWise}"
+                   Text="{Binding Path=Title}"
                    Grid.Column="1"
                    FontSize="22"
                    TextColor="{StaticResource White}"
@@ -42,5 +43,5 @@
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate views:FeedbackFormView}"
-        Route="Dashboard" />
+        Route="Dashboard"/>
 </Shell>

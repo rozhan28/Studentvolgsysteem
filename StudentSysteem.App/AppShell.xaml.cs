@@ -1,18 +1,19 @@
-﻿using StudentSysteem.App.ViewModels;
+﻿using System.Diagnostics;
+using StudentSysteem.App.ViewModels;
 
 namespace StudentSysteem.App;
 
 public partial class AppShell : Shell
 {
-    public string PaginaTitel { get; set; }
     public string gebruikersNaam { get; set; }
     
     public AppShell()
     {
         InitializeComponent();
+        this.Title = "Feedbackformulier";
         Routing.RegisterRoute(nameof(FeedbackFormViewModel), typeof(FeedbackFormViewModel));
+        
         gebruikersNaam = "Naam";
-        PaginaTitel = "Dashboard";
         BindingContext = this;
     }
     
