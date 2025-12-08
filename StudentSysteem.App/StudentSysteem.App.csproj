@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0-android;net10.0-windows10.0.19041.0;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+	<TargetFrameworks>net10.0-android;net10.0-windows10.0.19041.0;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>StudentSysteem.App</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <!-- Projectreferenties -->
+    <ProjectReference Include="..\StudentSysteem.Core.Data\StudentSysteem.Core.Data.csproj" />
     <ProjectReference Include="..\StudentSysteem.Core\StudentSysteem.Core.csproj" />
   </ItemGroup>
 
@@ -55,7 +56,7 @@
     <MauiXaml Update="Views\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\FeedbackFormView.xaml">
+    <MauiXaml Update="Views\FeedbackFormulierView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

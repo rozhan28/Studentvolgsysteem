@@ -5,9 +5,9 @@ using System.Text;
 
 namespace StudentVolgSysteem.App.Services
 {
-    public class AlertService : IAlertService
+    public class MeldingService : IMeldingService
     {
-        public Task ShowAlertAsync(string title, string message, string okText = "OK")
+        public Task ToonMeldingAsync(string title, string message, string okText = "OK")
         {
             return Application.Current.MainPage.DisplayAlert(title, message, okText);
         }

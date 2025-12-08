@@ -8,11 +8,25 @@ namespace StudentSysteem.App.Models
 
         public string Titel { get; set; }
         public string Domein { get; set; }
-        public string MakenDomeinmodel { get; set; }
+        public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded != value)
+                {
+                    _isExpanded = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExpanded)));
+                }
+            }
+        }
 
         // ---- Toelichting ----
         private string _toelichting;
+        
         public string Toelichting
         {
             get => _toelichting;
@@ -169,7 +183,7 @@ namespace StudentSysteem.App.Models
                 if (InOntwikkeling)
                     return "In ontwikkeling";
 
-                return "Geen";
+                return "";
             }
         }
 
@@ -183,17 +197,14 @@ namespace StudentSysteem.App.Models
             if (BovenNiveauVolledig)
             {
                 BovenNiveauColor = "#78D97F";
-                ContainerColor = "#E2FFE4";
             }
             else if (OpNiveauDomeinWeerspiegelt || OpNiveauSyntaxCorrect || OpNiveauVastgelegd)
             {
                 OpNiveauColor = "#BFF8C6";
-                ContainerColor = "#F2FFF3";
             }
             else if (InOntwikkeling)
             {
                 InOntwikkelingColor = "#BFD7FF";
-                ContainerColor = "#E8F1FF";
             }
             else
             {

@@ -5,6 +5,8 @@ using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Data;
+using StudentSysteem.Core.Data.Repositories;
 
 namespace StudentSysteem.App
 {
@@ -16,23 +18,26 @@ namespace StudentSysteem.App
 
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                .UseMauiCommunityToolkit();
 
             // Services
-            builder.Services.AddSingleton<ISelfReflectionService, MockSelfReflectionService>();
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
-            builder.Services.AddSingleton<IAlertService, AlertService>();
+            builder.Services.AddSingleton<IZelfEvaluatieService, MockZelfevaluatieService>();
+            builder.Services.AddSingleton<INavigatieService, NavigatieService>();
+            builder.Services.AddSingleton<IMeldingService, MeldingService>();
+
+            // Repository & Formulierservice
+            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Repository.IFeedbackRepository, StudentSysteem.Core.Data.Repositories.FeedbackRepository>();
+            builder.Services.AddSingleton<StudentSysteem.Core.Interfaces.Services.IFeedbackFormulierService, StudentSysteem.Core.Services.FeedbackFormulierService>();
 
             // Viewmodels
-            builder.Services.AddTransient<FeedbackFormViewModel>();
+            builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
-            // Viems
-            builder.Services.AddTransient<FeedbackFormView>();
+            // Views
+            builder.Services.AddTransient<FeedbackFormulierView>();
+
+            //Laad database vuller
+            DatabaseVuller vulTabel = new();
+            vulTabel.TabelVuller();
 
 #if DEBUG
             builder.Logging.AddDebug();

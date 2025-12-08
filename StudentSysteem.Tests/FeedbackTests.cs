@@ -1,92 +1,70 @@
-﻿using NUnit.Framework;
-using StudentVolgSysteem.Core.Models;
+﻿using Moq;
+using NUnit.Framework;
+using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Services;
 using StudentVolgSysteem.Core.Services;
-using Assert = NUnit.Framework.Assert;
-using Moq;
-using System;
-using StudentSysteem.Core.Interfaces.Services;
 
-namespace StudentSysteem.Tests
+namespace StudentSysteem.Tests.Services
 {
-    public class CoreTests
+    public class FeedbackFormulierServiceTests
     {
+        private Mock<IFeedbackRepository> _mockRepo;
+        private FeedbackFormulierService _service;
 
-        [Test]
-        public void SelfReflection_DefaultValues_ShouldBeSetCorrectly()
+        [SetUp]
+        public void Setup()
         {
-            var reflection = new SelfReflection();
-
-            Assert.That(reflection.PrestatieNiveau, Is.EqualTo(""));
-            Assert.That(reflection.Toelichting, Is.EqualTo(""));
-            Assert.That(reflection.Datum, Is.Not.EqualTo(default(DateTime)));
+            _mockRepo = new Mock<IFeedbackRepository>();
+            _service = new FeedbackFormulierService(_mockRepo.Object);
         }
 
         [Test]
-        public void SelfReflection_SetProperties_ShouldStoreValues()
+        public void SlaToelichtingOp_MetGeldigeWaarde_RoeptRepositoryAan()
         {
-            var reflection = new SelfReflection
-            {
-                Id = 5,
-                StudentId = 10,
-                PrestatieNiveau = "Op niveau",
-                Toelichting = "Goed gedaan",
-                Datum = new DateTime(2024, 5, 10)
-            };
+            // Arrange
+            string toelichting = "Dit ging goed";
+            int studentId = 5;
 
-            Assert.That(reflection.Id, Is.EqualTo(5));
-            Assert.That(reflection.StudentId, Is.EqualTo(10));
-            Assert.That(reflection.PrestatieNiveau, Is.EqualTo("Op niveau"));
-            Assert.That(reflection.Toelichting, Is.EqualTo("Goed gedaan"));
-            Assert.That(reflection.Datum, Is.EqualTo(new DateTime(2024, 5, 10)));
-        }
+            // Act
+            _service.SlaToelichtingOp(toelichting, studentId);
 
-
-        [Test]
-        public void SelfReflectionService_Add_ShouldBeCalled()
-        {
-            var mock = new Mock<ISelfReflectionService>();
-
-            var reflection = new SelfReflection { StudentId = 1 };
-
-            mock.Object.Add(reflection);
-
-            mock.Verify(s => s.Add(reflection), Times.Once);
+            // Assert
+            _mockRepo.Verify(
+                r => r.VoegToelichtingToe(toelichting, studentId),
+                Times.Once
+            );
         }
 
         [Test]
-        public void SelfReflectionService_GetByStudent_ReturnsCorrectList()
+        public void SlaToelichtingOp_LegeToelichting_GooitArgumentException()
         {
-            var mock = new Mock<ISelfReflectionService>();
-            var expectedList = new List<SelfReflection>
-            {
-                new SelfReflection { StudentId = 1, PrestatieNiveau = "Op niveau" }
-            };
-
-            mock.Setup(s => s.GetByStudent(1)).Returns(expectedList);
-
-            var result = mock.Object.GetByStudent(1);
-
-            Assert.That(result, Is.EqualTo(expectedList));
-            Assert.That(result.Count, Is.EqualTo(1));
-        }
-
-
-        [Test]
-        public void UserSession_LoginAls_ShouldSetRole()
-        {
-            UserSession.LoginAls("Docent");
-
-            Assert.That(UserSession.HuidigeRol, Is.EqualTo("Docent"));
+            Assert.Throws<ArgumentException>(() =>
+                _service.SlaToelichtingOp("")
+            );
         }
 
         [Test]
-        public void UserSession_Loguit_ShouldClearRole()
+        public void SlaToelichtingOp_NullToelichting_GooitArgumentException()
         {
-            UserSession.LoginAls("Student");
+            Assert.Throws<ArgumentException>(() =>
+                _service.SlaToelichtingOp(null)
+            );
+        }
 
-            UserSession.Loguit();
+        [Test]
+        public void SlaToelichtingOp_StandaardStudentId_WerktCorrect()
+        {
+            // Arrange
+            string toelichting = "Test met default id";
 
-            Assert.That(UserSession.HuidigeRol, Is.EqualTo(""));
+            // Act
+            _service.SlaToelichtingOp(toelichting);
+
+            // Assert
+            _mockRepo.Verify(
+                r => r.VoegToelichtingToe(toelichting, 1), 
+                Times.Once
+            );
         }
     }
 }
