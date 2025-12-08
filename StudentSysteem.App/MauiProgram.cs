@@ -21,8 +21,8 @@ namespace StudentSysteem.App
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit();
-
-            // Services
+            
+            // Service Interfaces
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
@@ -31,21 +31,27 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
 
+            // Data registratie
+            builder.Services.AddSingleton<DatabaseVerbinding, DatabaseVuller>();
+
             // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
-            //Laad database vuller
-            DatabaseVuller vulTabel = new();
-            vulTabel.TabelVuller();
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            
+            var app = builder.Build();
 
-            return builder.Build();
+            var databaseInitializer = app.Services.GetService<DatabaseVuller>();
+            if (databaseInitializer != null)
+            {
+                 databaseInitializer.TabelVuller(); 
+            }
+            return app;
         }
     }
 }

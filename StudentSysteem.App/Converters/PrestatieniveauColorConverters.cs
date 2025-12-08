@@ -2,18 +2,36 @@ using System.Globalization;
 
 namespace StudentSysteem.App.Converters
 {
+    // Hulpfunctie om een kleur resource op te zoeken
+    public static class ResourceHelper
+    {
+        public static Color GetColorResource(string resourceKey)
+        {
+            if (Application.Current.Resources.TryGetValue(resourceKey, out object resourceValue))
+            {
+                if (resourceValue is Color color)
+                {
+                    return color;
+                }
+                // Optioneel: als de resource een SolidColorBrush is, haal dan de Color eruit
+                if (resourceValue is SolidColorBrush brush)
+                {
+                    return brush.Color;
+                }
+            }
+            return Colors.Transparent; 
+        }
+    }
+
     // Converter voor "In ontwikkeling" niveau
     public class InOntwikkelingConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // DEBUG: Print de waarde naar console
-            System.Diagnostics.Debug.WriteLine($"InOntwikkelingConverter - Value: {value}, Type: {value?.GetType()}");
-            
             if (value is bool isInOntwikkeling && isInOntwikkeling)
             {
-                System.Diagnostics.Debug.WriteLine("InOntwikkelingConverter - Returning BLUE");
-                return Color.FromArgb("#4594D3");
+                System.Diagnostics.Debug.WriteLine("InOntwikkelingConverter - Retrieving 'InOntwikkeling' color from Resources");
+                return ResourceHelper.GetColorResource("InOntwikkeling"); 
             }
             
             System.Diagnostics.Debug.WriteLine("InOntwikkelingConverter - Returning Transparent");
@@ -31,13 +49,10 @@ namespace StudentSysteem.App.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // DEBUG: Print de waarde naar console
-            System.Diagnostics.Debug.WriteLine($"OpNiveauConverter - Value: {value}, Type: {value?.GetType()}");
-            
             if (value is bool isOpNiveau && isOpNiveau)
             {
-                System.Diagnostics.Debug.WriteLine("OpNiveauConverter - Returning YELLOW");
-                return Color.FromArgb("#D5E05B");
+                System.Diagnostics.Debug.WriteLine("OpNiveauConverter - Retrieving 'OpNiveau' color from Resources");
+                return ResourceHelper.GetColorResource("OpNiveau");
             }
             
             System.Diagnostics.Debug.WriteLine("OpNiveauConverter - Returning Transparent");
@@ -55,13 +70,10 @@ namespace StudentSysteem.App.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // DEBUG: Print de waarde naar console
-            System.Diagnostics.Debug.WriteLine($"BovenNiveauConverter - Value: {value}, Type: {value?.GetType()}");
-            
             if (value is bool isBovenNiveau && isBovenNiveau)
             {
-                System.Diagnostics.Debug.WriteLine("BovenNiveauConverter - Returning GREEN");
-                return Color.FromArgb("#45B97C");
+                System.Diagnostics.Debug.WriteLine("BovenNiveauConverter - Retrieving 'BovenNiveau' color from Resources");
+                return ResourceHelper.GetColorResource("BovenNiveau");
             }
             
             System.Diagnostics.Debug.WriteLine("BovenNiveauConverter - Returning Transparent");
