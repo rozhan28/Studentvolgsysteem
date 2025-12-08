@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace StudentSysteem.App.Models
+namespace StudentSysteem.Core.Models
 {
     public class BeoordelingItem : INotifyPropertyChanged
     {
