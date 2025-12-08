@@ -23,7 +23,7 @@ namespace StudentSysteem.App
                 .UseMauiCommunityToolkit();
 
             // Services
-            builder.Services.AddSingleton<IZelfEvaluatieService, MockZelfEvaluatieService>();
+            builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
 
