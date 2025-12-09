@@ -40,6 +40,10 @@ namespace StudentSysteem.App
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
+            //Laad database vuller
+            DatabaseVuller vulTabel = new();
+            vulTabel.TabelVuller();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
