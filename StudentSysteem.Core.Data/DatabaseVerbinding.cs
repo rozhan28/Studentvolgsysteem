@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using StudentSysteem.Core.Data.Helpers;
+using Microsoft.Data.Sqlite;
 using System.Data;
 
 namespace StudentSysteem.Core.Data
@@ -11,9 +12,10 @@ namespace StudentSysteem.Core.Data
         public DatabaseVerbinding()
         {
             databaseNaam = "StepWiseDbs.sqlite";
-            string localDataPath = FileSystem.AppDataDirectory;
-            string fullPathToDbFile = Path.Combine(localDataPath, databaseNaam);
-            string padNaarDb = "Data Source=" + fullPathToDbFile;
+
+            string projectMap = AppDomain.CurrentDomain.BaseDirectory ?? "";
+            string padNaarDb = "Data Source=" + Path.Combine(projectMap, databaseNaam);
+
             Verbinding = new SqliteConnection(padNaarDb);
         }
 
