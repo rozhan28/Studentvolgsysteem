@@ -150,7 +150,13 @@
                                                 <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="models:ExtraToelichting">
                                                         <VerticalStackLayout Spacing="10">
+                                                            
+                                                            <!-- Dropdown -->
+                                                            <Button Text="{Binding GeselecteerdeOptie}" Command="{Binding OptiesCommand}" HorizontalOptions="Start"/>
+                                                            
+                                                            <!-- Toelichtingsvak -->
                                                             <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Extra toelichting..."/>
+                                                            
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>
