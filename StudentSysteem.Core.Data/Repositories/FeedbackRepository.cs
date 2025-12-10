@@ -24,7 +24,6 @@ namespace StudentSysteem.Core.Data.Repositories
             ];
             VoegMeerdereInMetTransactie(VoegFeedback);
             VerwijderInhoud("Feedback");
-            
         }
         public void VerwijderInhoud(string tableName)
         {
@@ -67,11 +66,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 cmd.Parameters.AddWithValue("@studentId", studentId);
                 cmd.Transaction = transactie;
                 cmd.ExecuteNonQuery();
-                
-                using var testCmd = Verbinding.CreateCommand();
-                testCmd.CommandText = "INSERT INTO Feedback (toelichting) VALUES ('TEST DATA ZOU MOETEN WERKEN');"; 
-                testCmd.Transaction = transactie;
-                testCmd.ExecuteNonQuery();
 
                 transactie.Commit();
             }
