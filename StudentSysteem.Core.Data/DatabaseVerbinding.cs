@@ -1,7 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using Microsoft.Data.Sqlite;
 using System.Data;
-using Microsoft.Maui.Storage;
 
 namespace StudentSysteem.Core.Data
 {
@@ -12,21 +11,11 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
+            databaseBestandsnaam = string.IsNullOrEmpty(databaseBestandsnaam) ? "StepWiseDbs.sqlite" : databaseBestandsnaam;
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dbPath = Path.Combine(baseDir, databaseBestandsnaam);
             string dbConnection = $"Data Source={dbPath}; Foreign Keys=True; Pooling=False; Cache=Shared";
             Verbinding = new SqliteConnection(dbConnection);
-
-            /*
-            // OPTIONEEL: Zorg ervoor dat de database bestaat als deze voor de eerste keer wordt gestart
-            // Dit is een goede gewoonte bij SQLite
-            if (!File.Exists(dbPath))
-            {
-                // Roep hier logica aan om de database en tabellen aan te maken.
-                // U kunt dit het beste in de klasse die dit erft regelen.
-            }
-            */
         }
 
         protected void OpenVerbinding()
@@ -48,17 +37,7 @@ namespace StudentSysteem.Core.Data
                 command.ExecuteNonQuery();
             }
         }
-
-        /*
-        protected void ExecuteNonQuery(string sql, SqliteTransaction? transaction = null)
-        {
-            using var command = Verbinding.CreateCommand();
-            command.CommandText = sql;
-            if (transaction != null) command.Transaction = transaction;
-            command.ExecuteNonQuery();
-        }
-        */
-
+        
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             OpenVerbinding();
