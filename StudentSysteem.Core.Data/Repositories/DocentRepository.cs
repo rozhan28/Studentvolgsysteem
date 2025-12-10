@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class DocentRepository : DatabaseVerbinding, IDocentRepository
     {
-        public DocentRepository()
+        public DocentRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Docent (
                     [docent_id] INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class StudentRepository : DatabaseVerbinding, IStudentRepository
     {
-        public StudentRepository()
+        public StudentRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Student (
                     [student_id] INTEGER PRIMARY KEY AUTOINCREMENT,

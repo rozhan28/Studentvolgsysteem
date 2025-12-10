@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
-    public class ClusterRepository : DatabaseVerbinding, IClustherRepository
+    public class ClusterRepository : DatabaseVerbinding, IClusterRepository
     {
-        public ClusterRepository()
+        public ClusterRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Cluster (
                     [cluster_id] INTEGER PRIMARY KEY AUTOINCREMENT,

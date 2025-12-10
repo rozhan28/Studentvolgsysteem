@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StudentVolgSysteem.App.Services;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
+using StudentSysteem.Core.Data;
+using StudentSysteem.Core.Data.Helpers;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Data;
 using StudentSysteem.Core.Data.Repositories;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Services;
@@ -17,49 +19,54 @@ namespace StudentSysteem.App
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
-
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit();
+                .UseMauiCommunityToolkit()
+                .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
+                fonts.AddFont("Poppins-BoldItalic.ttf", "PoppinsBoldItalic");
+                fonts.AddFont("Poppins-Bold.ttf", "PoppinsBold");
+            });
+#if DEBUG
+            builder.Logging.AddDebug();
+#endif
             
-            // Service Interfaces
+            // Database 
+var a = typeof(MauiProgram).Assembly;
+using var stream = a.GetManifestResourceStream("StudentSysteem.App.appsettings.json");
+
+if (stream != null)
+{
+    IConfiguration config = new ConfigurationBuilder()
+        .AddJsonStream(stream)
+        .Build();
+
+    builder.Configuration.AddConfiguration(config);
+}
+else
+{
+ 
+    throw new InvalidOperationException("Configuratiebestand 'appsettings.json' niet gevonden als Embedded Resource.");
+}
+            
+            // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
             builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
-
-            // Repository & Formulierservice
-            builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
+            builder.Services.AddSingleton<DbConnectieHelper>();
 
-            // Data registratie
-            builder.Services.AddSingleton<DatabaseVerbinding, DatabaseVuller>();
+            // Repository
+            builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
 
             // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
-
-            //Maak database tabbellen aan
-            DatabaseVuller MaakTabellen = new();
-            MaakTabellen.TabelLader();
-
-            //Laad database vuller
-            DatabaseVuller vulTabel = new();
-            vulTabel.TabelVuller();
-
-#if DEBUG
-            builder.Logging.AddDebug();
-#endif
-            
-            var app = builder.Build();
-
-            var databaseInitializer = app.Services.GetService<DatabaseVuller>();
-            if (databaseInitializer != null)
-            {
-                 databaseInitializer.TabelVuller(); 
-            }
-            return app;
+            return builder.Build();
         }
     }
 }

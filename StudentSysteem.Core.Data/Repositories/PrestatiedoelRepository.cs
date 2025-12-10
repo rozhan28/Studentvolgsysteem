@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository()
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Prestatiedoel (
                     [processtap_id] INTEGER PRIMARY KEY AUTOINCREMENT,

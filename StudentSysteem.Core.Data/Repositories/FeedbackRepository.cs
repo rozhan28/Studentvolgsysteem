@@ -1,11 +1,12 @@
 ﻿using StudentSysteem.Core.Interfaces.Repository;
 using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Data.Helpers;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class FeedbackRepository : DatabaseVerbinding, IFeedbackRepository
     {
-        public FeedbackRepository()
+        public FeedbackRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Feedback (
                     [feedback_id] INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,6 +17,11 @@ namespace StudentSysteem.Core.Data.Repositories
                     [student_id] INTEGER,
                     [docent_id] INTEGER,
                     [vaardigheid_id] INTEGER)");
+            List<string> VoegFeedback = [
+                @"INSERT OR REPLACE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
+            VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"
+            ];
+            VoegMeerdereInMetTransactie(VoegFeedback);
         }
 
         public void VoegMeerdereInMetTransactie(List<string> regels)

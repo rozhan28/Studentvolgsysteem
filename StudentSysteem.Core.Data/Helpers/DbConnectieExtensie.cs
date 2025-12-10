@@ -2,7 +2,7 @@
 
 namespace StudentSysteem.Core.Data.Helpers
 {
-    public static class DbConnectionExtensions
+    public static class DbConnectieExtensie
     {
         public static int ExecuteNonQuery(this DbConnection connection, string commandText, int timeout = 30)
         {

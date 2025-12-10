@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class VaardigheidRepository : DatabaseVerbinding, IVaardigheidRepository
     {
-        public VaardigheidRepository()
+        public VaardigheidRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Vaardigheid (
                     [vaardigheid_id] INTEGER PRIMARY KEY AUTOINCREMENT,

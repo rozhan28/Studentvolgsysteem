@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class LeeruitkomstRepository : DatabaseVerbinding, ILeeruitkomstRepository
     {
-        public LeeruitkomstRepository()
+        public LeeruitkomstRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Leeruitkomst (
                     [leeruitkomst_id] INTEGER PRIMARY KEY AUTOINCREMENT,

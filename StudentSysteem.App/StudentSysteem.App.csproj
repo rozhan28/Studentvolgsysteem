@@ -42,6 +42,8 @@
     <PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.10" />
     <PackageReference Include="CommunityToolkit.Maui" Version="13.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +63,11 @@
     <MauiXaml Update="Views\FeedbackFormulierView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Database -->
+    <EmbeddedResource Include="appsettings.json" />
   </ItemGroup>
 
 </Project>

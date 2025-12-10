@@ -1,10 +1,11 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class ProcesstapRepository : DatabaseVerbinding, IProcesstapRepository
     {
-        public ProcesstapRepository()
+        public ProcesstapRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Processtap (
                     [processtap_id] INTEGER PRIMARY KEY AUTOINCREMENT,

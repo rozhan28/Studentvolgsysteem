@@ -1,22 +1,31 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using Microsoft.Data.Sqlite;
 using System.Data;
+using Microsoft.Maui.Storage;
 
 namespace StudentSysteem.Core.Data
 {
     public abstract class DatabaseVerbinding : IDisposable
     {
         protected SqliteConnection Verbinding { get; }
-        private string databaseNaam;
+        private string databaseBestandsnaam;
 
-        public DatabaseVerbinding()
+        public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseNaam = "StepWiseDbs.sqlite";
+            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, databaseBestandsnaam);
+            string dbConnection = $"Data Source={dbPath}";
+            Verbinding = new SqliteConnection(dbConnection);
 
-            string projectMap = AppDomain.CurrentDomain.BaseDirectory ?? "";
-            string padNaarDb = "Data Source=" + Path.Combine(projectMap, databaseNaam);
-
-            Verbinding = new SqliteConnection(padNaarDb);
+            /*
+            // OPTIONEEL: Zorg ervoor dat de database bestaat als deze voor de eerste keer wordt gestart
+            // Dit is een goede gewoonte bij SQLite
+            if (!File.Exists(dbPath))
+            {
+                // Roep hier logica aan om de database en tabellen aan te maken.
+                // U kunt dit het beste in de klasse die dit erft regelen.
+            }
+            */
         }
 
         protected void OpenVerbinding()
@@ -37,9 +46,9 @@ namespace StudentSysteem.Core.Data
                 command.CommandText = sqlOpdracht;
                 command.ExecuteNonQuery();
             }
-            SluitVerbinding();
         }
 
+        /*
         protected void ExecuteNonQuery(string sql, SqliteTransaction? transaction = null)
         {
             using var command = Verbinding.CreateCommand();
@@ -47,53 +56,35 @@ namespace StudentSysteem.Core.Data
             if (transaction != null) command.Transaction = transaction;
             command.ExecuteNonQuery();
         }
+        */
 
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             OpenVerbinding();
+            var transactie = Verbinding.BeginTransaction();
 
-            using var transactie = Verbinding.BeginTransaction();
             try
             {
-                foreach (var r in regels)
-                {
-                    ExecuteNonQuery(r, transactie);
-                }
+                regels.ForEach(l => Verbinding.ExecuteNonQuery(l));
                 transactie.Commit();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                try { transactie.Rollback(); } catch { /* ignore */ }
-            }
-            finally
-            {
-                SluitVerbinding();
-            }
-        }
-
-        public void VerwijderInhoud(string tableName)
-        {
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentException("Table name cannot be empty.", nameof(tableName));
-
-            OpenVerbinding();
-            try
-            {
-                using var command = Verbinding.CreateCommand();
-                command.CommandText = $"DELETE FROM {tableName};";
-                command.ExecuteNonQuery();
-            }
-            finally
-            {
-                SluitVerbinding();
+                try
+                {
+                    transactie.Rollback();
+                }
+                finally
+                {
+                    transactie.Dispose();
+                }
             }
         }
 
         public void Dispose()
         {
             SluitVerbinding();
-            Verbinding?.Dispose();
         }
     }
 }
