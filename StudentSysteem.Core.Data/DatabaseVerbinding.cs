@@ -20,12 +20,10 @@ namespace StudentSysteem.Core.Data
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string schoneBaseDir = baseDir.Trim();
             string schoneBestandsnaam = databaseBestandsnaam.Trim();
-    
-            // 💡 Gebruik de schone strings voor de combinatie
-            string dbPath = Path.Combine(schoneBaseDir, schoneBestandsnaam); 
-
-            // ... (rest van de code, inclusief de vereenvoudigde connection string)
-            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True"; // 🚨 Gebruik deze vereenvoudigde string
+            string dbPath = schoneBaseDir.TrimEnd(Path.DirectorySeparatorChar)
+                            + Path.DirectorySeparatorChar
+                            + schoneBestandsnaam;
+            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True";
             Verbinding = new SqliteConnection(dbConnection);
         }
 
@@ -62,7 +60,7 @@ namespace StudentSysteem.Core.Data
                 foreach (var sql in regels)
                 {
                     cmd.CommandText = sql;
-                    cmd.ExecuteNonQuery(); // Nu werkt het gegarandeerd met de transactie
+                    cmd.ExecuteNonQuery();
                 }
         
                 transactie.Commit();
