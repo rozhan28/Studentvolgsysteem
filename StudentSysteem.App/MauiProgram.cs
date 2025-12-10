@@ -59,7 +59,7 @@ else
 
             // Repository
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
-            builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
+            builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
 
             // Viewmodels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();

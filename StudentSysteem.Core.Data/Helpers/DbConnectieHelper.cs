@@ -8,7 +8,7 @@ namespace StudentSysteem.Core.Data.Helpers
         
         public DbConnectieHelper(IConfiguration configuration)
         {
-            _configuration = configuration; 
+            _configuration = configuration;
         }
         
         public string ConnectionStringValue(string name)
