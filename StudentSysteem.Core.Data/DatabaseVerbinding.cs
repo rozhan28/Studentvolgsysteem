@@ -1,6 +1,7 @@
-﻿using StudentSysteem.Core.Data.Helpers;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Data.Helpers;
 using System.Data;
+using System.Diagnostics;
 
 namespace StudentSysteem.Core.Data
 {
@@ -25,6 +26,9 @@ namespace StudentSysteem.Core.Data
                             + schoneBestandsnaam;
             string dbConnection = $"Data Source={dbPath}; Foreign Keys=True";
             Verbinding = new SqliteConnection(dbConnection);
+            
+            //Vindt locatie van .sqlite path.
+            //Debug.WriteLine("DB PATH: " + dbPath);
         }
 
         protected void OpenVerbinding()
