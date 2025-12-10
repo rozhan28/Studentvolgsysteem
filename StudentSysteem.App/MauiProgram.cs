@@ -40,6 +40,10 @@ namespace StudentSysteem.App
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
+            //Maak database tabbellen aan
+            DatabaseVuller MaakTabellen = new();
+            MaakTabellen.TabelMaker();
+
             //Laad database vuller
             DatabaseVuller vulTabel = new();
             vulTabel.TabelVuller();
