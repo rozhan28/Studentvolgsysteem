@@ -13,8 +13,16 @@ namespace StudentSysteem.Core.Data
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
             databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, databaseBestandsnaam);
-            string dbConnection = $"Data Source={dbPath}";
+            
+            if (string.IsNullOrEmpty(databaseBestandsnaam))
+            {
+                databaseBestandsnaam = "StepWiseDbs.sqlite"; // 👈 Fallback naar de werkende naam
+                Console.WriteLine("WAARSCHUWING: appsettings.json faalt, fallback naar StepWiseDbs.sqlite");
+            }
+            
+            string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string dbPath = Path.Combine(baseDir, databaseBestandsnaam);
+            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True; Pooling=False; Cache=Shared";
             Verbinding = new SqliteConnection(dbConnection);
 
             /*
@@ -65,26 +73,33 @@ namespace StudentSysteem.Core.Data
 
             try
             {
-                regels.ForEach(l => Verbinding.ExecuteNonQuery(l));
+                using var cmd = Verbinding.CreateCommand();
+                cmd.Transaction = transactie; 
+        
+                foreach (var sql in regels)
+                {
+                    cmd.CommandText = sql;
+                    cmd.ExecuteNonQuery(); // Nu werkt het gegarandeerd met de transactie
+                }
+        
                 transactie.Commit();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                try
-                {
-                    transactie.Rollback();
-                }
-                finally
-                {
-                    transactie.Dispose();
-                }
+                try { transactie.Rollback(); } catch { /* Ignore secondary error */ }
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
             }
         }
 
         public void Dispose()
         {
             SluitVerbinding();
+            Verbinding.Dispose();
         }
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using StudentVolgSysteem.App.Services;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
-using StudentSysteem.Core.Data;
 using StudentSysteem.Core.Data.Helpers;
 using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;

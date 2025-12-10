@@ -3,6 +3,7 @@ using StudentSysteem.Core.Interfaces.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.App.ViewModels
 {

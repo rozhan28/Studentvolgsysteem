@@ -36,6 +36,8 @@ namespace StudentSysteem.Core.Data.Repositories
             try
             {
                 using var cmd = Verbinding.CreateCommand();
+                
+                
                 cmd.CommandText = @"INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
                                     VALUES (@toelichting, @datum, @tijd, @studentId);";
                 cmd.Parameters.AddWithValue("@toelichting", toelichting);
@@ -45,6 +47,11 @@ namespace StudentSysteem.Core.Data.Repositories
                 cmd.Parameters.AddWithValue("@studentId", studentId);
                 cmd.Transaction = transactie;
                 cmd.ExecuteNonQuery();
+                
+                using var testCmd = Verbinding.CreateCommand();
+                testCmd.CommandText = "INSERT INTO Feedback (toelichting) VALUES ('TEST DATA ZOU MOETEN WERKEN');"; 
+                testCmd.Transaction = transactie;
+                testCmd.ExecuteNonQuery();
 
                 transactie.Commit();
             }
