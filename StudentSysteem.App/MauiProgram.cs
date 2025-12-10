@@ -42,7 +42,7 @@ namespace StudentSysteem.App
 
             //Maak database tabbellen aan
             DatabaseVuller MaakTabellen = new();
-            MaakTabellen.TabelMaker();
+            MaakTabellen.TabelLader();
 
             //Laad database vuller
             DatabaseVuller vulTabel = new();

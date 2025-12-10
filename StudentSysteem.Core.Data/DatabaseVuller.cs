@@ -21,7 +21,7 @@ namespace StudentSysteem.Core.Data
         ];
         
         //Maakt tabbelen aan in database
-        public void TabelMaker()
+        public void TabelLader()
         {
             FeedbackRepository Feedback = new();
         }
