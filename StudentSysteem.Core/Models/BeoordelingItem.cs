@@ -18,7 +18,11 @@ namespace StudentSysteem.Core.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isUpdating;
-
+        
+        public int MaxExtraToelichting { get; } = 10;
+        
+        public bool KanExtraToelichtingToevoegen => ExtraToelichtingVak.Count < MaxExtraToelichting;
+    
         public string Titel { get; set; }
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
@@ -273,7 +277,10 @@ namespace StudentSysteem.Core.Models
         // --- Methods ---
         public void VoegExtraToelichtingToe()
         {
+            if (ExtraToelichtingVak.Count >= MaxExtraToelichting) {return;}
             ExtraToelichtingVak.Add(new ExtraToelichting());
+            
+            Notify(nameof(KanExtraToelichtingToevoegen));
             Notify(nameof(ExtraToelichtingVak));
         }
 

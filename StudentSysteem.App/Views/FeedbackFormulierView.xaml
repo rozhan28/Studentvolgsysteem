@@ -13,6 +13,8 @@
             <converters:InOntwikkelingConverter x:Key="InOntwikkeling"/>
             <converters:OpNiveauConverter x:Key="OpNiveau"/>
             <converters:BovenNiveauConverter x:Key="BovenNiveau"/>
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -166,7 +168,15 @@
                                             <Button Text="+ Voeg extra feedback toe"
                                                     HorizontalOptions="Center"
                                                     MaximumWidthRequest="250"
-                                                    Command="{Binding VoegExtraToelichtingToeCommand}"/>
+                                                    Command="{Binding VoegExtraToelichtingToeCommand}"
+                                                    IsVisible="{Binding KanExtraToelichtingToevoegen}"/>
+                                            
+                                            <!-- Maximale feedback label -->
+                                            <Label Text="Maximale feedback bereikt."
+                                                   IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource InvertBoolConverter}}"
+                                                   TextColor="Gray"
+                                                   HorizontalOptions="Center"
+                                                   FontAttributes="Italic" />
                                             
                                         </VerticalStackLayout>
                                     </Border>
