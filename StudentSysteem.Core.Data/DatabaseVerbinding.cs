@@ -11,10 +11,21 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseBestandsnaam = string.IsNullOrEmpty(databaseBestandsnaam) ? "StepWiseDbs.sqlite" : databaseBestandsnaam;
+            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
+            if (string.IsNullOrEmpty(databaseBestandsnaam))
+            {
+                databaseBestandsnaam = "StepWiseDbs.sqlite"; 
+            }
+            
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string dbPath = Path.Combine(baseDir, databaseBestandsnaam);
-            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True; Pooling=False; Cache=Shared";
+            string schoneBaseDir = baseDir.Trim();
+            string schoneBestandsnaam = databaseBestandsnaam.Trim();
+    
+            // 💡 Gebruik de schone strings voor de combinatie
+            string dbPath = Path.Combine(schoneBaseDir, schoneBestandsnaam); 
+
+            // ... (rest van de code, inclusief de vereenvoudigde connection string)
+            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True"; // 🚨 Gebruik deze vereenvoudigde string
             Verbinding = new SqliteConnection(dbConnection);
         }
 
