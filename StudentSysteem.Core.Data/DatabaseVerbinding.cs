@@ -13,13 +13,6 @@ namespace StudentSysteem.Core.Data
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
             databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
-            
-            if (string.IsNullOrEmpty(databaseBestandsnaam))
-            {
-                databaseBestandsnaam = "StepWiseDbs.sqlite"; // 👈 Fallback naar de werkende naam
-                Console.WriteLine("WAARSCHUWING: appsettings.json faalt, fallback naar StepWiseDbs.sqlite");
-            }
-            
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dbPath = Path.Combine(baseDir, databaseBestandsnaam);
             string dbConnection = $"Data Source={dbPath}; Foreign Keys=True; Pooling=False; Cache=Shared";
