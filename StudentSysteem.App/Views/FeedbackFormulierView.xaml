@@ -145,11 +145,6 @@
                                                     Placeholder="Voeg toelichting toe..."
                                                     Text="{Binding Toelichting}" />
 
-                                            <!-- Extra feedback knop -->
-                                            <Button Text="+ Voeg extra feedback toe"
-                                                    HorizontalOptions="Center"
-                                                    MaximumWidthRequest="250"/>
-
                                             <!-- Extra Toelichting CollectionView -->
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExtraToelichtingVak}" Spacing="10">
                                                 <BindableLayout.ItemTemplate>
@@ -160,6 +155,13 @@
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>
                                             </VerticalStackLayout>
+                                            
+                                            <!-- Extra feedback knop -->
+                                            <Button Text="+ Voeg extra feedback toe"
+                                                    HorizontalOptions="Center"
+                                                    MaximumWidthRequest="250"
+                                                    Command="{Binding VoegExtraToelichtingToeCommand}"/>
+                                            
                                         </VerticalStackLayout>
                                     </Border>
                                 </VerticalStackLayout>
