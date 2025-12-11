@@ -12,10 +12,10 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
+            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepwiseDb");
             if (string.IsNullOrEmpty(databaseBestandsnaam))
             {
-                databaseBestandsnaam = "StepWiseDbs.sqlite"; 
+                databaseBestandsnaam = "StepwiseDbs.sqlite"; 
             }
             
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);

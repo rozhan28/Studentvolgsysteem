@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class CriteriumRepository : DatabaseVerbinding, ICriteriumRepository

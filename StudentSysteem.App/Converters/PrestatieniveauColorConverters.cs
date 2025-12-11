@@ -2,8 +2,7 @@ using System.Globalization;
 
 namespace StudentSysteem.App.Converters
 {
-    // Hulpfunctie om een kleur resource op te zoeken
-    public static class ResourceHelper
+    public static class PrestatieniveauColorConverters
     {
         public static Color GetColorResource(string resourceKey)
         {
@@ -31,7 +30,7 @@ namespace StudentSysteem.App.Converters
             if (value is bool isInOntwikkeling && isInOntwikkeling)
             {
                 System.Diagnostics.Debug.WriteLine("InOntwikkelingConverter - Retrieving 'InOntwikkeling' color from Resources");
-                return ResourceHelper.GetColorResource("InOntwikkeling"); 
+                return PrestatieniveauColorConverters.GetColorResource("InOntwikkeling"); 
             }
             
             System.Diagnostics.Debug.WriteLine("InOntwikkelingConverter - Returning Transparent");
@@ -52,7 +51,7 @@ namespace StudentSysteem.App.Converters
             if (value is bool isOpNiveau && isOpNiveau)
             {
                 System.Diagnostics.Debug.WriteLine("OpNiveauConverter - Retrieving 'OpNiveau' color from Resources");
-                return ResourceHelper.GetColorResource("OpNiveau");
+                return PrestatieniveauColorConverters.GetColorResource("OpNiveau");
             }
             
             System.Diagnostics.Debug.WriteLine("OpNiveauConverter - Returning Transparent");
@@ -73,7 +72,7 @@ namespace StudentSysteem.App.Converters
             if (value is bool isBovenNiveau && isBovenNiveau)
             {
                 System.Diagnostics.Debug.WriteLine("BovenNiveauConverter - Retrieving 'BovenNiveau' color from Resources");
-                return ResourceHelper.GetColorResource("BovenNiveau");
+                return PrestatieniveauColorConverters.GetColorResource("BovenNiveau");
             }
             
             System.Diagnostics.Debug.WriteLine("BovenNiveauConverter - Returning Transparent");

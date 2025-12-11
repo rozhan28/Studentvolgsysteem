@@ -1,5 +1,4 @@
-using StudentVolgSysteem.Core.Services;
-using Microsoft.Extensions.DependencyInjection;
+using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.Views;
 

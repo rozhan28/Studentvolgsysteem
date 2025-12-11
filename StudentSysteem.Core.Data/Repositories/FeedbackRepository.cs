@@ -1,7 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
-using StudentSysteem.Core.Data.Helpers;
+﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
-using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -23,24 +21,6 @@ namespace StudentSysteem.Core.Data.Repositories
             VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"
             ];
             VoegMeerdereInMetTransactie(VoegFeedback);
-            VerwijderInhoud("Feedback");
-        }
-        public void VerwijderInhoud(string tableName)
-        {
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentException("Table name cannot be empty.", nameof(tableName));
-
-            OpenVerbinding();
-            try
-            {
-                using var command = Verbinding.CreateCommand();
-                command.CommandText = $"DELETE FROM {tableName};";
-                command.ExecuteNonQuery();
-            }
-            finally
-            {
-                SluitVerbinding();
-            }
         }
 
         public void VoegMeerdereInMetTransactie(List<string> regels)

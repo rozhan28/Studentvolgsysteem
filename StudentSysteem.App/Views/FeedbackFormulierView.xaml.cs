@@ -1,6 +1,6 @@
 using StudentSysteem.App.ViewModels;
-using StudentVolgSysteem.Core.Services;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.Views
 {

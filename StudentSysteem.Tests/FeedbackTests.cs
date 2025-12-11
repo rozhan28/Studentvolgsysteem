@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Services;
-using StudentVolgSysteem.Core.Services;
 
 namespace StudentSysteem.Tests.Services
 {

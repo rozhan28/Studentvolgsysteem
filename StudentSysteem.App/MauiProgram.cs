@@ -1,15 +1,13 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using StudentVolgSysteem.App.Services;
-using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
-using StudentSysteem.Core.Data.Helpers;
-using StudentVolgSysteem.Core.Services;
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Data.Repositories;
-using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.App.ViewModels;
 using StudentSysteem.Core.Services;
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Data.Repositories;
 
 namespace StudentSysteem.App
 {
