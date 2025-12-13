@@ -54,6 +54,11 @@ else
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<DbConnectieHelper>();
 
+            // Prestatiedoelen
+            builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
+            builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+
+
             // Repository
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
