@@ -65,8 +65,8 @@ namespace StudentSysteem.App.ViewModels
             Beoordelingen = new ObservableCollection<BeoordelingItem>(
                 doelen.Select(d => new BeoordelingItem
                 {
-                    Titel = d.Beschrijving,              // prestatiedoel tekst
-                    PrestatiedoelNiveau = d.Niveau,      // "Op niveau" / "Boven niveau"
+                    Titel = d.Beschrijving,              
+                    PrestatiedoelNiveau = d.Niveau,      
                     Vaardigheid = $"Criterium {d.CriteriumId}"
                 })
             );
