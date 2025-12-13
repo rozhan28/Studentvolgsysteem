@@ -49,7 +49,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<DbConnectieHelper>();
 
 
-            // Repositories DEZE VOLGORDE AANHOUDEN AUB (anders haalt hij de db niet op!!)
+            // Repositories DEZE VOLGORDE AANHOUDEN AUB (anders crasht de solution!!)
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();

@@ -11,13 +11,17 @@ namespace StudentSysteem.Core.Data.Repositories
             : base(dbConnectieHelper)
         {
             MaakTabel(@"
-            CREATE TABLE IF NOT EXISTS Prestatiedoel (
-                processtap_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                niveau TEXT,
-                beschrijving TEXT,
-                criterium_id INTEGER,
-                FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-            )");
+                    CREATE TABLE IF NOT EXISTS Prestatiedoel (
+                        processtap_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        niveau TEXT NOT NULL,
+                        beschrijving TEXT NOT NULL,
+                        criterium_id INTEGER NOT NULL,
+
+                        UNIQUE (niveau, criterium_id),
+
+                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+                    )");
+
 
             List<string> seed = new()
         {
