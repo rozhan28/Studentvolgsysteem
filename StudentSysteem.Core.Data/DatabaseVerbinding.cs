@@ -13,10 +13,6 @@ namespace StudentSysteem.Core.Data
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
             databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepwiseDb");
-            if (string.IsNullOrEmpty(databaseBestandsnaam))
-            {
-                databaseBestandsnaam = "StepwiseDbs.sqlite"; 
-            }
             
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string schoneBaseDir = baseDir.Trim();
@@ -80,6 +76,7 @@ namespace StudentSysteem.Core.Data
                 SluitVerbinding();
             }
         }
+        
         public void VerwijderInhoud(string tableName)
         {
             if (string.IsNullOrWhiteSpace(tableName))
