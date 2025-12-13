@@ -10,7 +10,8 @@ namespace StudentSysteem.App.Views
             IZelfEvaluatieService zelfEvaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
-            IFeedbackFormulierService feedbackFormulierService)
+            IFeedbackFormulierService feedbackFormulierService,
+            IPrestatiedoelService prestatiedoelService)
         {
             InitializeComponent();
 
@@ -21,8 +22,10 @@ namespace StudentSysteem.App.Views
                 navigatieService,
                 meldingService,
                 feedbackFormulierService,
+                prestatiedoelService,
                 isDocent
             );
         }
+
     }
 }
