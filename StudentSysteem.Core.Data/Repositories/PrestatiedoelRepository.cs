@@ -35,23 +35,35 @@ namespace StudentSysteem.Core.Data.Repositories
         {
             List<Prestatiedoel> prestatiedoelen = new();
 
-            using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"SELECT processtap_id, niveau, beschrijving, criterium_id
-                                FROM Prestatiedoel";
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                prestatiedoelen.Add(new Prestatiedoel
+                OpenVerbinding(); 
+
+                using var cmd = Verbinding.CreateCommand();
+                cmd.CommandText = @"
+            SELECT processtap_id, niveau, beschrijving, criterium_id
+            FROM Prestatiedoel
+        ";
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    Id = reader.GetInt32(0),
-                    Niveau = reader.GetString(1),
-                    Beschrijving = reader.GetString(2),
-                    CriteriumId = reader.IsDBNull(3) ? null : reader.GetInt32(3)
-                });
+                    prestatiedoelen.Add(new Prestatiedoel
+                    {
+                        Id = reader.GetInt32(0),
+                        Niveau = reader.GetString(1),
+                        Beschrijving = reader.GetString(2),
+                        CriteriumId = reader.IsDBNull(3) ? null : reader.GetInt32(3)
+                    });
+                }
+            }
+            finally
+            {
+                SluitVerbinding(); 
             }
 
             return prestatiedoelen;
         }
+
     }
 }
