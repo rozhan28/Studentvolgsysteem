@@ -6,12 +6,10 @@ namespace StudentSysteem.Core.Services
     public class FeedbackFormulierService : IFeedbackFormulierService
     {
         private readonly IFeedbackRepository _feedbackRepository;
-        private readonly ICriteriumRepository _criteriumRepository;
 
-        public FeedbackFormulierService(IFeedbackRepository feedbackRepository, ICriteriumRepository criteriumRepository)
+        public FeedbackFormulierService(IFeedbackRepository feedbackRepository)
         {
             _feedbackRepository = feedbackRepository;
-            _criteriumRepository = criteriumRepository;
         }
 
         public void SlaToelichtingOp(string toelichting, int studentId = 1)
