@@ -26,9 +26,10 @@ namespace StudentSysteem.Core.Data
                             + schoneBestandsnaam;
             string dbConnection = $"Data Source={dbPath}; Foreign Keys=True";
             Verbinding = new SqliteConnection(dbConnection);
-            
-            //Vindt locatie van .sqlite path.
-            //Debug.WriteLine("DB PATH: " + dbPath);
+
+            //Vindt locatie van .sqlite path. C:\\Users\\rozha\\AppData\\Local\\StepwiseDbs.sqlite
+
+            Debug.WriteLine("DB PATH: " + dbPath);
         }
 
         protected void OpenVerbinding()

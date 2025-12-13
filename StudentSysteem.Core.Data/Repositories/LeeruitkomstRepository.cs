@@ -10,9 +10,9 @@ namespace StudentSysteem.Core.Data.Repositories
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Leeruitkomst (
                     [leeruitkomst_id] INTEGER PRIMARY KEY AUTOINCREMENT,
                     [naam] VARCHAR(50),
-                    [hboi_competentie] VARCHAR(50))");
+                    [hboi_activiteit] VARCHAR(50))");
 
-            List<string> insertQueries = [@"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_competentie) 
+            List<string> insertQueries = [@"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
                                         VALUES(NULL, 'MockData2', NULL)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }
