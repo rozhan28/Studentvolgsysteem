@@ -12,7 +12,7 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepwiseDb");
+            databaseBestandsnaam = dbConnectieHelper.ConnectieStringWaarde("StepwiseDb");
             
             string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string schoneBaseDir = baseDir.Trim();
