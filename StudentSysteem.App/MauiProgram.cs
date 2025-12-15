@@ -8,6 +8,8 @@ using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Data.Repositories;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace StudentSysteem.App
 {
