@@ -18,14 +18,19 @@ namespace StudentSysteem.Core.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isUpdating;
-        
-        public int MaxExtraToelichting { get; } = 10;
-        
-        public bool KanExtraToelichtingToevoegen => ExtraToelichtingVak.Count < MaxExtraToelichting;
-    
+
         public string Titel { get; set; }
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
+        
+        public bool KanExtraToelichtingToevoegen
+        {
+            get
+            {
+                return ExtraToelichtingVak.Count < (_beschikbareOpties.Count-1);
+            }
+        }
+
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -52,6 +57,8 @@ namespace StudentSysteem.Core.Models
 
         public ICommand VoegExtraToelichtingToeCommand { get; }
         public List<string> Opties { get; } = new() { "Algemeen", "Criteria 1", "Criteria 2", "Criteria 3" };
+        private List<string> _beschikbareOpties = new List<string> { "Algemeen", "Criteria 1", "Criteria 2", "Criteria 3" };
+
         private string _geselecteerdeOptie = "Toelichting gekoppeld aan...";
         public string GeselecteerdeOptie
         {
@@ -277,9 +284,13 @@ namespace StudentSysteem.Core.Models
         // --- Methods ---
         public void VoegExtraToelichtingToe()
         {
-            if (ExtraToelichtingVak.Count >= MaxExtraToelichting) {return;}
-            ExtraToelichtingVak.Add(new ExtraToelichting());
-            
+            if (!KanExtraToelichtingToevoegen) {return;}
+            var nieuweToelichting = new ExtraToelichting 
+            { 
+                ParentBeoordelingItem = this
+            };
+    
+            ExtraToelichtingVak.Add(nieuweToelichting);
             Notify(nameof(KanExtraToelichtingToevoegen));
             Notify(nameof(ExtraToelichtingVak));
         }
@@ -307,16 +318,39 @@ namespace StudentSysteem.Core.Models
             Notify(nameof(IsBovenNiveau));
         }
 
+
+        public List<string> GetBeschikbareOpties()
+        {
+            var gebruikteOpties = new List<string>();
+            
+            if (GeselecteerdeOptie != "Toelichting gekoppeld aan...")
+            {
+                gebruikteOpties.Add(GeselecteerdeOptie);
+            }
+            
+            foreach (var extra in ExtraToelichtingVak)
+            {
+                if (extra.GeselecteerdeOptie != "Toelichting gekoppeld aan...")
+                {
+                    gebruikteOpties.Add(extra.GeselecteerdeOptie);
+                }
+            }
+            
+            return _beschikbareOpties.Where(x => !gebruikteOpties.Contains(x)).ToList();
+        }
+
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
         private async void ShowOptiesPicker()
         {
+            var beschikbareOpties = GetBeschikbareOpties();
+            
             var result = await Application.Current.MainPage.DisplayActionSheet(
                 "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
-                Opties.ToArray()
+                beschikbareOpties.ToArray()
             );
 
             if (!string.IsNullOrEmpty(result) && result != "Annuleren")

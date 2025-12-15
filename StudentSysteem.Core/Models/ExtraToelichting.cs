@@ -5,7 +5,9 @@ using System.Windows.Input;
 namespace StudentSysteem.Core.Models
 {
     public class ExtraToelichting : INotifyPropertyChanged
+    
     {
+        public BeoordelingItem ParentBeoordelingItem { get; set; }
         private string _tekst;
         public string Tekst
         {
@@ -17,13 +19,7 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        public List<string> Opties { get; } = new List<string>
-        {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
+        public List<string> Opties { get; } = new List<string> { "Algemeen", "Criteria 1", "Criteria 2", "Criteria 3" };
 
         private string _geselecteerdeOptie = "Toelichting gekoppeld aan...";
         public string GeselecteerdeOptie
@@ -45,17 +41,17 @@ namespace StudentSysteem.Core.Models
 
         private async void ShowOptiesPicker()
         {
-            var result = await Application.Current.MainPage.DisplayActionSheet(
+            var beschikbareOpties = ParentBeoordelingItem.GetBeschikbareOpties();
+
+            var selectedOption = await Application.Current.MainPage.DisplayActionSheet(
                 "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
-                Opties.ToArray()
+                beschikbareOpties.ToArray()
             );
 
-            if (!string.IsNullOrEmpty(result) && result != "Annuleren")
-            {
-                GeselecteerdeOptie = result;
-            }
+            if (!string.IsNullOrEmpty(selectedOption) && selectedOption != "Annuleren")
+                GeselecteerdeOptie = selectedOption;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
