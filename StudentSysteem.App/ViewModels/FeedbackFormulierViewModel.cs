@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
@@ -13,19 +13,18 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
-        private readonly IPrestatiedoelService _prestatiedoelService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
 
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
-        public ObservableCollection<BeoordelingItem> Beoordelingen
+        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
+
+        public List<string> Opties { get; } = new()
         {
-            get => _beoordelingen;
-            set
-            {
-                _beoordelingen = value;
-                OnPropertyChanged(nameof(Beoordelingen));
-            }
-        }
+            "Algemeen",
+            "Criteria 1",
+            "Criteria 2",
+            "Criteria 3"
+        };
 
         private string _statusMelding;
         public string StatusMelding
@@ -45,33 +44,38 @@ namespace StudentSysteem.App.ViewModels
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
-            IPrestatiedoelService prestatiedoelService,
             bool isDocent = false)
         {
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
-            _prestatiedoelService = prestatiedoelService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
-            LaadPrestatiedoelen();
-        }
-        private void LaadPrestatiedoelen()
-        {
-            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-
-            Beoordelingen = new ObservableCollection<BeoordelingItem>(
-                doelen.Select(d => new BeoordelingItem
+            Beoordelingen = new ObservableCollection<BeoordelingItem>
+            {
+                new BeoordelingItem
                 {
-                    Titel = d.Beschrijving,              
-                    PrestatiedoelNiveau = d.Niveau,      
-                    Vaardigheid = $"Criterium {d.CriteriumId}"
-                })
-            );
+                    Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Maken domeinmodel",
+                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
+                },
+                new BeoordelingItem
+                {
+                    Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Bestuderen probleemstelling",
+                    Beschrijving = "Het probleem achterhalen"
+                },
+                new BeoordelingItem
+                {
+                    Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
+                    Vaardigheid = "Beschrijven stakeholders",
+                    Beschrijving = "Het maken van een stakeholderanalyse"
+                }
+            };
         }
-
 
         private async Task BewaarReflectieAsync()
         {
@@ -85,18 +89,23 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
+                // Zelfevaluatie opslaan 
+                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+
+                // Toelichtingen koppelen aan die zelfevaluatie
                 foreach (var item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
                     {
-                        _feedbackService.SlaToelichtingOp(item.Toelichting, 1);
+                        _feedbackService.SlaToelichtingOp(
+                            item.Toelichting,
+                            zelfEvaluatieId);
                     }
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Toelichting is opgeslagen!"
-                );
+                    "Zelfevaluatie en toelichtingen zijn opgeslagen!");
             }
             catch (Exception ex)
             {
@@ -125,11 +134,11 @@ namespace StudentSysteem.App.ViewModels
 
         private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {
-            return item.InOntwikkeling
-                || item.OpNiveauSyntaxCorrect
-                || item.OpNiveauVastgelegd
-                || item.OpNiveauDomeinWeerspiegelt
-                || item.BovenNiveauVolledig;
+            return item.InOntwikkeling ||
+                   item.OpNiveauSyntaxCorrect ||
+                   item.OpNiveauVastgelegd ||
+                   item.OpNiveauDomeinWeerspiegelt ||
+                   item.BovenNiveauVolledig;
         }
 
         protected void OnPropertyChanged(string propertyName) =>
