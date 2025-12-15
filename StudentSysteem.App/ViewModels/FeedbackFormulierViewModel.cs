@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using StudentSysteem.Core.Models;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.ViewModels
 {
@@ -13,18 +13,20 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
+        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
 
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
-
-        public List<string> Opties { get; } = new()
+        private ObservableCollection<BeoordelingItem> _beoordelingen;
+        public ObservableCollection<BeoordelingItem> Beoordelingen
         {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
+            get => _beoordelingen;
+            set
+            {
+                _beoordelingen = value;
+                OnPropertyChanged(nameof(Beoordelingen));
+            }
+        }
 
         private string _statusMelding;
         public string StatusMelding
@@ -44,37 +46,33 @@ namespace StudentSysteem.App.ViewModels
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
+            IPrestatiedoelService prestatiedoelService,
             bool isDocent = false)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
+            _prestatiedoelService = prestatiedoelService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
-            Beoordelingen = new ObservableCollection<BeoordelingItem>
-            {
-                new BeoordelingItem
+            LaadPrestatiedoelen();
+        }
+
+        private void LaadPrestatiedoelen()
+        {
+            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+
+            Beoordelingen = new ObservableCollection<BeoordelingItem>(
+                doelen.Select(d => new BeoordelingItem
                 {
-                    Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Maken domeinmodel",
-                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
-                },
-                new BeoordelingItem
-                {
-                    Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Bestuderen probleemstelling",
-                    Beschrijving = "Het probleem achterhalen"
-                },
-                new BeoordelingItem
-                {
-                    Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Beschrijven stakeholders",
-                    Beschrijving = "Het maken van een stakeholderanalyse"
-                }
-            };
+                    Titel = d.Beschrijving,
+                    Vaardigheid = $"Criterium {d.CriteriumId}",
+                    PrestatiedoelId = d.Id
+                })
+            );
         }
 
         private async Task BewaarReflectieAsync()
@@ -89,23 +87,24 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                // Zelfevaluatie opslaan 
+                // 1️⃣ Zelfevaluatie opslaan
                 int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
-                // Toelichtingen koppelen aan die zelfevaluatie
+                // 2️⃣ Toelichtingen opslaan
                 foreach (var item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
                     {
                         _feedbackService.SlaToelichtingOp(
                             item.Toelichting,
-                            zelfEvaluatieId);
+                            zelfEvaluatieId
+                        );
                     }
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Zelfevaluatie en toelichtingen zijn opgeslagen!");
+                    "Zelfevaluatie en feedback zijn opgeslagen!");
             }
             catch (Exception ex)
             {
@@ -122,7 +121,9 @@ namespace StudentSysteem.App.ViewModels
                 bool prestatieOk = ValideerPrestatieNiveau(item);
                 item.IsPrestatieNiveauInvalid = !prestatieOk;
 
-                bool toelichtingOk = !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
+                bool toelichtingOk =
+                    !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
+
                 item.IsToelichtingInvalid = !toelichtingOk;
 
                 if (!prestatieOk || !toelichtingOk)
@@ -134,11 +135,11 @@ namespace StudentSysteem.App.ViewModels
 
         private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {
-            return item.InOntwikkeling ||
-                   item.OpNiveauSyntaxCorrect ||
-                   item.OpNiveauVastgelegd ||
-                   item.OpNiveauDomeinWeerspiegelt ||
-                   item.BovenNiveauVolledig;
+            return item.InOntwikkeling
+                || item.OpNiveauSyntaxCorrect
+                || item.OpNiveauVastgelegd
+                || item.OpNiveauDomeinWeerspiegelt
+                || item.BovenNiveauVolledig;
         }
 
         protected void OnPropertyChanged(string propertyName) =>
