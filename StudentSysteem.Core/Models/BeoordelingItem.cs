@@ -18,6 +18,7 @@ namespace StudentSysteem.Core.Models
 
         public int PrestatiedoelId { get; set; }
 
+        public string PrestatiedoelBeschrijving { get; set; }
 
         private bool _isUpdating;
 
