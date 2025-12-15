@@ -13,6 +13,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
 
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
@@ -29,18 +30,23 @@ namespace StudentSysteem.App.ViewModels
         public string StatusMelding
         {
             get => _statusMelding;
-            set { _statusMelding = value; OnPropertyChanged(nameof(StatusMelding)); }
+            set
+            {
+                _statusMelding = value;
+                OnPropertyChanged(nameof(StatusMelding));
+            }
         }
 
         public ICommand OpslaanCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfevaluatieService,
+            IZelfEvaluatieService zelfEvaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             bool isDocent = false)
         {
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
@@ -48,20 +54,22 @@ namespace StudentSysteem.App.ViewModels
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
-            // Startdata voor beoordelingitems
             Beoordelingen = new ObservableCollection<BeoordelingItem>
-{
-                new BeoordelingItem {
+            {
+                new BeoordelingItem
+                {
                     Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Maken domeinmodel",
                     Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
                 },
-                new BeoordelingItem {
+                new BeoordelingItem
+                {
                     Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Bestuderen probleemstelling",
                     Beschrijving = "Het probleem achterhalen"
                 },
-                new BeoordelingItem {
+                new BeoordelingItem
+                {
                     Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Beschrijven stakeholders",
                     Beschrijving = "Het maken van een stakeholderanalyse"
@@ -81,13 +89,23 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
+                // Zelfevaluatie opslaan 
+                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+
+                // Toelichtingen koppelen aan die zelfevaluatie
                 foreach (var item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
-                        _feedbackService.SlaToelichtingOp(item.Toelichting, 1);
+                    {
+                        _feedbackService.SlaToelichtingOp(
+                            item.Toelichting,
+                            zelfEvaluatieId);
+                    }
                 }
 
-                await _meldingService.ToonMeldingAsync("Succes", "Toelichting is opgeslagen!");
+                await _meldingService.ToonMeldingAsync(
+                    "Succes",
+                    "Zelfevaluatie en toelichtingen zijn opgeslagen!");
             }
             catch (Exception ex)
             {
