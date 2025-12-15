@@ -1,9 +1,6 @@
 ﻿using StudentSysteem.Core.Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace StudentVolgSysteem.App.Services
+namespace StudentSysteem.Core.Services
 {
     public class NavigatieService : INavigatieService
     {

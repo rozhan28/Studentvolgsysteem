@@ -1,8 +1,8 @@
-﻿using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Interfaces.Services;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
@@ -67,8 +67,6 @@ namespace StudentSysteem.App.ViewModels
                     Beschrijving = "Het maken van een stakeholderanalyse"
                 }
             };
-
-        
         }
 
         private async Task BewaarReflectieAsync()

@@ -11,9 +11,16 @@ namespace StudentSysteem.Core.Data.Helpers
             _configuration = configuration;
         }
         
-        public string ConnectionStringValue(string name)
+        public string ConnectieStringWaarde(string naam)
         {
-            return _configuration.GetConnectionString(name);
+            string connectieString = _configuration.GetConnectionString(naam);
+            
+            if (string.IsNullOrWhiteSpace(connectieString))
+            {
+                throw new InvalidOperationException(
+                    $"Connection string '{naam}' is niet geconfigureerd in appsettings.json.");
+            }
+            return connectieString;
         }
     }
 }

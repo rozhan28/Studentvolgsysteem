@@ -1,7 +1,7 @@
 ﻿using StudentSysteem.Core.Interfaces.Services;
-using StudentVolgSysteem.Core.Models;
+using StudentSysteem.Core.Models;
 
-namespace StudentVolgSysteem.Core.Services
+namespace StudentSysteem.Core.Services
 {
     public class ZelfEvaluatieService : IZelfEvaluatieService
     {

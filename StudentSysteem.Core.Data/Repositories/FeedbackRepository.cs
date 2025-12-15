@@ -1,6 +1,5 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
-using Microsoft.Data.Sqlite;
-using StudentSysteem.Core.Data.Helpers;
+﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -36,6 +35,8 @@ namespace StudentSysteem.Core.Data.Repositories
             try
             {
                 using var cmd = Verbinding.CreateCommand();
+                
+                
                 cmd.CommandText = @"INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
                                     VALUES (@toelichting, @datum, @tijd, @studentId);";
                 cmd.Parameters.AddWithValue("@toelichting", toelichting);

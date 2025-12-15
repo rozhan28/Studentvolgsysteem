@@ -1,7 +1,7 @@
-﻿using StudentSysteem.Core.Data.Helpers;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Data.Helpers;
 using System.Data;
-using Microsoft.Maui.Storage;
+using System.Diagnostics;
 
 namespace StudentSysteem.Core.Data
 {
@@ -12,20 +12,19 @@ namespace StudentSysteem.Core.Data
 
         public DatabaseVerbinding(DbConnectieHelper dbConnectieHelper)
         {
-            databaseBestandsnaam = dbConnectieHelper.ConnectionStringValue("StepWiseDb");
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, databaseBestandsnaam);
-            string dbConnection = $"Data Source={dbPath}";
+            databaseBestandsnaam = dbConnectieHelper.ConnectieStringWaarde("StepwiseDb");
+            
+            string baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string schoneBaseDir = baseDir.Trim();
+            string schoneBestandsnaam = databaseBestandsnaam.Trim();
+            string dbPath = schoneBaseDir.TrimEnd(Path.DirectorySeparatorChar)
+                            + Path.DirectorySeparatorChar
+                            + schoneBestandsnaam;
+            string dbConnection = $"Data Source={dbPath}; Foreign Keys=True";
             Verbinding = new SqliteConnection(dbConnection);
-
-            /*
-            // OPTIONEEL: Zorg ervoor dat de database bestaat als deze voor de eerste keer wordt gestart
-            // Dit is een goede gewoonte bij SQLite
-            if (!File.Exists(dbPath))
-            {
-                // Roep hier logica aan om de database en tabellen aan te maken.
-                // U kunt dit het beste in de klasse die dit erft regelen.
-            }
-            */
+            
+            //Vindt locatie van .sqlite path.
+            //Debug.WriteLine("DB PATH: " + dbPath);
         }
 
         protected void OpenVerbinding()
@@ -47,17 +46,7 @@ namespace StudentSysteem.Core.Data
                 command.ExecuteNonQuery();
             }
         }
-
-        /*
-        protected void ExecuteNonQuery(string sql, SqliteTransaction? transaction = null)
-        {
-            using var command = Verbinding.CreateCommand();
-            command.CommandText = sql;
-            if (transaction != null) command.Transaction = transaction;
-            command.ExecuteNonQuery();
-        }
-        */
-
+        
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             OpenVerbinding();
@@ -65,26 +54,51 @@ namespace StudentSysteem.Core.Data
 
             try
             {
-                regels.ForEach(l => Verbinding.ExecuteNonQuery(l));
+                using var cmd = Verbinding.CreateCommand();
+                cmd.Transaction = transactie; 
+        
+                foreach (var sql in regels)
+                {
+                    cmd.CommandText = sql;
+                    cmd.ExecuteNonQuery();
+                }
+        
                 transactie.Commit();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                try
-                {
-                    transactie.Rollback();
-                }
-                finally
-                {
-                    transactie.Dispose();
-                }
+                try { transactie.Rollback(); } catch { /* Ignore secondary error */ }
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
+        }
+        
+        public void VerwijderInhoud(string tableName)
+        {
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new ArgumentException("Table name cannot be empty.", nameof(tableName));
+
+            OpenVerbinding();
+            try
+            {
+                using var command = Verbinding.CreateCommand();
+                command.CommandText = $"DELETE FROM {tableName};";
+                command.ExecuteNonQuery();
+            }
+            finally
+            {
+                SluitVerbinding();
             }
         }
 
         public void Dispose()
         {
             SluitVerbinding();
+            Verbinding.Dispose();
         }
     }
 }

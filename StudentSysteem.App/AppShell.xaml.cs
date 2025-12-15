@@ -9,7 +9,7 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-        this.Title = "Feedbackformulier";
+        Title = "Feedbackformulier";
         Routing.RegisterRoute(nameof(FeedbackFormulierViewModel), typeof(FeedbackFormulierViewModel));
         
         gebruikersNaam = "Naam";

@@ -1,4 +1,4 @@
-﻿namespace StudentVolgSysteem.Core.Models
+﻿namespace StudentSysteem.Core.Models
 {
     public class ZelfEvaluatie
     {

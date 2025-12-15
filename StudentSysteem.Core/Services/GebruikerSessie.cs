@@ -1,4 +1,4 @@
-﻿namespace StudentVolgSysteem.Core.Services
+﻿namespace StudentSysteem.Core.Services
 {
     public static class GebruikerSessie
     {

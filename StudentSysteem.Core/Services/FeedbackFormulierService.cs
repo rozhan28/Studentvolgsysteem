@@ -1,5 +1,4 @@
-﻿using System;
-using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.Core.Services

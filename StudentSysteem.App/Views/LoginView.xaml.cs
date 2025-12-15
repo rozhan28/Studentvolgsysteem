@@ -1,4 +1,4 @@
-using StudentVolgSysteem.Core.Services;
+using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.Views;
 
