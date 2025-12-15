@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using StudentSysteem.Core.Interfaces.Services;
@@ -14,6 +14,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
 
         private ObservableCollection<BeoordelingItem> _beoordelingen;
@@ -48,6 +49,7 @@ namespace StudentSysteem.App.ViewModels
             IPrestatiedoelService prestatiedoelService,
             bool isDocent = false)
         {
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
@@ -58,6 +60,7 @@ namespace StudentSysteem.App.ViewModels
 
             LaadPrestatiedoelen();
         }
+
         private void LaadPrestatiedoelen()
         {
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
@@ -65,13 +68,12 @@ namespace StudentSysteem.App.ViewModels
             Beoordelingen = new ObservableCollection<BeoordelingItem>(
                 doelen.Select(d => new BeoordelingItem
                 {
-                    Titel = d.Beschrijving,              // prestatiedoel tekst
-                    PrestatiedoelNiveau = d.Niveau,      // "Op niveau" / "Boven niveau"
-                    Vaardigheid = $"Criterium {d.CriteriumId}"
+                    Titel = d.Beschrijving,
+                    Vaardigheid = $"Criterium {d.CriteriumId}",
+                    PrestatiedoelId = d.Id
                 })
             );
         }
-
 
         private async Task BewaarReflectieAsync()
         {
@@ -85,18 +87,24 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
+                // 1️⃣ Zelfevaluatie opslaan
+                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+
+                // 2️⃣ Toelichtingen opslaan
                 foreach (var item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
                     {
-                        _feedbackService.SlaToelichtingOp(item.Toelichting, 1);
+                        _feedbackService.SlaToelichtingOp(
+                            item.Toelichting,
+                            zelfEvaluatieId
+                        );
                     }
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Toelichting is opgeslagen!"
-                );
+                    "Zelfevaluatie en feedback zijn opgeslagen!");
             }
             catch (Exception ex)
             {
@@ -113,7 +121,9 @@ namespace StudentSysteem.App.ViewModels
                 bool prestatieOk = ValideerPrestatieNiveau(item);
                 item.IsPrestatieNiveauInvalid = !prestatieOk;
 
-                bool toelichtingOk = !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
+                bool toelichtingOk =
+                    !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
+
                 item.IsToelichtingInvalid = !toelichtingOk;
 
                 if (!prestatieOk || !toelichtingOk)

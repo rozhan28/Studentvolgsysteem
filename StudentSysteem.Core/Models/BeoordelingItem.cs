@@ -16,6 +16,9 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public int PrestatiedoelId { get; set; }
+
+
         private bool _isUpdating;
 
         public string Titel { get; set; }
