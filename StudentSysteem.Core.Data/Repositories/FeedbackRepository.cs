@@ -23,11 +23,6 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(VoegFeedback);
         }
 
-        public void VoegMeerdereInMetTransactie(List<string> regels)
-        {
-            base.VoegMeerdereInMetTransactie(regels);
-        }
-
         public void VoegToelichtingToe(string toelichting, int studentId)
         {
             OpenVerbinding();

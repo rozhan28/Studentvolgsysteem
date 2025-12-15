@@ -33,6 +33,10 @@ namespace StudentSysteem.Core.Models
                 Notify(nameof(IsExpanded));
             }
         }
+        public string PrestatiedoelNiveau { get; set; } = string.Empty;
+
+
+
 
         private ObservableCollection<ExtraToelichting> _extraToelichtingVak = new ObservableCollection<ExtraToelichting>();
         public ObservableCollection<ExtraToelichting> ExtraToelichtingVak

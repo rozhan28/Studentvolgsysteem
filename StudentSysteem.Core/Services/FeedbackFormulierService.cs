@@ -25,4 +25,3 @@ namespace StudentSysteem.Core.Services
     }
 }
 
-
