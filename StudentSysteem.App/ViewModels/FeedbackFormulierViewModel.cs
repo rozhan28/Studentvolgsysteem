@@ -44,7 +44,7 @@ namespace StudentSysteem.App.ViewModels
             _prestatiedoelService =  prestatiedoelService;
             _isDocent = isDocent;
 
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
+            OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>
             {
@@ -69,7 +69,7 @@ namespace StudentSysteem.App.ViewModels
             };
         }
 
-        private async Task BewaarReflectieAsync()
+        private async Task BewaarEvaluatieAsync()
         {
             StatusMelding = string.Empty;
 
