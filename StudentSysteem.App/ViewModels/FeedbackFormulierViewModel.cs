@@ -9,23 +9,13 @@ namespace StudentSysteem.App.ViewModels
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly bool _isDocent;
-
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
-
-        public List<string> Opties { get; } = new()
-        {
-            "Algemeen",
-            "Criteria 1",
-            "Criteria 2",
-            "Criteria 3"
-        };
-
         private string _statusMelding;
         public string StatusMelding
         {
@@ -44,12 +34,14 @@ namespace StudentSysteem.App.ViewModels
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
+            IPrestatiedoelService prestatiedoelService,
             bool isDocent = false)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
+            _prestatiedoelService =  prestatiedoelService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
