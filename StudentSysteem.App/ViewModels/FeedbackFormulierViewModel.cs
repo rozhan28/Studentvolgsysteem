@@ -1,8 +1,9 @@
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.ViewModels
 {
@@ -18,6 +19,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly ICriteriumService _criteriumService;
         private readonly bool _isDocent;
 
         private ObservableCollection<BeoordelingItem> _beoordelingen;
@@ -50,6 +52,7 @@ namespace StudentSysteem.App.ViewModels
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
+            ICriteriumService criteriumService,
             bool isDocent = false)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
@@ -57,6 +60,7 @@ namespace StudentSysteem.App.ViewModels
             _meldingService = meldingService;
             _feedbackService = feedbackService;
             _prestatiedoelService = prestatiedoelService;
+            _criteriumService = criteriumService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
@@ -69,17 +73,21 @@ namespace StudentSysteem.App.ViewModels
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>(
-                doelen.Select(d => new BeoordelingItem
-                {
-                    PrestatiedoelId = d.Id,
+              doelen.Select(d => new BeoordelingItem
+              {
+                  PrestatiedoelId = d.Id,
+                  Titel = $"Prestatiedoel {d.Id}",
+                  PrestatiedoelBeschrijving = d.Beschrijving,
 
-                    Titel = $"Prestatiedoel {d.Id}",
+                  OpNiveauCriteria = new ObservableCollection<Criterium>(
+                      _criteriumService.HaalOpNiveauCriteriaOp()),
 
-                    PrestatiedoelBeschrijving = d.Beschrijving,
+                  BovenNiveauCriteria = new ObservableCollection<Criterium>(
+                      _criteriumService.HaalBovenNiveauCriteriaOp())
+              })
+          );
 
-                    Vaardigheid = $"Criterium {d.CriteriumId}"
-                })
-            );
+
         }
 
 
@@ -144,11 +152,10 @@ namespace StudentSysteem.App.ViewModels
         private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {
             return item.InOntwikkeling
-                || item.OpNiveauSyntaxCorrect
-                || item.OpNiveauVastgelegd
-                || item.OpNiveauDomeinWeerspiegelt
-                || item.BovenNiveauVolledig;
+                || item.IsOpNiveau
+                || item.IsBovenNiveau;
         }
+
 
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

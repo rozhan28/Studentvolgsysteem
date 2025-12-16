@@ -94,35 +94,29 @@
 
                                                     <!-- Op niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                        <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding IsOpNiveau, Converter={StaticResource OpNiveau}}"
-                                                                             Padding="10">
-                                                            <Label Text="Op niveau" FontAttributes="Bold"/>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
-                                                                <Label Text="Het domeinmodel weerspiegelt het domein" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauSyntaxCorrect}" />
-                                                                <Label Text="De syntax van het domeinmodel is correct volgens UML" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauVastgelegd}" />
-                                                                <Label Text="Het domeinmodel is op een logische locatie vastgelegd" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
+                                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
+                                                            <BindableLayout.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:Criterium">
+                                                                    <HorizontalStackLayout Spacing="10">
+                                                                        <CheckBox IsChecked="{Binding IsGeselecteerd}" />
+                                                                        <Label Text="{Binding Beschrijving}" />
+                                                                    </HorizontalStackLayout>
+                                                                </DataTemplate>
+                                                            </BindableLayout.ItemTemplate>
                                                         </VerticalStackLayout>
                                                     </Border>
 
                                                     <!-- Boven niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                        <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding IsBovenNiveau, Converter={StaticResource BovenNiveau}}"
-                                                                             Padding="10">
-                                                            <Label Text="Boven niveau" FontAttributes="Bold"/>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
-                                                                <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context." VerticalOptions="Center" />
-                                                            </HorizontalStackLayout>
+                                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
+                                                            <BindableLayout.ItemTemplate>
+                                                                <DataTemplate x:DataType="models:Criterium">
+                                                                    <HorizontalStackLayout Spacing="10">
+                                                                        <CheckBox IsChecked="{Binding IsGeselecteerd}" />
+                                                                        <Label Text="{Binding Beschrijving}" />
+                                                                    </HorizontalStackLayout>
+                                                                </DataTemplate>
+                                                            </BindableLayout.ItemTemplate>
                                                         </VerticalStackLayout>
                                                     </Border>
 

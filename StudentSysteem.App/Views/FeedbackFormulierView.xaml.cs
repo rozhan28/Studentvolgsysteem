@@ -7,11 +7,12 @@ namespace StudentSysteem.App.Views
     public partial class FeedbackFormulierView : ContentPage
     {
         public FeedbackFormulierView(
-            IZelfEvaluatieService zelfEvaluatieService,
-            INavigatieService navigatieService,
-            IMeldingService meldingService,
-            IFeedbackFormulierService feedbackFormulierService,
-            IPrestatiedoelService prestatiedoelService)
+    IZelfEvaluatieService zelfEvaluatieService,
+    INavigatieService navigatieService,
+    IMeldingService meldingService,
+    IFeedbackFormulierService feedbackFormulierService,
+    IPrestatiedoelService prestatiedoelService,
+    ICriteriumService criteriumService)
         {
             InitializeComponent();
 
@@ -23,6 +24,7 @@ namespace StudentSysteem.App.Views
                 meldingService,
                 feedbackFormulierService,
                 prestatiedoelService,
+                criteriumService,
                 isDocent
             );
         }
