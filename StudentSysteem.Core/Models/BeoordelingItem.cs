@@ -36,10 +36,10 @@ namespace StudentSysteem.Core.Models
         }
 
         //Criteria uit DB
-        public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
+        public ObservableCollection<Criterium> OpNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
-        public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
+        public ObservableCollection<Criterium> BovenNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
         //In ontwikkeling
@@ -54,15 +54,10 @@ namespace StudentSysteem.Core.Models
                 _inOntwikkeling = value;
 
                 if (value)
-                {
                     ResetCriteria();
-                }
 
-                UpdateKleur();
+                UpdateStatus();
                 Notify();
-                Notify(nameof(IsOpNiveau));
-                Notify(nameof(IsBovenNiveau));
-                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -101,7 +96,7 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        private void UpdateKleur()
+        private void UpdateStatus()
         {
             if (IsBovenNiveau)
                 Kleur = PrestatieNiveauKleur.BovenNiveau;
@@ -111,6 +106,11 @@ namespace StudentSysteem.Core.Models
                 Kleur = PrestatieNiveauKleur.InOntwikkeling;
             else
                 Kleur = PrestatieNiveauKleur.NietIngeleverd;
+
+            Notify(nameof(InOntwikkeling));
+            Notify(nameof(IsOpNiveau));
+            Notify(nameof(IsBovenNiveau));
+            Notify(nameof(PrestatieNiveau));
         }
 
         // Toelichting
@@ -120,12 +120,13 @@ namespace StudentSysteem.Core.Models
             get => _toelichting;
             set
             {
+                if (_toelichting == value) return;
                 _toelichting = value;
                 Notify();
             }
         }
 
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; set; }
+        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; }
             = new ObservableCollection<ExtraToelichting>();
 
         public ICommand VoegExtraToelichtingToeCommand { get; }
@@ -176,10 +177,7 @@ namespace StudentSysteem.Core.Models
             {
                 c.PropertyChanged += (_, __) =>
                 {
-                    UpdateKleur();
-                    Notify(nameof(IsOpNiveau));
-                    Notify(nameof(IsBovenNiveau));
-                    Notify(nameof(PrestatieNiveau));
+                    UpdateStatus();
                 };
             }
         }
@@ -188,4 +186,3 @@ namespace StudentSysteem.Core.Models
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
-
