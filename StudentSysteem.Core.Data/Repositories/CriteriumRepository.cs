@@ -18,11 +18,11 @@ namespace StudentSysteem.Core.Data.Repositories
             );");
 
             // Koppeltabel feedback <--> criterium
-            MaakTabel(@"
-            CREATE TABLE IF NOT EXISTS FeedbackCriterium (
+            MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
                 feedback_id INTEGER NOT NULL,
                 criterium_id INTEGER NOT NULL,
                 niveau TEXT NOT NULL,
+                toelichting TEXT, -- 👈 NIEUW
                 PRIMARY KEY (feedback_id, criterium_id)
             );");
 
@@ -89,15 +89,18 @@ namespace StudentSysteem.Core.Data.Repositories
                 {
                     using var cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
-                        INSERT INTO FeedbackCriterium
-                        (feedback_id, criterium_id, niveau)
-                        VALUES (@feedbackId, @criteriumId, @niveau);";
+                INSERT INTO FeedbackCriterium
+                (feedback_id, criterium_id, niveau, toelichting)
+                VALUES (@feedbackId, @criteriumId, @niveau, @toelichting);";
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
                     cmd.Parameters.AddWithValue("@niveau", niveau);
-                    cmd.Transaction = transactie;
+                    cmd.Parameters.AddWithValue(
+                        "@toelichting",
+                        (object?)criterium.Toelichting ?? DBNull.Value);
 
+                    cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();
                 }
 
@@ -113,5 +116,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 SluitVerbinding();
             }
         }
+
     }
 }

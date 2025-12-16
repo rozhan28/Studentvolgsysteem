@@ -117,6 +117,19 @@ namespace StudentSysteem.Core.Models
             Notify(nameof(PrestatieNiveau));
         }
 
+        private bool _isCriteriumInvalid;
+        public bool IsCriteriumInvalid
+        {
+            get => _isCriteriumInvalid;
+            set
+            {
+                if (_isCriteriumInvalid == value) return;
+                _isCriteriumInvalid = value;
+                Notify();
+            }
+        }
+
+
         // Toelichting
         private string _toelichting;
         public string Toelichting

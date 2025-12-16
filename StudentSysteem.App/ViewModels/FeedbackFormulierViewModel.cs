@@ -1,6 +1,7 @@
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -16,8 +17,12 @@ namespace StudentSysteem.App.ViewModels
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ICriteriumService _criteriumService;
         private readonly IMeldingService _meldingService;
+        private readonly IFeedbackFormulierService _feedbackService;
+        private readonly IZelfEvaluatieService _zelfEvaluatieService;
 
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; set; }
+        private readonly bool _isDocent;
+
+        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
             = new();
 
         private string _statusMelding;
@@ -34,21 +39,28 @@ namespace StudentSysteem.App.ViewModels
         public ICommand OpslaanCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IPrestatiedoelService prestatiedoelService,
-            ICriteriumService criteriumService,
-            ICriteriumRepository criteriumRepository,
-            IFeedbackRepository feedbackRepository,
-            IMeldingService meldingService)
+        IPrestatiedoelService prestatiedoelService,
+        ICriteriumService criteriumService,
+        ICriteriumRepository criteriumRepository,
+        IFeedbackRepository feedbackRepository,
+        IFeedbackFormulierService feedbackService,
+        IZelfEvaluatieService zelfEvaluatieService,
+        IMeldingService meldingService)
         {
             _prestatiedoelService = prestatiedoelService;
             _criteriumService = criteriumService;
             _criteriumRepository = criteriumRepository;
             _feedbackRepository = feedbackRepository;
+            _feedbackService = feedbackService;
+            _zelfEvaluatieService = zelfEvaluatieService;
             _meldingService = meldingService;
 
-            OpslaanCommand = new Command(SlaFeedbackOp);
+            _isDocent = GebruikerSessie.HuidigeRol == "Docent";
+
+            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
             LaadPrestatiedoelen();
         }
+
 
         private void LaadPrestatiedoelen()
         {
@@ -75,15 +87,30 @@ namespace StudentSysteem.App.ViewModels
                     item.BeschikbareCriteria.Add(c);
                 }
 
-
                 Beoordelingen.Add(item);
             }
         }
 
-        private void SlaFeedbackOp()
+        //Opslaan
+        private async Task BewaarReflectieAsync()
         {
+            StatusMelding = string.Empty;
+
+            if (!ValideerBeoordelingen())
+            {
+                StatusMelding = "Controleer alle velden a.u.b.";
+                return;
+            }
+
             try
             {
+                // Zelfevaluatie aanmaken
+                int zelfEvaluatieId = _zelfEvaluatieService.Add(new ZelfEvaluatie
+                {
+                    StudentId = 1,
+                    PrestatieNiveau = "Ingevuld"
+                });
+
                 foreach (var item in Beoordelingen)
                 {
                     string niveau =
@@ -97,9 +124,16 @@ namespace StudentSysteem.App.ViewModels
 
                     int feedbackId = _feedbackRepository.MaakFeedbackAan(niveau);
 
-                    var geselecteerdeCriteria =
-                        item.OpNiveauCriteria
-                        .Concat(item.BovenNiveauCriteria)
+                    // Toelichting (alleen als ingevuld)
+                    if (!string.IsNullOrWhiteSpace(item.Toelichting))
+                    {
+                        _feedbackRepository.VoegToelichtingToe(
+                            feedbackId,
+                            item.Toelichting);
+                    }
+
+                    // Criteria
+                    var geselecteerdeCriteria = item.BeschikbareCriteria
                         .Where(c => c.IsGeselecteerd)
                         .ToList();
 
@@ -112,18 +146,56 @@ namespace StudentSysteem.App.ViewModels
                     }
                 }
 
-                _meldingService.ToonMeldingAsync(
+                await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Feedback en criteria zijn opgeslagen");
+                    "Zelfevaluatie en feedback zijn opgeslagen!");
             }
             catch (Exception ex)
             {
-                StatusMelding = $"Fout: {ex.Message}";
+                StatusMelding = $"Fout bij opslaan: {ex.Message}";
             }
+        }
+
+        //Validatie
+        private bool ValideerBeoordelingen()
+        {
+            bool allesGeldig = true;
+
+            foreach (var item in Beoordelingen)
+            {
+                bool prestatieOk = !_isDocent || ValideerPrestatieNiveau(item);
+                item.IsPrestatieNiveauInvalid = _isDocent && !prestatieOk;
+
+                bool toelichtingOk = _isDocent || !string.IsNullOrWhiteSpace(item.Toelichting);
+                item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
+
+                bool criteriumOk = true;
+                if (_isDocent)
+                {
+                    criteriumOk = item.BeschikbareCriteria.Any(c => c.IsGeselecteerd);
+                    item.IsCriteriumInvalid = !criteriumOk;
+                }
+                else
+                {
+                    item.IsCriteriumInvalid = false;
+                }
+
+                if (!prestatieOk || !toelichtingOk || !criteriumOk)
+                    allesGeldig = false;
+            }
+
+            return allesGeldig;
+        }
+
+
+        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
+        {
+            return item.InOntwikkeling
+                || item.IsOpNiveau
+                || item.IsBovenNiveau;
         }
 
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
-

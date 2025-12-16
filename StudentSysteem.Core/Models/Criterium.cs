@@ -22,6 +22,17 @@ public class Criterium : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    private string _toelichting;
+    public string Toelichting
+    {
+        get => _toelichting;
+        set
+        {
+            if (_toelichting == value) return;
+            _toelichting = value;
+            OnPropertyChanged(); 
+        }
+    }
 
     protected void OnPropertyChanged(
         [CallerMemberName] string propertyName = "")
