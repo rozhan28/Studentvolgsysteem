@@ -72,23 +72,33 @@ namespace StudentSysteem.App.ViewModels
         {
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
 
-            Beoordelingen = new ObservableCollection<BeoordelingItem>(
-              doelen.Select(d => new BeoordelingItem
-              {
-                  PrestatiedoelId = d.Id,
-                  Titel = $"Prestatiedoel {d.Id}",
-                  PrestatiedoelBeschrijving = d.Beschrijving,
+            var lijst = new ObservableCollection<BeoordelingItem>();
 
-                  OpNiveauCriteria = new ObservableCollection<Criterium>(
-                      _criteriumService.HaalOpNiveauCriteriaOp()),
+            foreach (var d in doelen)
+            {
+                var item = new BeoordelingItem
+                {
+                    PrestatiedoelId = d.Id,
+                    Titel = $"Prestatiedoel {d.Id}",
+                    PrestatiedoelBeschrijving = d.Beschrijving
+                };
 
-                  BovenNiveauCriteria = new ObservableCollection<Criterium>(
-                      _criteriumService.HaalBovenNiveauCriteriaOp())
-              })
-          );
+                foreach (var criterium in _criteriumService.HaalOpNiveauCriteriaOp())
+                {
+                    item.OpNiveauCriteria.Add(criterium);
+                }
 
+                foreach (var criterium in _criteriumService.HaalBovenNiveauCriteriaOp())
+                {
+                    item.BovenNiveauCriteria.Add(criterium);
+                }
 
+                lijst.Add(item);
+            }
+
+            Beoordelingen = lijst;
         }
+
 
 
         private async Task BewaarReflectieAsync()
@@ -103,10 +113,10 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                // 1️⃣ Zelfevaluatie opslaan
+                // Zelfevaluatie opslaan
                 int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
-                // 2️⃣ Toelichtingen opslaan
+                // Toelichtingen opslaan
                 foreach (var item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
