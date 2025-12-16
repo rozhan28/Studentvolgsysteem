@@ -64,8 +64,7 @@ namespace StudentSysteem.App.ViewModels
 
         private void LaadPrestatiedoelen()
         {
-            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-
+            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             foreach (var d in doelen)
             {
                 var item = new BeoordelingItem
@@ -75,13 +74,13 @@ namespace StudentSysteem.App.ViewModels
                     PrestatiedoelBeschrijving = d.Beschrijving
                 };
 
-                foreach (var c in _criteriumService.HaalOpNiveauCriteriaOp())
+                foreach (Criterium c in _criteriumService.HaalOpNiveauCriteriaOp())
                 {
                     item.OpNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
                 }
 
-                foreach (var c in _criteriumService.HaalBovenNiveauCriteriaOp())
+                foreach (Criterium c in _criteriumService.HaalBovenNiveauCriteriaOp())
                 {
                     item.BovenNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
@@ -111,7 +110,7 @@ namespace StudentSysteem.App.ViewModels
                     PrestatieNiveau = "Ingevuld"
                 });
 
-                foreach (var item in Beoordelingen)
+                foreach (BeoordelingItem item in Beoordelingen)
                 {
                     string niveau =
                         item.IsBovenNiveau ? "Boven niveau" :
@@ -161,7 +160,7 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (var item in Beoordelingen)
+            foreach (BeoordelingItem item in Beoordelingen)
             {
                 bool prestatieOk = !_isDocent || ValideerPrestatieNiveau(item);
                 item.IsPrestatieNiveauInvalid = _isDocent && !prestatieOk;
