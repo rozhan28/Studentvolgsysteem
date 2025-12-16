@@ -180,17 +180,10 @@ namespace StudentSysteem.Core.Models
 
         public BeoordelingItem()
         {
-            VoegExtraToelichtingToeCommand = new Command(VoegExtraToelichtingToe);
             OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
 
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
             BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
-        }
-
-        private void VoegExtraToelichtingToe()
-        {
-            ExtraToelichtingVak.Add(new ExtraToelichting());
-            Notify(nameof(ExtraToelichtingVak));
         }
 
         private async Task ToonCriteriaKeuze()
