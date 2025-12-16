@@ -12,16 +12,15 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public void SlaToelichtingOp(string toelichting, int studentId = 1)
+        public void SlaToelichtingOp(int feedbackId, string toelichting)
         {
+            if (feedbackId <= 0)
+                throw new ArgumentException("FeedbackId moet groter zijn dan 0.", nameof(feedbackId));
+
             if (string.IsNullOrWhiteSpace(toelichting))
                 throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
 
-            if (studentId <= 0)
-                throw new ArgumentException("StudentId moet groter zijn dan 0.", nameof(studentId));
-
-            _feedbackRepository.VoegToelichtingToe(toelichting, studentId);
+            _feedbackRepository.VoegToelichtingToe(feedbackId, toelichting);
         }
     }
 }
-

@@ -153,8 +153,11 @@
                                             <Label Text="Toelichting" FontAttributes="Bold" />
 
                                             <!-- Dropdown -->
-                                            <Button Text="{Binding GeselecteerdeOptie}" Command="{Binding OptiesCommand}" HorizontalOptions="Start"/>
-
+                                            <Button Text="{Binding GeselecteerdeOptie}"
+                                                    Command="{Binding OptiesCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    HorizontalOptions="Start"/>
+                                            
                                             <!-- Toelichtingsvak -->
                                             <Editor HeightRequest="120"
                                                     Placeholder="Voeg toelichting toe..."
@@ -162,8 +165,10 @@
 
                                             <!-- Extra feedback knop -->
                                             <Button Text="+ Voeg extra feedback toe"
+                                                    Command="{Binding VoegExtraToelichtingToeCommand}"
                                                     HorizontalOptions="Center"
                                                     MaximumWidthRequest="250"/>
+
 
                                             <!-- Extra Toelichting CollectionView -->
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExtraToelichtingVak}" Spacing="10">

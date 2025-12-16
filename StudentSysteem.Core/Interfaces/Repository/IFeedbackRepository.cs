@@ -2,6 +2,7 @@
 {
     public interface IFeedbackRepository
     {
-        void VoegToelichtingToe(string toelichting, int studentId);
+        int MaakFeedbackAan(string niveau);
+        void VoegToelichtingToe(int feedbackId, string toelichting);
     }
 }

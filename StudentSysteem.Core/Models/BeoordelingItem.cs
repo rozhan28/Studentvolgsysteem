@@ -42,6 +42,10 @@ namespace StudentSysteem.Core.Models
         public ObservableCollection<Criterium> BovenNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
+        //Dropdown criteria
+        public ObservableCollection<Criterium> BeschikbareCriteria { get; }
+            = new ObservableCollection<Criterium>();
+
         //In ontwikkeling
         private bool _inOntwikkeling;
         public bool InOntwikkeling
@@ -126,13 +130,27 @@ namespace StudentSysteem.Core.Models
             }
         }
 
+        //Extra toelichting
         public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; }
             = new ObservableCollection<ExtraToelichting>();
 
         public ICommand VoegExtraToelichtingToeCommand { get; }
 
-        // Validatie
+        //Dropdown geselecteerde optie
+        private string _geselecteerdeOptie = "Toelichting koppelen aan...";
+        public string GeselecteerdeOptie
+        {
+            get => _geselecteerdeOptie;
+            set
+            {
+                _geselecteerdeOptie = value;
+                Notify();
+            }
+        }
 
+        public ICommand OptiesCommand { get; }
+
+        // Validatie
         private bool _isPrestatieNiveauInvalid;
         public bool IsPrestatieNiveauInvalid
         {
@@ -150,16 +168,37 @@ namespace StudentSysteem.Core.Models
         public BeoordelingItem()
         {
             VoegExtraToelichtingToeCommand = new Command(VoegExtraToelichtingToe);
+            OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
 
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
             BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
         }
 
-
         private void VoegExtraToelichtingToe()
         {
             ExtraToelichtingVak.Add(new ExtraToelichting());
             Notify(nameof(ExtraToelichtingVak));
+        }
+
+        private async Task ToonCriteriaKeuze()
+        {
+            if (BeschikbareCriteria.Count == 0)
+                return;
+
+            var opties = BeschikbareCriteria
+                .Select(c => c.Beschrijving)
+                .ToArray();
+
+            string keuze = await Application.Current.MainPage.DisplayActionSheet(
+                "Koppel toelichting aan criterium",
+                "Annuleren",
+                null,
+                opties);
+
+            if (!string.IsNullOrWhiteSpace(keuze) && keuze != "Annuleren")
+            {
+                GeselecteerdeOptie = keuze;
+            }
         }
 
         private void ResetCriteria()

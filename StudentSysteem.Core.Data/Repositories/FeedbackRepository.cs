@@ -1,59 +1,67 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using Microsoft.Data.Sqlite;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class FeedbackRepository : DatabaseVerbinding, IFeedbackRepository
     {
-        public FeedbackRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
+        public FeedbackRepository(DbConnectieHelper dbConnectieHelper)
+            : base(dbConnectieHelper)
         {
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS Feedback (
-                    [feedback_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [niveauaanduiding] VARCHAR(255),
-                    [toelichting] TEXT,
-                    [datum] TEXT,
-                    [tijd] TEXT,
-                    [student_id] INTEGER,
-                    [docent_id] INTEGER,
-                    [vaardigheid_id] INTEGER)");
-            List<string> VoegFeedback = [
-                @"INSERT OR REPLACE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
-            VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"
-            ];
-            VoegMeerdereInMetTransactie(VoegFeedback);
+            MaakTabel(@"
+                CREATE TABLE IF NOT EXISTS Feedback (
+                    feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    niveauaanduiding TEXT NOT NULL,
+                    toelichting TEXT,
+                    datum TEXT,
+                    tijd TEXT,
+                    student_id INTEGER,
+                    docent_id INTEGER,
+                    vaardigheid_id INTEGER
+                );
+            ");
         }
 
-        public void VoegToelichtingToe(string toelichting, int studentId)
+        public int MaakFeedbackAan(string niveau)
         {
             OpenVerbinding();
-            using var transactie = Verbinding.BeginTransaction();
-            try
-            {
-                using var cmd = Verbinding.CreateCommand();
-                
-                
-                cmd.CommandText = @"INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
-                                    VALUES (@toelichting, @datum, @tijd, @studentId);";
-                cmd.Parameters.AddWithValue("@toelichting", toelichting);
-                var now = DateTime.Now;
-                cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
-                cmd.Parameters.AddWithValue("@studentId", studentId);
-                cmd.Transaction = transactie;
-                cmd.ExecuteNonQuery();
 
-                transactie.Commit();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                try { transactie.Rollback(); } catch { }
-                throw;
-            }
-            finally
-            {
-                SluitVerbinding();
-            }
+            using var cmd = Verbinding.CreateCommand();
+            cmd.CommandText = @"
+                INSERT INTO Feedback (niveauaanduiding, datum, tijd)
+                VALUES (@niveau, @datum, @tijd);
+                SELECT last_insert_rowid();
+            ";
+
+            cmd.Parameters.AddWithValue("@niveau", niveau);
+
+            var now = DateTime.Now;
+            cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
+            cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+
+            int feedbackId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            SluitVerbinding();
+            return feedbackId;
+        }
+
+        public void VoegToelichtingToe(int feedbackId, string toelichting)
+        {
+            OpenVerbinding();
+
+            using var cmd = Verbinding.CreateCommand();
+            cmd.CommandText = @"
+                UPDATE Feedback
+                SET toelichting = @toelichting
+                WHERE feedback_id = @feedbackId;
+            ";
+
+            cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
+            cmd.Parameters.AddWithValue("@toelichting", toelichting);
+
+            cmd.ExecuteNonQuery();
+            SluitVerbinding();
         }
     }
 }

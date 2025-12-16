@@ -12,10 +12,19 @@ namespace StudentSysteem.Core.Data.Repositories
         {
             MaakTabel(@"
             CREATE TABLE IF NOT EXISTS Criterium (
-            criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            beschrijving TEXT NOT NULL,
-            niveau TEXT NOT NULL
-        );");
+                criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                beschrijving TEXT NOT NULL,
+                niveau TEXT NOT NULL
+            );");
+
+            // Koppeltabel feedback <--> criterium
+            MaakTabel(@"
+            CREATE TABLE IF NOT EXISTS FeedbackCriterium (
+                feedback_id INTEGER NOT NULL,
+                criterium_id INTEGER NOT NULL,
+                niveau TEXT NOT NULL,
+                PRIMARY KEY (feedback_id, criterium_id)
+            );");
 
             List<string> seed = new()
             {
@@ -34,7 +43,6 @@ namespace StudentSysteem.Core.Data.Repositories
                   VALUES (4, 'Het domeinmodel is volledig en logisch', 'Boven niveau')"
             };
 
-
             VoegMeerdereInMetTransactie(seed);
         }
 
@@ -46,9 +54,9 @@ namespace StudentSysteem.Core.Data.Repositories
 
             using var cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
-        SELECT criterium_id, beschrijving
-        FROM Criterium
-        WHERE niveau = @niveau";
+                SELECT criterium_id, beschrijving
+                FROM Criterium
+                WHERE niveau = @niveau";
 
             cmd.Parameters.AddWithValue("@niveau", niveau);
 
@@ -66,6 +74,44 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
             return lijst;
         }
-    }
 
+        public void SlaGeselecteerdeCriteriaOp(
+            int feedbackId,
+            IEnumerable<Criterium> geselecteerdeCriteria,
+            string niveau)
+        {
+            OpenVerbinding();
+            using var transactie = Verbinding.BeginTransaction();
+
+            try
+            {
+                foreach (var criterium in geselecteerdeCriteria)
+                {
+                    using var cmd = Verbinding.CreateCommand();
+                    cmd.CommandText = @"
+                        INSERT INTO FeedbackCriterium
+                        (feedback_id, criterium_id, niveau)
+                        VALUES (@feedbackId, @criteriumId, @niveau);";
+
+                    cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
+                    cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
+                    cmd.Parameters.AddWithValue("@niveau", niveau);
+                    cmd.Transaction = transactie;
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                transactie.Commit();
+            }
+            catch
+            {
+                transactie.Rollback();
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
+        }
+    }
 }

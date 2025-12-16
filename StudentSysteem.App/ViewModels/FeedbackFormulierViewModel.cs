@@ -1,6 +1,6 @@
+using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -10,28 +10,15 @@ namespace StudentSysteem.App.ViewModels
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public string Titel { get; set; }             
-        public string PrestatiedoelBeschrijving { get; set; } 
 
-
-        private readonly INavigatieService _navigatieService;
-        private readonly IMeldingService _meldingService;
-        private readonly IFeedbackFormulierService _feedbackService;
+        private readonly ICriteriumRepository _criteriumRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly ICriteriumService _criteriumService;
-        private readonly bool _isDocent;
+        private readonly IMeldingService _meldingService;
 
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
-        public ObservableCollection<BeoordelingItem> Beoordelingen
-        {
-            get => _beoordelingen;
-            set
-            {
-                _beoordelingen = value;
-                OnPropertyChanged(nameof(Beoordelingen));
-            }
-        }
+        public ObservableCollection<BeoordelingItem> Beoordelingen { get; set; }
+            = new();
 
         private string _statusMelding;
         public string StatusMelding
@@ -40,39 +27,32 @@ namespace StudentSysteem.App.ViewModels
             set
             {
                 _statusMelding = value;
-                OnPropertyChanged(nameof(StatusMelding));
+                Notify(nameof(StatusMelding));
             }
         }
 
         public ICommand OpslaanCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfEvaluatieService,
-            INavigatieService navigatieService,
-            IMeldingService meldingService,
-            IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
             ICriteriumService criteriumService,
-            bool isDocent = false)
+            ICriteriumRepository criteriumRepository,
+            IFeedbackRepository feedbackRepository,
+            IMeldingService meldingService)
         {
-            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
-            _navigatieService = navigatieService;
-            _meldingService = meldingService;
-            _feedbackService = feedbackService;
             _prestatiedoelService = prestatiedoelService;
             _criteriumService = criteriumService;
-            _isDocent = isDocent;
+            _criteriumRepository = criteriumRepository;
+            _feedbackRepository = feedbackRepository;
+            _meldingService = meldingService;
 
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
-
+            OpslaanCommand = new Command(SlaFeedbackOp);
             LaadPrestatiedoelen();
         }
 
         private void LaadPrestatiedoelen()
         {
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-
-            var lijst = new ObservableCollection<BeoordelingItem>();
 
             foreach (var d in doelen)
             {
@@ -83,91 +63,67 @@ namespace StudentSysteem.App.ViewModels
                     PrestatiedoelBeschrijving = d.Beschrijving
                 };
 
-                foreach (var criterium in _criteriumService.HaalOpNiveauCriteriaOp())
+                foreach (var c in _criteriumService.HaalOpNiveauCriteriaOp())
                 {
-                    item.OpNiveauCriteria.Add(criterium);
+                    item.OpNiveauCriteria.Add(c);
+                    item.BeschikbareCriteria.Add(c);
                 }
 
-                foreach (var criterium in _criteriumService.HaalBovenNiveauCriteriaOp())
+                foreach (var c in _criteriumService.HaalBovenNiveauCriteriaOp())
                 {
-                    item.BovenNiveauCriteria.Add(criterium);
+                    item.BovenNiveauCriteria.Add(c);
+                    item.BeschikbareCriteria.Add(c);
                 }
 
-                lijst.Add(item);
+
+                Beoordelingen.Add(item);
             }
-
-            Beoordelingen = lijst;
         }
 
-
-
-        private async Task BewaarReflectieAsync()
+        private void SlaFeedbackOp()
         {
-            StatusMelding = string.Empty;
-
-            if (!ValideerBeoordelingen())
-            {
-                StatusMelding = "Controleer alle velden a.u.b.";
-                return;
-            }
-
             try
             {
-                // Zelfevaluatie opslaan
-                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
-
-                // Toelichtingen opslaan
                 foreach (var item in Beoordelingen)
                 {
-                    if (!string.IsNullOrWhiteSpace(item.Toelichting))
+                    string niveau =
+                        item.IsBovenNiveau ? "Boven niveau" :
+                        item.IsOpNiveau ? "Op niveau" :
+                        item.InOntwikkeling ? "In ontwikkeling" :
+                        null;
+
+                    if (niveau == null)
+                        continue;
+
+                    int feedbackId = _feedbackRepository.MaakFeedbackAan(niveau);
+
+                    var geselecteerdeCriteria =
+                        item.OpNiveauCriteria
+                        .Concat(item.BovenNiveauCriteria)
+                        .Where(c => c.IsGeselecteerd)
+                        .ToList();
+
+                    if (geselecteerdeCriteria.Any())
                     {
-                        _feedbackService.SlaToelichtingOp(
-                            item.Toelichting,
-                            zelfEvaluatieId
-                        );
+                        _criteriumRepository.SlaGeselecteerdeCriteriaOp(
+                            feedbackId,
+                            geselecteerdeCriteria,
+                            niveau);
                     }
                 }
 
-                await _meldingService.ToonMeldingAsync(
+                _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Zelfevaluatie en feedback zijn opgeslagen!");
+                    "Feedback en criteria zijn opgeslagen");
             }
             catch (Exception ex)
             {
-                StatusMelding = $"Fout bij opslaan: {ex.Message}";
+                StatusMelding = $"Fout: {ex.Message}";
             }
         }
 
-        private bool ValideerBeoordelingen()
-        {
-            bool allesGeldig = true;
-
-            foreach (var item in Beoordelingen)
-            {
-                bool prestatieOk = ValideerPrestatieNiveau(item);
-                item.IsPrestatieNiveauInvalid = !prestatieOk;
-
-                bool toelichtingOk =
-                    !(string.IsNullOrWhiteSpace(item.Toelichting) && !_isDocent);
-
-                item.IsToelichtingInvalid = !toelichtingOk;
-
-                if (!prestatieOk || !toelichtingOk)
-                    allesGeldig = false;
-            }
-
-            return allesGeldig;
-        }
-
-        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
-        {
-            return item.InOntwikkeling
-                || item.IsOpNiveau
-                || item.IsBovenNiveau;
-        }
-
-
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void Notify(string prop) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+
