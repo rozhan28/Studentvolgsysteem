@@ -11,15 +11,13 @@ namespace StudentSysteem.App.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         public string Titel { get; set; }             
         public string PrestatiedoelBeschrijving { get; set; } 
-
-
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
-
+        
         private ObservableCollection<BeoordelingItem> _beoordelingen;
         public ObservableCollection<BeoordelingItem> Beoordelingen
         {
@@ -66,7 +64,7 @@ namespace StudentSysteem.App.ViewModels
 
         private void LaadPrestatiedoelen()
         {
-            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>(
                 doelen.Select(d => new BeoordelingItem
@@ -99,7 +97,7 @@ namespace StudentSysteem.App.ViewModels
                 int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
                 // 2️⃣ Toelichtingen opslaan
-                foreach (var item in Beoordelingen)
+                foreach (BeoordelingItem item in Beoordelingen)
                 {
                     if (!string.IsNullOrWhiteSpace(item.Toelichting))
                     {
@@ -124,7 +122,7 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (var item in Beoordelingen)
+            foreach (BeoordelingItem item in Beoordelingen)
             {
                 bool prestatieOk = ValideerPrestatieNiveau(item);
                 item.IsPrestatieNiveauInvalid = !prestatieOk;
