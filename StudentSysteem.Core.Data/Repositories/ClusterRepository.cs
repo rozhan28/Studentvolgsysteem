@@ -12,7 +12,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [naam] VARCHAR(50),
                     [code] VARCHAR(50))");
 
-            List<string> insertQueries = [@"INSERT OR IGNORE INTO Cluster(cluster_id, naam, code) 
+            List<string> insertQueries = [@"INSERT OR REPLACE INTO Cluster(cluster_id, naam, code) 
                                         VALUES(NULL, 'MockData2', NULL)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }

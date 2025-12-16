@@ -21,10 +21,10 @@ namespace StudentSysteem.Core.Data.Repositories
 
                         FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                     )");
-            /*
+            
             List<string> seed = new()
         {
-            @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id)
+            @"INSERT OR REPLACE INTO Prestatiedoel (niveau, beschrijving, criterium_id)
               VALUES (
                 'Op niveau',
                 'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten',
@@ -32,8 +32,6 @@ namespace StudentSysteem.Core.Data.Repositories
               )"
         };
             VoegMeerdereInMetTransactie(seed);
-
- */
         }
 
 

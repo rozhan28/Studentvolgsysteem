@@ -18,7 +18,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     FOREIGN KEY([prestatiedoel_id]) REFERENCES Prestatiedoel(prestatiedoel_id),
                     FOREIGN KEY([processtap_id]) REFERENCES Processtap(processtap_id))");
 
-            List<string> insertQueries = [@"INSERT OR IGNORE INTO Vaardigheid
+            List<string> insertQueries = [@"INSERT OR REPLACE INTO Vaardigheid
             (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id)
             VALUES (
                 'Maken domeinmodel',
