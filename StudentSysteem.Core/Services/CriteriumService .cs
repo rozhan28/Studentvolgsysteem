@@ -6,17 +6,21 @@ namespace StudentSysteem.Core.Services
 {
     public class CriteriumService : ICriteriumService
     {
-        private readonly ICriteriumRepository _repo;
+        private readonly ICriteriumRepository _criteriumRepository;
 
-        public CriteriumService(ICriteriumRepository repo)
+        public CriteriumService(ICriteriumRepository criteriumRepository)
         {
-            _repo = repo;
+            _criteriumRepository = criteriumRepository;
         }
 
         public List<Criterium> HaalOpNiveauCriteriaOp()
-            => _repo.HaalCriteriaOpVoorNiveau("OpNiveau");
+        {
+            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Op niveau");
+        }
 
         public List<Criterium> HaalBovenNiveauCriteriaOp()
-            => _repo.HaalCriteriaOpVoorNiveau("BovenNiveau");
+        {
+            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Boven niveau");
+        }
     }
 }

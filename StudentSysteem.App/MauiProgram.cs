@@ -8,8 +8,6 @@ using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Data.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace StudentSysteem.App
 {
@@ -62,6 +60,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<ICriteriumService, CriteriumService>();
 
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
