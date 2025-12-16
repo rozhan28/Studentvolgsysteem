@@ -9,6 +9,9 @@ namespace StudentSysteem.App.ViewModels
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public string Titel { get; set; }             
+        public string PrestatiedoelBeschrijving { get; set; } 
+
 
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
@@ -68,12 +71,17 @@ namespace StudentSysteem.App.ViewModels
             Beoordelingen = new ObservableCollection<BeoordelingItem>(
                 doelen.Select(d => new BeoordelingItem
                 {
-                    Titel = d.Beschrijving,
-                    Vaardigheid = $"Criterium {d.CriteriumId}",
-                    PrestatiedoelId = d.Id
+                    PrestatiedoelId = d.Id,
+
+                    Titel = $"Prestatiedoel {d.Id}",
+
+                    PrestatiedoelBeschrijving = d.Beschrijving,
+
+                    Vaardigheid = $"Criterium {d.CriteriumId}"
                 })
             );
         }
+
 
         private async Task BewaarReflectieAsync()
         {
