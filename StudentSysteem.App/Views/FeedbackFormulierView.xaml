@@ -13,6 +13,7 @@
             <converters:InOntwikkelingConverter x:Key="InOntwikkeling"/>
             <converters:OpNiveauConverter x:Key="OpNiveau"/>
             <converters:BovenNiveauConverter x:Key="BovenNiveau"/>
+            <converters:AiConverter x:Key="AiIconConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -66,7 +67,7 @@
                                             <Label Text="{Binding PrestatiedoelBeschrijving}"
                                              LineBreakMode="WordWrap"/>
                                             <HorizontalStackLayout Spacing="5">
-                                                <Image Source="ai_samenwerking.png" HeightRequest="100" WidthRequest="100"/>
+                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" HeightRequest="100" WidthRequest="100"/>
                                                 <Button Text="Leertaken.nl"/>
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>

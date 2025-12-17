@@ -17,14 +17,9 @@ namespace StudentSysteem.App.ViewModels
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
-
-        //Bevat model-instanties met al gevulde properties
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
-        private ObservableCollection<Vaardigheid> _vaardigheid;
-
+        public string AiAssessmentScale { get; set; }
         
-
-
+        private ObservableCollection<BeoordelingItem> _beoordelingen;
         public ObservableCollection<BeoordelingItem> Beoordelingen
         {
             get => _beoordelingen;
@@ -81,7 +76,8 @@ namespace StudentSysteem.App.ViewModels
 
                     PrestatiedoelBeschrijving = d.Beschrijving,
 
-                    Vaardigheid = $"Criterium {d.CriteriumId}"
+                    Vaardigheid = $"Criterium {d.CriteriumId}",
+                    AiAssessmentScale = d.AiAssessmentScale
                 })
             );
         }
