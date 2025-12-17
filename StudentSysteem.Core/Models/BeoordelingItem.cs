@@ -16,6 +16,9 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        //US2 properties
+        public string Hboi_Activiteit { get; set; }
+
         public int PrestatiedoelId { get; set; }
 
         public string PrestatiedoelBeschrijving { get; set; }
