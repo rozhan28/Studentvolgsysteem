@@ -12,7 +12,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [naam] VARCHAR(50),
                     [hboi_activiteit] VARCHAR(50))");
 
-            List<string> insertQueries = [@"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
+            List<string> insertQueries = [@"INSERT OR REPLACE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
                                         VALUES(NULL, 'MockData2', NULL)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }

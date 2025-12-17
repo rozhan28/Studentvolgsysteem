@@ -11,7 +11,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [proces_id] INTEGER PRIMARY KEY AUTOINCREMENT,
                     [naam] VARCHAR(50))");
 
-            List<string> insertQueries = [@"INSERT OR IGNORE INTO Proces (naam)
+            List<string> insertQueries = [@"INSERT OR REPLACE INTO Proces (naam)
                                          VALUES ('Requirementsanalyseproces')"];
             VoegMeerdereInMetTransactie(insertQueries);
         }

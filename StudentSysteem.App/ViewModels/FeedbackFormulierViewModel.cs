@@ -71,7 +71,22 @@ namespace StudentSysteem.App.ViewModels
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
-            LaadPrestatiedoelen();
+            Task.Run(async () => await InitialiseerPaginaAsync());
+        }
+
+        // Toegevoegd voor T2.01 - voorkomt crashen
+        // Zorgt ervoor dat indien de datbaase niet beschikbaar is, de applicatie niet crasht
+        private async Task InitialiseerPaginaAsync()
+        {
+            try 
+            {
+                LaadPrestatiedoelen();
+            }
+            catch (Exception ex)
+            {
+                StatusMelding = "Databasefout: De prestatiedoelen konden niet worden geladen.";
+                System.Diagnostics.Debug.WriteLine($"Fout: {ex.Message}");
+            }
         }
         
         private void LaadPrestatiedoelen()

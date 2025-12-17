@@ -17,17 +17,17 @@ namespace StudentSysteem.Core.Data.Repositories
             List<string> seed = new()
         {
              //Op niveau
-             @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving)
+             @"INSERT OR REPLACE INTO Criterium (criterium_id, beschrijving)
               VALUES (1, 'Het domeinmodel weerspiegelt het domein.')",
              
-            @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving)
+            @"INSERT OR REPLACE INTO Criterium (criterium_id, beschrijving)
               VALUES (2, 'De syntax van het domeinmodel is correct volgens UML.')",
 
-            @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving)
+            @"INSERT OR REPLACE INTO Criterium (criterium_id, beschrijving)
               VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd.')",
 
             //Boven niveau
-            @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving)
+            @"INSERT OR REPLACE INTO Criterium (criterium_id, beschrijving)
               VALUES (4, 'Het domeinmodel is volledig en logisch.')" 
         };
 

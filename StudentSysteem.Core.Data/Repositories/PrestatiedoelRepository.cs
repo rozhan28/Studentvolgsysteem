@@ -12,7 +12,7 @@ namespace StudentSysteem.Core.Data.Repositories
         {
             MaakTabel(@"
                     CREATE TABLE IF NOT EXISTS Prestatiedoel (
-                        processtap_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
                         niveau TEXT NOT NULL,
                         beschrijving TEXT NOT NULL,
                         criterium_id INTEGER NOT NULL,
@@ -26,7 +26,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
             List<string> seed = new()
         {
-            @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
+            @"INSERT OR REPLACE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
               VALUES (
                 'Op niveau',
                 'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
