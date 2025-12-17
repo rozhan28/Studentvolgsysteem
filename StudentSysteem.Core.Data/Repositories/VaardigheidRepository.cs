@@ -7,7 +7,7 @@ namespace StudentSysteem.Core.Data.Repositories
 {
     public class VaardigheidRepository : DatabaseVerbinding, IVaardigheidRepository
     {
-        private readonly List<BeoordelingItem> vaardigheidLijst = new();
+        private readonly List<Vaardigheid> vaardigheidLijst = new();
 
 
         public VaardigheidRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
@@ -35,10 +35,10 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(VoegVaardigheid);
         }
 
-        public List<BeoordelingItem> HaalAlleVaardighedenOp()
+        public List<Vaardigheid> HaalAlleVaardighedenOp()
         {
             vaardigheidLijst.Clear();
-            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id FROM Vaardigheid";
+            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url FROM Vaardigheid";
             OpenVerbinding();
 
             using (SqliteCommand command = new(selectQuery, Verbinding))
@@ -51,36 +51,12 @@ namespace StudentSysteem.Core.Data.Repositories
                     string VaardigheidNaam = reader.GetString(1);
                     string VaardigheidBeschrijving = reader.GetString(2);
                     string HboiActiviteit = reader.GetString(3);
-                    int LeertakenUrl = reader.GetInt32(4);
+                    string LeertakenUrl = reader.GetString(4);
                     vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl));
                 }
             }
             SluitVerbinding();
             return vaardigheidLijst;
-        }
-
-        public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
-        {
-            List<Prestatiedoel> lijst = new();
-
-            OpenVerbinding();
-            using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"SELECT processtap_id, niveau, beschrijving, criterium_id FROM Prestatiedoel";
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                lijst.Add(new Prestatiedoel
-                {
-                    Id = reader.GetInt32(0),
-                    Niveau = reader.GetString(1),
-                    Beschrijving = reader.GetString(2),
-                    CriteriumId = reader.GetInt32(3)
-                });
-            }
-
-            SluitVerbinding();
-            return lijst;
         }
     }
 }

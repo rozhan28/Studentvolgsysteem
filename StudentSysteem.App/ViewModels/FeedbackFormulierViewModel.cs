@@ -17,8 +17,13 @@ namespace StudentSysteem.App.ViewModels
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
-        
+
+        //Bevat model-instanties met al gevulde properties
         private ObservableCollection<BeoordelingItem> _beoordelingen;
+
+
+
+
         public ObservableCollection<BeoordelingItem> Beoordelingen
         {
             get => _beoordelingen;

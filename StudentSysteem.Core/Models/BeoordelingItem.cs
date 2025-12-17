@@ -16,19 +16,6 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //US2 properties
-        public int Vaardigheid_id { get; set; }
-        public string VaardigheidNaam { get; set; }
-        public string VaardigheidBeschrijving { get; set; }
-        public string HboiActiviteit { get; set; }
-        public string LeertakenUrl { get; set; }
-        
-        //Wat moet ik hiermee?
-        public int Prestatiedoel_id { get; set; }
-        public int Processtap_id { get; set; }
-
-        //----------
-
         public BeoordelingItem()
         {
             //Hoort niet in models, moet veranderd worden bij extra tijd. (Viewmodel)

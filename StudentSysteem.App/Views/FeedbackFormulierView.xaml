@@ -57,7 +57,7 @@
 
                                         <!-- Linkerkolom -->
                                         <VerticalStackLayout Grid.Column="0" Spacing="5">
-                                            <Label Text="{Binding Hboi_Activiteit}" FontAttributes="Bold"/>
+                                            <Label Text="{Binding HboiActiviteit}" FontAttributes="Bold"/>
                                             <Label Text="Vaardigheid" FontAttributes="Italic"/>
                                             <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
                                             <Label Text="{Binding Beschrijving}"/>
@@ -67,6 +67,7 @@
                                              LineBreakMode="WordWrap"/>
                                             <HorizontalStackLayout Spacing="5">
                                                 <Image Source="ai_samen.png" HeightRequest="100" WidthRequest="100"/>
+                                                <Button Text="{Binding dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd}"/>
                                                 <Button Text="Leertaken.nl"/>
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
