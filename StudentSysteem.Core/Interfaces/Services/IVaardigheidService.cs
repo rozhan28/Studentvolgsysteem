@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface IVaardigheidServicecs
+    public interface IVaardigheidService
     {
         public List<Vaardigheid> HaalAlleVaardighedenOp();
     }
