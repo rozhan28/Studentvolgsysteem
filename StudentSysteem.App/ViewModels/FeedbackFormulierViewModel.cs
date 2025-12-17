@@ -1,24 +1,33 @@
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
+using StudentSysteem.Core.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.ViewModels
 {
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        //TODO: Clean properties naar models in .core
         public string Titel { get; set; }             
-        public string PrestatiedoelBeschrijving { get; set; } 
+        public string PrestatiedoelBeschrijving { get; set; }
+        public string AiAssessmentScale { get; set; }
+        
+        
+        private readonly bool _isDocent;
+
+
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
-        private readonly bool _isDocent;
-        public string AiAssessmentScale { get; set; }
-        
+        private readonly IVaardigheidService _vaardigheidService;
+
+
         private ObservableCollection<BeoordelingItem> _beoordelingen;
         public ObservableCollection<BeoordelingItem> Beoordelingen
         {
@@ -49,6 +58,7 @@ namespace StudentSysteem.App.ViewModels
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
+            IVaardigheidService vaardigheidService,
             bool isDocent = false)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
@@ -56,13 +66,14 @@ namespace StudentSysteem.App.ViewModels
             _meldingService = meldingService;
             _feedbackService = feedbackService;
             _prestatiedoelService = prestatiedoelService;
+            _vaardigheidService = vaardigheidService;
             _isDocent = isDocent;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
 
             LaadPrestatiedoelen();
         }
-
+        
         private void LaadPrestatiedoelen()
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();

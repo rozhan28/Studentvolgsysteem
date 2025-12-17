@@ -55,6 +55,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
@@ -62,6 +63,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
 
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
