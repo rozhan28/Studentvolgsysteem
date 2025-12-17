@@ -28,7 +28,7 @@ namespace StudentSysteem.Core.Data.Repositories
             @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id)
               VALUES (
                 'Op niveau',
-                'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten',
+                'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
                 1
               )"
         };
