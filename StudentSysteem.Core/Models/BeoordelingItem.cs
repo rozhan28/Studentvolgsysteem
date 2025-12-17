@@ -35,6 +35,25 @@ namespace StudentSysteem.Core.Models
             }
         }
 
+        private Criterium _geselecteerdCriterium;
+        public Criterium GeselecteerdCriterium
+        {
+            get => _geselecteerdCriterium;
+            set
+            {
+                if (_geselecteerdCriterium == value) return;
+                _geselecteerdCriterium = value;
+                Notify();
+            }
+        }
+
+        public Criterium AlgemeenCriterium { get; } = new Criterium
+        {
+            Id = -1,
+            Beschrijving = "Algemeen",
+            Niveau = "Algemeen"
+        };
+
         //Criteria uit DB
         public ObservableCollection<Criterium> OpNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
@@ -180,6 +199,8 @@ namespace StudentSysteem.Core.Models
 
         public BeoordelingItem()
         {
+            BeschikbareCriteria.Add(AlgemeenCriterium);
+
             OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
 
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
@@ -188,24 +209,25 @@ namespace StudentSysteem.Core.Models
 
         private async Task ToonCriteriaKeuze()
         {
-            if (BeschikbareCriteria.Count == 0)
-                return;
-
             var opties = BeschikbareCriteria
-                .Select(c => c.Beschrijving)
+                .Select(c => c.DisplayNaam)
                 .ToArray();
 
-            string keuze = await Application.Current.MainPage.DisplayActionSheet(
+            string keuze = await Shell.Current.DisplayActionSheet(
                 "Koppel toelichting aan criterium",
                 "Annuleren",
                 null,
                 opties);
 
-            if (!string.IsNullOrWhiteSpace(keuze) && keuze != "Annuleren")
-            {
-                GeselecteerdeOptie = keuze;
-            }
+            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze))
+                return;
+
+            GeselecteerdeOptie = keuze;
+
+            GeselecteerdCriterium =
+                BeschikbareCriteria.FirstOrDefault(c => c.DisplayNaam == keuze);
         }
+
 
         private void ResetCriteria()
         {

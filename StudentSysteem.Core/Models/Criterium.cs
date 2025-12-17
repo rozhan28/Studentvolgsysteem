@@ -41,4 +41,15 @@ public class Criterium : INotifyPropertyChanged
             this,
             new PropertyChangedEventArgs(propertyName));
     }
+
+    public string DisplayNaam
+    {
+        get
+        {
+            if (Niveau == "Algemeen")
+                return "Algemeen";
+
+            return $"{Niveau} • {Beschrijving}";
+        }
+    }
 }

@@ -105,9 +105,12 @@
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
                                                                         <HorizontalStackLayout Spacing="10">
-                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" />
-                                                                            <Label Text="{Binding Beschrijving}" />
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}"
+                                                                                      VerticalOptions="Center"/>
+                                                                            <Label Text="{Binding Beschrijving}"
+                                                                                   VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
+
                                                                     </DataTemplate>
                                                                 </BindableLayout.ItemTemplate>
                                                             </VerticalStackLayout>
@@ -124,18 +127,23 @@
                                                             BackgroundColor="{Binding IsBovenNiveau, Converter={StaticResource BovenNiveau}}">  
 
                                                             <Label Text="Boven niveau" FontAttributes="Bold"/>
-
-                                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
+                                                            <HorizontalStackLayout Spacing="10">
+                                                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
-                                                                        <HorizontalStackLayout Spacing="10">
-                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" />
-                                                                            <Label Text="{Binding Beschrijving}" />
-                                                                        </HorizontalStackLayout>
-                                                                    </DataTemplate>
-                                                                </BindableLayout.ItemTemplate>
-                                                            </VerticalStackLayout>
+                                                                            <HorizontalStackLayout Spacing="10">
+                                                                                <CheckBox IsChecked="{Binding IsGeselecteerd}"
+                                                                                          VerticalOptions="Center"/>
 
+                                                                                <Label Text="{Binding Beschrijving}"
+                                                                                       VerticalOptions="Center"/>
+                                                                            </HorizontalStackLayout>
+
+                                                                        </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
+                                                             
+                                                            </VerticalStackLayout>
+                                                            </HorizontalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>
 

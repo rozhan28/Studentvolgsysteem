@@ -22,7 +22,6 @@ namespace StudentSysteem.Core.Data.Repositories
                         feedback_id INTEGER NOT NULL,
                         criterium_id INTEGER NOT NULL,
                         niveau TEXT NOT NULL,
-                        toelichting TEXT,
                         PRIMARY KEY (feedback_id, criterium_id),
                         FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
                         FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
@@ -63,10 +62,10 @@ namespace StudentSysteem.Core.Data.Repositories
 
             using SqliteCommand cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
-        SELECT criterium_id, beschrijving, niveau
-        FROM Criterium
-        WHERE niveau = @niveau;
-    ";
+                SELECT criterium_id, beschrijving, niveau
+                FROM Criterium
+                WHERE niveau = @niveau;
+            ";
 
             cmd.Parameters.AddWithValue("@niveau", niveau);
 
@@ -96,13 +95,13 @@ namespace StudentSysteem.Core.Data.Repositories
 
             using SqliteCommand cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
-        SELECT c.criterium_id, c.beschrijving, c.niveau
-        FROM Criterium c
-        JOIN PrestatiedoelCriterium pc
-            ON pc.criterium_id = c.criterium_id
-        WHERE pc.prestatiedoel_id = @prestatiedoelId
-          AND c.niveau = @niveau;
-    ";
+                SELECT c.criterium_id, c.beschrijving, c.niveau
+                FROM Criterium c
+                JOIN PrestatiedoelCriterium pc
+                    ON pc.criterium_id = c.criterium_id
+                WHERE pc.prestatiedoel_id = @prestatiedoelId
+                  AND c.niveau = @niveau;
+            ";
 
             cmd.Parameters.AddWithValue("@prestatiedoelId", prestatiedoelId);
             cmd.Parameters.AddWithValue("@niveau", niveau);
@@ -138,18 +137,15 @@ namespace StudentSysteem.Core.Data.Repositories
                 {
                     using var cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
-               INSERT OR REPLACE INTO FeedbackCriterium
-                (feedback_id, criterium_id, niveau, toelichting)
-                VALUES (@feedbackId, @criteriumId, @niveau, @toelichting);
-                ";
+                        INSERT OR REPLACE INTO FeedbackCriterium
+                        (feedback_id, criterium_id, niveau)
+                        VALUES (@feedbackId, @criteriumId, @niveau);
+                        ";
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
                     cmd.Parameters.AddWithValue("@niveau", niveau);
-                    cmd.Parameters.AddWithValue(
-                        "@toelichting",
-                        (object?)criterium.Toelichting ?? DBNull.Value);
-
+                    
                     cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();
                 }
