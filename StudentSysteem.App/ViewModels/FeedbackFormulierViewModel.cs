@@ -1,4 +1,4 @@
-using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 using StudentSysteem.Core.Services;
@@ -64,23 +64,36 @@ namespace StudentSysteem.App.ViewModels
 
         private void LaadPrestatiedoelen()
         {
-            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+
             foreach (var d in doelen)
             {
-                var item = new BeoordelingItem
+                BeoordelingItem item = new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving
                 };
 
-                foreach (Criterium c in _criteriumService.HaalOpNiveauCriteriaOp())
+                // Op niveau criteria
+                List<Criterium> opNiveauCriteria =
+                    _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(
+                        d.Id,
+                        "Op niveau");
+
+                foreach (Criterium c in opNiveauCriteria)
                 {
                     item.OpNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
                 }
 
-                foreach (Criterium c in _criteriumService.HaalBovenNiveauCriteriaOp())
+                // Boven niveau criteria 
+                List<Criterium> bovenNiveauCriteria =
+                    _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(
+                        d.Id,
+                        "Boven niveau");
+
+                foreach (Criterium c in bovenNiveauCriteria)
                 {
                     item.BovenNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
@@ -162,25 +175,21 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (BeoordelingItem item in Beoordelingen)
             {
-                bool prestatieOk = !_isDocent || ValideerPrestatieNiveau(item);
-                item.IsPrestatieNiveauInvalid = _isDocent && !prestatieOk;
+                bool niveauGekozen = ValideerPrestatieNiveau(item);
+                bool criteriumGekozen = item.BeschikbareCriteria.Any(c => c.IsGeselecteerd);
+
+                bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
+
+                item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
+                item.IsCriteriumInvalid = !niveauOfCriteriumOk;
 
                 bool toelichtingOk = _isDocent || !string.IsNullOrWhiteSpace(item.Toelichting);
                 item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
 
-                bool criteriumOk = true;
-                if (_isDocent)
+                if (!niveauOfCriteriumOk || !toelichtingOk)
                 {
-                    criteriumOk = item.BeschikbareCriteria.Any(c => c.IsGeselecteerd);
-                    item.IsCriteriumInvalid = !criteriumOk;
-                }
-                else
-                {
-                    item.IsCriteriumInvalid = false;
-                }
-
-                if (!prestatieOk || !toelichtingOk || !criteriumOk)
                     allesGeldig = false;
+                }
             }
 
             return allesGeldig;

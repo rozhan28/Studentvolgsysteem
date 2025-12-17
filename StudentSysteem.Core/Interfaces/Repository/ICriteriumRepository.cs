@@ -1,12 +1,15 @@
-﻿namespace StudentSysteem.Core.Interfaces.Repository
-{
-    public interface ICriteriumRepository
-    {
-        List<Criterium> HaalCriteriaOpVoorNiveau(string niveau);
+﻿using StudentSysteem.Core.Models;
 
-        void SlaGeselecteerdeCriteriaOp(
-            int feedbackId,
-            IEnumerable<Criterium> geselecteerdeCriteria,
-            string niveau);
-    }
+public interface ICriteriumRepository
+{
+    List<Criterium> HaalCriteriaOpVoorNiveau(string niveau);
+
+    List<Criterium> HaalCriteriaOpVoorPrestatiedoel(
+        int prestatiedoelId,
+        string niveau);
+
+    void SlaGeselecteerdeCriteriaOp(
+        int feedbackId,
+        IEnumerable<Criterium> geselecteerdeCriteria,
+        string niveau);
 }
