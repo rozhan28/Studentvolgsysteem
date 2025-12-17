@@ -20,8 +20,9 @@ namespace StudentSysteem.App.ViewModels
 
         //Bevat model-instanties met al gevulde properties
         private ObservableCollection<BeoordelingItem> _beoordelingen;
+        private ObservableCollection<Vaardigheid> _vaardigheid;
 
-
+        
 
 
         public ObservableCollection<BeoordelingItem> Beoordelingen
