@@ -6,6 +6,7 @@
         public string Niveau { get; set; }
         public string Beschrijving { get; set; }
         public int? CriteriumId { get; set; }
+        public string AiAssessmentScale { get; set; }
     }
 }
 
