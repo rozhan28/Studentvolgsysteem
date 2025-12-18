@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Services
 {
@@ -12,15 +13,18 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public void SlaToelichtingOp(string toelichting, int studentId = 1)
+        public void SlaToelichtingenOp(List<Toelichting> toelichtingen, int studentId = 1)
         {
-            if (string.IsNullOrWhiteSpace(toelichting))
-                throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
+            foreach (Toelichting toelichting in toelichtingen)
+            {
+                if (string.IsNullOrWhiteSpace(toelichting.Tekst))
+                    throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
+            }
 
             if (studentId <= 0)
                 throw new ArgumentException("StudentId moet groter zijn dan 0.", nameof(studentId));
 
-            _feedbackRepository.VoegToelichtingToe(toelichting, studentId);
+            _feedbackRepository.VoegToelichtingenToe(toelichtingen, studentId);
         }
     }
 }

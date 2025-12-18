@@ -1,7 +1,9 @@
-﻿namespace StudentSysteem.Core.Interfaces.Services
+﻿using StudentSysteem.Core.Models;
+
+namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IFeedbackFormulierService
     {
-        void SlaToelichtingOp(string toelichting, int studentId = 1);
+        void SlaToelichtingenOp(List<Toelichting> toelichtingen, int studentId = 1);
     }
 }

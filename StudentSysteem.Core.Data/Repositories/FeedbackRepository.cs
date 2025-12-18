@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -28,9 +29,10 @@ namespace StudentSysteem.Core.Data.Repositories
             base.VoegMeerdereInMetTransactie(regels);
         }
 
-        public void VoegToelichtingToe(string toelichting, int studentId)
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
         {
             OpenVerbinding();
+            List<string> regels = new();
             using var transactie = Verbinding.BeginTransaction();
             try
             {

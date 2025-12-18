@@ -101,7 +101,7 @@ namespace StudentSysteem.App.ViewModels
                     foreach (var t in item.Toelichtingen)
                     {
                         if (!string.IsNullOrWhiteSpace(t.Tekst))
-                            _feedbackService.SlaToelichtingOp(t.Tekst, 1);
+                            _feedbackService.SlaToelichtingenOp(t.Tekst, 1);
                     }
                 }
 

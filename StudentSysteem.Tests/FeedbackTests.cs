@@ -25,11 +25,11 @@ namespace StudentSysteem.Tests.Services
             int studentId = 5;
 
             // Act
-            _service.SlaToelichtingOp(toelichting, studentId);
+            _service.SlaToelichtingenOp(toelichting, studentId);
 
             // Assert
             _mockRepo.Verify(
-                r => r.VoegToelichtingToe(toelichting, studentId),
+                r => r.VoegToelichtingenToe(toelichting, studentId),
                 Times.Once
             );
         }
@@ -38,7 +38,7 @@ namespace StudentSysteem.Tests.Services
         public void SlaToelichtingOp_LegeToelichting_GooitArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>
-                _service.SlaToelichtingOp("")
+                _service.SlaToelichtingenOp("")
             );
         }
 
@@ -46,7 +46,7 @@ namespace StudentSysteem.Tests.Services
         public void SlaToelichtingOp_NullToelichting_GooitArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>
-                _service.SlaToelichtingOp(null)
+                _service.SlaToelichtingenOp(null)
             );
         }
 
@@ -57,11 +57,11 @@ namespace StudentSysteem.Tests.Services
             string toelichting = "Test met default id";
 
             // Act
-            _service.SlaToelichtingOp(toelichting);
+            _service.SlaToelichtingenOp(toelichting);
 
             // Assert
             _mockRepo.Verify(
-                r => r.VoegToelichtingToe(toelichting, 1), 
+                r => r.VoegToelichtingenToe(toelichting, 1), 
                 Times.Once
             );
         }

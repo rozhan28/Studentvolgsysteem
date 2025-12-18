@@ -2,6 +2,6 @@
 {
     public interface IFeedbackRepository
     {
-        void VoegToelichtingToe(string toelichting, int studentId);
+        void VoegToelichtingenToe(string toelichting, int studentId);
     }
 }
