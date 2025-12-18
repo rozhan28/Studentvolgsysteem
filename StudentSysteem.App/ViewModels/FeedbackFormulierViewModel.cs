@@ -26,6 +26,8 @@ namespace StudentSysteem.App.ViewModels
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly IVaardigheidService _vaardigheidService;
+        
+        public ICommand LeertakenCommand { get; }
 
 
         private ObservableCollection<BeoordelingItem> _beoordelingen;
@@ -68,10 +70,11 @@ namespace StudentSysteem.App.ViewModels
             _prestatiedoelService = prestatiedoelService;
             _vaardigheidService = vaardigheidService;
             _isDocent = isDocent;
-
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
-
+            
             Task.Run(async () => await InitialiseerPaginaAsync());
+            
+            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
+            LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
         }
 
         // Toegevoegd voor T2.01 - voorkomt crashen
@@ -92,20 +95,27 @@ namespace StudentSysteem.App.ViewModels
         private void LaadPrestatiedoelen()
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+            
+            List<BeoordelingItem> items = doelen.Select(delegate(Prestatiedoel d)
+            {
+                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
 
-            Beoordelingen = new ObservableCollection<BeoordelingItem>(
-                doelen.Select(d => new BeoordelingItem
+                return new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
-
                     Titel = $"Prestatiedoel {d.Id}",
-
                     PrestatiedoelBeschrijving = d.Beschrijving,
+                    AiAssessmentScale = d.AiAssessmentScale,
+                    
+                    //Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
+                    LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
+                    //HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
+                    //Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving
+                };
+            }).ToList();
 
-                    Vaardigheid = $"Criterium {d.CriteriumId}",
-                    AiAssessmentScale = d.AiAssessmentScale
-                })
-            );
+            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
         }
 
 
@@ -178,5 +188,13 @@ namespace StudentSysteem.App.ViewModels
 
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        
+        private async Task OpenLeertakenUrl(string url)
+        {
+            if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                await Browser.Default.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
+            }
+        }
     }
 }

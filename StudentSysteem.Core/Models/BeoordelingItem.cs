@@ -21,9 +21,6 @@ namespace StudentSysteem.Core.Models
             //Hoort niet in models, moet veranderd worden bij extra tijd. (Viewmodel)
             VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
             OptiesCommand = new Command(ShowOptiesPicker);
-            
-            //VaardigheidRepo
-
         }
 
         public int PrestatiedoelId { get; set; }
@@ -248,6 +245,18 @@ namespace StudentSysteem.Core.Models
                 if (IsOpNiveau) return "Op niveau";
                 if (InOntwikkeling) return "In ontwikkeling";
                 return string.Empty;
+            }
+        }
+        
+        // Leertaken url
+        private string _leertakenUrl;
+        public string LeertakenUrl
+        {
+            get => _leertakenUrl;
+            set 
+            { 
+                _leertakenUrl = value; 
+                Notify(nameof(LeertakenUrl));
             }
         }
 

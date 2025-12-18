@@ -68,7 +68,9 @@
                                              LineBreakMode="WordWrap"/>
                                             <HorizontalStackLayout Spacing="5">
                                                 <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" HeightRequest="100" WidthRequest="100"/>
-                                                <Button Text="Leertaken.nl"/>
+                                                <Button Text="Leertaken.nl"
+                                                        Command="{Binding BindingContext.LeertakenCommand, Source={x:Reference Feedbackformulier}}"
+                                                        CommandParameter="{Binding LeertakenUrl}" />
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
 

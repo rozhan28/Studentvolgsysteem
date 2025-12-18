@@ -1,6 +1,7 @@
 ﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Services
 {
@@ -12,7 +13,8 @@ namespace StudentSysteem.Core.Services
         {
             _vaardigheidRepository = vaardigheidRepository;
         }
-        public List<Vaardigheid> HaalAlleVaardighedenOp()
+        
+        public IEnumerable<Vaardigheid> HaalAlleVaardighedenOp()
         {
             return _vaardigheidRepository.HaalAlleVaardighedenOp();
         }

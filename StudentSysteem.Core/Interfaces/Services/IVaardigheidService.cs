@@ -7,6 +7,6 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IVaardigheidService
     {
-        public List<Vaardigheid> HaalAlleVaardighedenOp();
+        IEnumerable<Vaardigheid> HaalAlleVaardighedenOp();
     }
 }
