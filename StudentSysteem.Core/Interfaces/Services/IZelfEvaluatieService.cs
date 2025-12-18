@@ -4,7 +4,7 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IZelfEvaluatieService
     {
-        void Add(ZelfEvaluatie evaluatie);
+        int Add(ZelfEvaluatie evaluatie);
         List<ZelfEvaluatie> HaalOpVoorStudent(int studentId);
     }
 }

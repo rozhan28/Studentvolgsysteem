@@ -17,10 +17,11 @@ namespace StudentSysteem.App.ViewModels
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly bool _isDocent;
         private readonly IToelichtingService _toelichtingService;
 
@@ -38,16 +39,19 @@ namespace StudentSysteem.App.ViewModels
         public ICommand OptiesCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfevaluatieService,
+            IZelfEvaluatieService zelfEvaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
+            IPrestatiedoelService prestatiedoelService,
             IToelichtingService toelichtingService,
             bool isDocent = false)
         {
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
+            _prestatiedoelService =  prestatiedoelService;
             _isDocent = isDocent;
             _toelichtingService = toelichtingService;
 
@@ -62,12 +66,14 @@ namespace StudentSysteem.App.ViewModels
                     Vaardigheid = "Maken domeinmodel",
                     Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
                 },
-                new BeoordelingItem {
+                new BeoordelingItem
+                {
                     Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Bestuderen probleemstelling",
                     Beschrijving = "Het probleem achterhalen"
                 },
-                new BeoordelingItem {
+                new BeoordelingItem
+                {
                     Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
                     Vaardigheid = "Beschrijven stakeholders",
                     Beschrijving = "Het maken van een stakeholderanalyse"
@@ -84,7 +90,7 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
-        private async Task BewaarReflectieAsync()
+        private async Task BewaarEvaluatieAsync()
         {
             StatusMelding = string.Empty;
 

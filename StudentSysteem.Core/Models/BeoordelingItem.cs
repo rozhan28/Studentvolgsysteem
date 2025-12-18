@@ -32,6 +32,10 @@ namespace StudentSysteem.Core.Models
                 Notify(nameof(IsExpanded));
             }
         }
+        public string PrestatiedoelNiveau { get; set; } = string.Empty;
+
+
+
 
         private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
         public PrestatieNiveauKleur Kleur

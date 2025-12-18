@@ -1,6 +1,9 @@
-﻿namespace StudentSysteem.Core.Interfaces.Repository
+﻿using StudentSysteem.Core.Models;
+
+namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IPrestatiedoelRepository
     {
+        List<Prestatiedoel> HaalAllePrestatiedoelenOp();
     }
 }
