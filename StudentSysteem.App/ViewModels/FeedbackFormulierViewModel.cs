@@ -135,7 +135,6 @@ namespace StudentSysteem.App.ViewModels
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
-                HookToelichtingen(item);
             });
         }
 
@@ -167,8 +166,6 @@ namespace StudentSysteem.App.ViewModels
         private void HookToelichtingen(BeoordelingItem item)
         {
             item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
-            Notify(nameof(item.Toelichting));
-            Debug.WriteLine($"{item.Toelichtingen.Count} {_toelichtingService.TotaleOptiesCount} {item.KanExtraToelichtingToevoegen}");
 
             void Handler(object s, NotifyCollectionChangedEventArgs e)
             {
