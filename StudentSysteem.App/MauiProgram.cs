@@ -62,6 +62,8 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<DbConnectieHelper>();
+            builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();

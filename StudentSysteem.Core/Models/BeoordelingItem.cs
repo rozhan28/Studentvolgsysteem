@@ -1,17 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
-
-public enum PrestatieNiveauKleur
-{
-    NietIngeleverd,
-    InOntwikkeling,
-    OpNiveau,
-    BovenNiveau
-}
 
 namespace StudentSysteem.Core.Models
 {
+    public enum PrestatieNiveauKleur
+    {
+        NietIngeleverd,
+        InOntwikkeling,
+        OpNiveau,
+        BovenNiveau
+    }
+
     public class BeoordelingItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -38,28 +37,6 @@ namespace StudentSysteem.Core.Models
 
 
 
-        private ObservableCollection<ExtraToelichting> _extraToelichtingVak = new ObservableCollection<ExtraToelichting>();
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak
-        {
-            get => _extraToelichtingVak;
-            set
-            {
-                _extraToelichtingVak = value;
-                Notify(nameof(ExtraToelichtingVak));
-            }
-        }
-
-        public ICommand VoegExtraToelichtingToeCommand { get; }
-        public List<string> Opties { get; } = new() { "Algemeen", "Criteria 1", "Criteria 2", "Criteria 3" };
-        private string _geselecteerdeOptie = "Toelichting gekoppeld aan...";
-        public string GeselecteerdeOptie
-        {
-            get => _geselecteerdeOptie;
-            set { _geselecteerdeOptie = value; Notify(nameof(GeselecteerdeOptie)); }
-        }
-        public ICommand OptiesCommand { get; }
-
-        // --- PrestatieNiveau ---
         private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
         public PrestatieNiveauKleur Kleur
         {
@@ -80,10 +57,8 @@ namespace StudentSysteem.Core.Models
             {
                 if (_inOntwikkeling == value) return;
                 if (_isUpdating) return;
-                
                 _isUpdating = true;
                 _inOntwikkeling = value;
-                
                 if (value)
                 {
                     _opNiveauDomeinWeerspiegelt = false;
@@ -91,10 +66,8 @@ namespace StudentSysteem.Core.Models
                     _opNiveauVastgelegd = false;
                     _bovenNiveauVolledig = false;
                 }
-
                 UpdateColor();
                 _isUpdating = false;
-                
                 Notify(nameof(InOntwikkeling));
                 Notify(nameof(IsOpNiveau));
                 Notify(nameof(IsBovenNiveau));
@@ -111,25 +84,20 @@ namespace StudentSysteem.Core.Models
             {
                 if (_opNiveauDomeinWeerspiegelt == value) return;
                 if (_isUpdating) return;
-                
                 _isUpdating = true;
                 _opNiveauDomeinWeerspiegelt = value;
-                
                 if (value)
                 {
                     _inOntwikkeling = false;
                     _bovenNiveauVolledig = false;
                 }
-
                 UpdateColor();
                 _isUpdating = false;
-                
                 Notify(nameof(OpNiveauDomeinWeerspiegelt));
                 Notify(nameof(PrestatieNiveau));
                 Notify(nameof(IsOpNiveau));
                 Notify(nameof(IsBovenNiveau));
                 Notify(nameof(IsInOntwikkeling));
-                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -141,25 +109,20 @@ namespace StudentSysteem.Core.Models
             {
                 if (_opNiveauSyntaxCorrect == value) return;
                 if (_isUpdating) return;
-                
                 _isUpdating = true;
                 _opNiveauSyntaxCorrect = value;
-                
                 if (value)
                 {
                     _inOntwikkeling = false;
                     _bovenNiveauVolledig = false;
                 }
-
                 UpdateColor();
                 _isUpdating = false;
-                
                 Notify(nameof(OpNiveauSyntaxCorrect));
                 Notify(nameof(PrestatieNiveau));
                 Notify(nameof(IsOpNiveau));
                 Notify(nameof(IsBovenNiveau));
                 Notify(nameof(IsInOntwikkeling));
-                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -171,25 +134,20 @@ namespace StudentSysteem.Core.Models
             {
                 if (_opNiveauVastgelegd == value) return;
                 if (_isUpdating) return;
-                
                 _isUpdating = true;
                 _opNiveauVastgelegd = value;
-                
                 if (value)
                 {
                     _inOntwikkeling = false;
                     _bovenNiveauVolledig = false;
                 }
-
                 UpdateColor();
                 _isUpdating = false;
-                
                 Notify(nameof(OpNiveauVastgelegd));
                 Notify(nameof(PrestatieNiveau));
                 Notify(nameof(IsOpNiveau));
                 Notify(nameof(IsBovenNiveau));
                 Notify(nameof(IsInOntwikkeling));
-                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -201,10 +159,8 @@ namespace StudentSysteem.Core.Models
             {
                 if (_bovenNiveauVolledig == value) return;
                 if (_isUpdating) return;
-                
                 _isUpdating = true;
                 _bovenNiveauVolledig = value;
-                
                 if (value)
                 {
                     _inOntwikkeling = false;
@@ -212,16 +168,13 @@ namespace StudentSysteem.Core.Models
                     _opNiveauSyntaxCorrect = false;
                     _opNiveauVastgelegd = false;
                 }
-
                 UpdateColor();
                 _isUpdating = false;
-                
                 Notify(nameof(BovenNiveauVolledig));
                 Notify(nameof(PrestatieNiveau));
                 Notify(nameof(IsOpNiveau));
                 Notify(nameof(IsBovenNiveau));
                 Notify(nameof(IsInOntwikkeling));
-                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -236,7 +189,6 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        // --- Toelichting ---
         private string _toelichting;
         public string Toelichting
         {
@@ -244,7 +196,6 @@ namespace StudentSysteem.Core.Models
             set { _toelichting = value; Notify(nameof(Toelichting)); }
         }
 
-        // --- Validatie ---
         private bool _isPrestatieNiveauInvalid;
         public bool IsPrestatieNiveauInvalid
         {
@@ -258,7 +209,7 @@ namespace StudentSysteem.Core.Models
             get => _isToelichtingInvalid;
             set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
         }
-        
+
         public bool IsOpNiveau =>
             OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd;
 
@@ -266,29 +217,22 @@ namespace StudentSysteem.Core.Models
 
         public bool IsBovenNiveau => BovenNiveauVolledig;
 
-        // --- Constructor ---
-        public BeoordelingItem()
+        private bool _kanExtraToelichtingToevoegen;
+        public bool KanExtraToelichtingToevoegen
         {
-            VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
-            OptiesCommand = new Command(ShowOptiesPicker);
+            get => _kanExtraToelichtingToevoegen;
+            set
+            {
+                if (_kanExtraToelichtingToevoegen == value) return;
+                _kanExtraToelichtingToevoegen = value;
+                Notify(nameof(KanExtraToelichtingToevoegen));
+            }
         }
 
-        // --- Methods ---
-        public void VoegExtraToelichtingToe()
-        {
-            ExtraToelichtingVak.Add(new ExtraToelichting());
-            Notify(nameof(ExtraToelichtingVak));
-        }
 
         private void UpdateColor()
         {
             if (_isUpdating) return;
-            
-            System.Diagnostics.Debug.WriteLine($"=== UpdateColor aangeroepen ===");
-            System.Diagnostics.Debug.WriteLine($"IsInOntwikkeling: {InOntwikkeling}");
-            System.Diagnostics.Debug.WriteLine($"IsOpNiveau: {IsOpNiveau}");
-            System.Diagnostics.Debug.WriteLine($"IsBovenNiveau: {BovenNiveauVolledig}");
-            
             if (BovenNiveauVolledig)
                 Kleur = PrestatieNiveauKleur.BovenNiveau;
             else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
@@ -297,7 +241,6 @@ namespace StudentSysteem.Core.Models
                 Kleur = PrestatieNiveauKleur.InOntwikkeling;
             else
                 Kleur = PrestatieNiveauKleur.NietIngeleverd;
-            
             Notify(nameof(IsOpNiveau));
             Notify(nameof(IsInOntwikkeling));
             Notify(nameof(IsBovenNiveau));
@@ -305,18 +248,8 @@ namespace StudentSysteem.Core.Models
 
         private void Notify(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        
+        public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new ObservableCollection<Toelichting>();
 
-        private async void ShowOptiesPicker()
-        {
-            var result = await Application.Current.MainPage.DisplayActionSheet(
-                "Toelichting gekoppeld aan...",
-                "Annuleren",
-                null,
-                Opties.ToArray()
-            );
-
-            if (!string.IsNullOrEmpty(result) && result != "Annuleren")
-                GeselecteerdeOptie = result;
-        }
     }
 }

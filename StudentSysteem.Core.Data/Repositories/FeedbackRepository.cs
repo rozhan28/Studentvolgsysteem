@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -23,24 +24,32 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(VoegFeedback);
         }
 
-        public void VoegToelichtingToe(string toelichting, int studentId)
+        public void VoegMeerdereInMetTransactie(List<string> regels)
+        {
+            base.VoegMeerdereInMetTransactie(regels);
+        }
+
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
         {
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();
             try
             {
-                using var cmd = Verbinding.CreateCommand();
-                
-                
-                cmd.CommandText = @"INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
+                foreach (Toelichting toelichting in toelichtingen)
+                {
+                    using var cmd = Verbinding.CreateCommand();
+
+
+                    cmd.CommandText = @"INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
                                     VALUES (@toelichting, @datum, @tijd, @studentId);";
-                cmd.Parameters.AddWithValue("@toelichting", toelichting);
-                var now = DateTime.Now;
-                cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
-                cmd.Parameters.AddWithValue("@studentId", studentId);
-                cmd.Transaction = transactie;
-                cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@toelichting", toelichting.Tekst);
+                    var now = DateTime.Now;
+                    cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+                    cmd.Transaction = transactie;
+                    cmd.ExecuteNonQuery();
+                }
 
                 transactie.Commit();
             }

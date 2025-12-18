@@ -12,6 +12,8 @@ namespace StudentSysteem.App.Views
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackFormulierService,
             IPrestatiedoelService prestatiedoelService)
+            IToelichtingService toelichtingService
+            )
         {
             InitializeComponent();
 
@@ -23,6 +25,7 @@ namespace StudentSysteem.App.Views
                 meldingService,
                 feedbackFormulierService,
                 prestatiedoelService,
+                toelichtingService,
                 isDocent
             );
         }
