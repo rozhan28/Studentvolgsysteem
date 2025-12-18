@@ -15,7 +15,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [cluster_id] INTEGER,
                     FOREIGN KEY([cluster_id]) REFERENCES Cluster(cluster_id))");
 
-            List<string> insertQueries = [@"INSERT OR REPLACE INTO Docent(docent_id, naam, email, nummer, cluster_id) 
+            List<string> insertQueries = [@"INSERT OR IGNORE INTO Docent(docent_id, naam, email, nummer, cluster_id) 
                                         VALUES(NULL, 'MockData2', NULL, NULL, NULL)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }

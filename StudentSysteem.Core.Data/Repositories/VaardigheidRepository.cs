@@ -22,7 +22,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [processtap_id] INTEGER,
                     FOREIGN KEY([prestatiedoel_id]) REFERENCES Prestatiedoel(prestatiedoel_id))");
 
-            List<string> VoegVaardigheid = [@"INSERT OR REPLACE INTO Vaardigheid
+            List<string> VoegVaardigheid = [@"INSERT OR IGNORE INTO Vaardigheid
             (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id)
             VALUES (
                 'Maken domeinmodel',

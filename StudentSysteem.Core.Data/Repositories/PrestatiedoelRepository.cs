@@ -26,7 +26,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
             List<string> seed = new()
         {
-            @"INSERT OR REPLACE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
+            @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
               VALUES (
                 'Op niveau',
                 'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',

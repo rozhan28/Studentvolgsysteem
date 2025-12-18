@@ -14,7 +14,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [studentnummer] VARCHAR(50),
                     [klas] VARCHAR(5))");
 
-            List<string> insertQueries = [@"INSERT OR REPLACE INTO Student(student_id, naam, email, studentnummer, klas) 
+            List<string> insertQueries = [@"INSERT OR IGNORE INTO Student(student_id, naam, email, studentnummer, klas) 
                                         VALUES(NULL, 'MockData2', NULL, NULL, NULL)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }
