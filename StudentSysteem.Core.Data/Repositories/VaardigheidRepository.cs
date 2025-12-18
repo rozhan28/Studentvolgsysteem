@@ -20,17 +20,15 @@ namespace StudentSysteem.Core.Data.Repositories
                     [leertaken_url] VARCHAR(255),
                     [prestatiedoel_id] INTEGER,
                     [processtap_id] INTEGER,
-                    FOREIGN KEY([prestatiedoel_id]) REFERENCES Prestatiedoel(prestatiedoel_id),
-                    FOREIGN KEY([processtap_id]) REFERENCES Processtap(processtap_id))");
+                    FOREIGN KEY([prestatiedoel_id]) REFERENCES Prestatiedoel(prestatiedoel_id))");
 
             List<string> VoegVaardigheid = [@"INSERT OR REPLACE INTO Vaardigheid
-            (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id)
+            (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id)
             VALUES (
                 'Maken domeinmodel',
                 'Het maken van een domeinmodel volgens een UML klassendiagram',
                 'Analyseren',
                 'https://leertaken.nl/2.-Processen/1.-Requirementsanalyseproces/1.-Uitleg-defini%C3%ABren-probleemdomein',
-                1, 
                 1)"];
             VoegMeerdereInMetTransactie(VoegVaardigheid);
         }

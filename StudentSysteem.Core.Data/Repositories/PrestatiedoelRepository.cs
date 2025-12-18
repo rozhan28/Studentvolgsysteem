@@ -7,7 +7,7 @@ namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper)
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
             : base(dbConnectieHelper)
         {
             MaakTabel(@"
@@ -44,7 +44,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
             OpenVerbinding();
             using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"SELECT processtap_id, niveau, beschrijving, criterium_id, ai_assessment_scale FROM Prestatiedoel";
+            cmd.CommandText = @"SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale FROM Prestatiedoel";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
