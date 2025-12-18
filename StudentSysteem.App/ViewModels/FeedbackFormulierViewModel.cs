@@ -22,7 +22,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly bool _isDocent;
-        private readonly ToelichtingService _toelichtingService;
+        private readonly IToelichtingService _toelichtingService;
 
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; set; }
 
@@ -42,13 +42,14 @@ namespace StudentSysteem.App.ViewModels
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
+            IToelichtingService toelichtingService,
             bool isDocent = false)
         {
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
             _isDocent = isDocent;
-            _toelichtingService = new ToelichtingService();
+            _toelichtingService = toelichtingService;
 
             OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
             VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));

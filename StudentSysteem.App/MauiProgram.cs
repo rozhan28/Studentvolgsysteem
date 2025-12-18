@@ -55,6 +55,7 @@ else
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<DbConnectieHelper>();
+            builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
             // Repository
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();

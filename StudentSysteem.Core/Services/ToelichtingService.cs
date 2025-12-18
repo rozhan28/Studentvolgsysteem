@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Services
 {
-    public class ToelichtingService
+    public class ToelichtingService : IToelichtingService
     {
         private readonly List<string> _beschikbareOpties = new()
         {
