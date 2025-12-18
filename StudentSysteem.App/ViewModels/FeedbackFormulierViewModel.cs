@@ -98,11 +98,7 @@ namespace StudentSysteem.App.ViewModels
             {
                 foreach (BeoordelingItem item in Beoordelingen)
                 {
-                    foreach (var t in item.Toelichtingen)
-                    {
-                        if (!string.IsNullOrWhiteSpace(t.Tekst))
-                            _feedbackService.SlaToelichtingenOp(t.Tekst, 1);
-                    }
+                    _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), 1);
                 }
 
                 if (Application.Current?.MainPage != null)
