@@ -55,7 +55,7 @@ namespace StudentSysteem.App.ViewModels
             _isDocent = isDocent;
             _toelichtingService = toelichtingService;
 
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
+            OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
             VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));
             OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
 

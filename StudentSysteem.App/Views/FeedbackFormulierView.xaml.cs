@@ -11,7 +11,7 @@ namespace StudentSysteem.App.Views
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackFormulierService,
-            IPrestatiedoelService prestatiedoelService)
+            IPrestatiedoelService prestatiedoelService,
             IToelichtingService toelichtingService
             )
         {
