@@ -58,6 +58,7 @@
 
                                         <!-- Linkerkolom -->
                                         <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                            <Label Text="HBO-I activiteit" FontAttributes="Bold"/>
                                             <Label Text="{Binding HboiActiviteit}" FontAttributes="Bold"/>
                                             <Label Text="Vaardigheid" FontAttributes="Italic"/>
                                             <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
