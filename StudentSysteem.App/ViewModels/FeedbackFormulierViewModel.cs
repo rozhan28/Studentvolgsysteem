@@ -15,15 +15,16 @@ namespace StudentSysteem.App.ViewModels
         private readonly ICriteriumRepository _criteriumRepository;
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly ICriteriumService _criteriumService;
-        private readonly IMeldingService _meldingService;
-        private readonly IFeedbackFormulierService _feedbackService;
         private readonly IZelfEvaluatieService _zelfEvaluatieService;
+        private readonly IMeldingService _meldingService;
 
         private readonly bool _isDocent;
 
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
             = new();
+
+        private readonly Dictionary<int, bool> _geselecteerdeCriteria = new();
+        private readonly Dictionary<int, string> _toelichtingen = new();
 
         private string _statusMelding;
         public string StatusMelding
@@ -39,19 +40,15 @@ namespace StudentSysteem.App.ViewModels
         public ICommand OpslaanCommand { get; }
 
         public FeedbackFormulierViewModel(
-        IPrestatiedoelService prestatiedoelService,
-        ICriteriumService criteriumService,
-        ICriteriumRepository criteriumRepository,
-        IFeedbackRepository feedbackRepository,
-        IFeedbackFormulierService feedbackService,
-        IZelfEvaluatieService zelfEvaluatieService,
-        IMeldingService meldingService)
+            IPrestatiedoelService prestatiedoelService,
+            ICriteriumRepository criteriumRepository,
+            IFeedbackRepository feedbackRepository,
+            IZelfEvaluatieService zelfEvaluatieService,
+            IMeldingService meldingService)
         {
             _prestatiedoelService = prestatiedoelService;
-            _criteriumService = criteriumService;
             _criteriumRepository = criteriumRepository;
             _feedbackRepository = feedbackRepository;
-            _feedbackService = feedbackService;
             _zelfEvaluatieService = zelfEvaluatieService;
             _meldingService = meldingService;
 
@@ -61,6 +58,33 @@ namespace StudentSysteem.App.ViewModels
             LaadPrestatiedoelen();
         }
 
+        #region Criterium UI-state
+
+        public bool IsCriteriumGeselecteerd(Criterium criterium)
+        {
+            return _geselecteerdeCriteria.TryGetValue(criterium.Id, out var value) && value;
+        }
+
+        public void ZetCriteriumGeselecteerd(Criterium criterium, bool waarde)
+        {
+            _geselecteerdeCriteria[criterium.Id] = waarde;
+            Notify(nameof(Beoordelingen));
+        }
+
+        public string GetToelichting(Criterium criterium)
+        {
+            return _toelichtingen.TryGetValue(criterium.Id, out var value)
+                ? value
+                : string.Empty;
+        }
+
+        public void ZetToelichting(Criterium criterium, string tekst)
+        {
+            _toelichtingen[criterium.Id] = tekst;
+            Notify(nameof(Beoordelingen));
+        }
+
+        #endregion
 
         private void LaadPrestatiedoelen()
         {
@@ -68,32 +92,26 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var d in doelen)
             {
-                BeoordelingItem item = new BeoordelingItem
+                var item = new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving
                 };
 
-                // Op niveau criteria
-                List<Criterium> opNiveauCriteria =
-                    _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(
-                        d.Id,
-                        "Op niveau");
+                var opNiveau = _criteriumRepository
+                    .HaalCriteriaOpVoorPrestatiedoel(d.Id, "Op niveau");
 
-                foreach (Criterium c in opNiveauCriteria)
+                var bovenNiveau = _criteriumRepository
+                    .HaalCriteriaOpVoorPrestatiedoel(d.Id, "Boven niveau");
+
+                foreach (var c in opNiveau)
                 {
                     item.OpNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
                 }
 
-                // Boven niveau criteria 
-                List<Criterium> bovenNiveauCriteria =
-                    _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(
-                        d.Id,
-                        "Boven niveau");
-
-                foreach (Criterium c in bovenNiveauCriteria)
+                foreach (var c in bovenNiveau)
                 {
                     item.BovenNiveauCriteria.Add(c);
                     item.BeschikbareCriteria.Add(c);
@@ -103,7 +121,6 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
-        //Opslaan
         private async Task BewaarReflectieAsync()
         {
             StatusMelding = string.Empty;
@@ -116,14 +133,13 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                // Zelfevaluatie aanmaken
-                int zelfEvaluatieId = _zelfEvaluatieService.Add(new ZelfEvaluatie
+                _zelfEvaluatieService.Add(new ZelfEvaluatie
                 {
                     StudentId = 1,
                     PrestatieNiveau = "Ingevuld"
                 });
 
-                foreach (BeoordelingItem item in Beoordelingen)
+                foreach (var item in Beoordelingen)
                 {
                     string niveau =
                         item.IsBovenNiveau ? "Boven niveau" :
@@ -136,25 +152,23 @@ namespace StudentSysteem.App.ViewModels
 
                     int feedbackId = _feedbackRepository.MaakFeedbackAan(niveau);
 
-                    // Toelichting (alleen als ingevuld)
-                    if (!string.IsNullOrWhiteSpace(item.Toelichting))
+                    foreach (var criterium in item.BeschikbareCriteria)
                     {
-                        _feedbackRepository.VoegToelichtingToe(
-                            feedbackId,
-                            item.Toelichting);
-                    }
+                        if (!IsCriteriumGeselecteerd(criterium))
+                            continue;
 
-                    // Criteria
-                    var geselecteerdeCriteria = item.BeschikbareCriteria
-                        .Where(c => c.IsGeselecteerd)
-                        .ToList();
-
-                    if (geselecteerdeCriteria.Any())
-                    {
                         _criteriumRepository.SlaGeselecteerdeCriteriaOp(
                             feedbackId,
-                            geselecteerdeCriteria,
+                            new List<Criterium> { criterium },
                             niveau);
+
+                        var toelichting = GetToelichting(criterium);
+                        if (!string.IsNullOrWhiteSpace(toelichting))
+                        {
+                            _feedbackRepository.VoegToelichtingToe(
+                                feedbackId,
+                                toelichting);
+                        }
                     }
                 }
 
@@ -168,33 +182,34 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
-        //Validatie
         private bool ValideerBeoordelingen()
         {
             bool allesGeldig = true;
 
-            foreach (BeoordelingItem item in Beoordelingen)
+            foreach (var item in Beoordelingen)
             {
                 bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen = item.BeschikbareCriteria.Any(c => c.IsGeselecteerd);
+                bool criteriumGekozen =
+                    item.BeschikbareCriteria.Any(c => IsCriteriumGeselecteerd(c));
 
                 bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
 
                 item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
                 item.IsCriteriumInvalid = !niveauOfCriteriumOk;
 
-                bool toelichtingOk = _isDocent || !string.IsNullOrWhiteSpace(item.Toelichting);
+                bool toelichtingOk = _isDocent ||
+                    item.BeschikbareCriteria.Any(c =>
+                        IsCriteriumGeselecteerd(c) &&
+                        !string.IsNullOrWhiteSpace(GetToelichting(c)));
+
                 item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
 
                 if (!niveauOfCriteriumOk || !toelichtingOk)
-                {
                     allesGeldig = false;
-                }
             }
 
             return allesGeldig;
         }
-
 
         private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {

@@ -1,55 +1,32 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-public class Criterium : INotifyPropertyChanged
+namespace StudentSysteem.Core.Models
 {
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public int Id { get; set; }
-
-    public string Beschrijving { get; set; }
-
-    public string Niveau { get; set; }
-
-    private bool _isGeselecteerd;
-    public bool IsGeselecteerd
+    public class Criterium : INotifyPropertyChanged
     {
-        get => _isGeselecteerd;
-        set
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Id { get; set; }
+        public string Beschrijving { get; set; }
+        public string Niveau { get; set; }
+
+        public string DisplayNaam =>
+            $"{Beschrijving} ({Niveau})";
+
+        private bool _isGeselecteerd;
+        public bool IsGeselecteerd
         {
-            if (_isGeselecteerd == value) return;
-            _isGeselecteerd = value;
-            OnPropertyChanged();
+            get => _isGeselecteerd;
+            set
+            {
+                if (_isGeselecteerd == value) return;
+                _isGeselecteerd = value;
+                Notify();
+            }
         }
-    }
-    private string _toelichting;
-    public string Toelichting
-    {
-        get => _toelichting;
-        set
-        {
-            if (_toelichting == value) return;
-            _toelichting = value;
-            OnPropertyChanged(); 
-        }
-    }
 
-    protected void OnPropertyChanged(
-        [CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(
-            this,
-            new PropertyChangedEventArgs(propertyName));
-    }
-
-    public string DisplayNaam
-    {
-        get
-        {
-            if (Niveau == "Algemeen")
-                return "Algemeen";
-
-            return $"{Niveau} • {Beschrijving}";
-        }
+        private void Notify([CallerMemberName] string prop = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
