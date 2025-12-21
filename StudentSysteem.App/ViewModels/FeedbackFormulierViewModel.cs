@@ -122,11 +122,48 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (BeoordelingItem item in Beoordelingen)
             {
-                bool toelichtingOk = !(item.Toelichtingen.All(t => string.IsNullOrWhiteSpace(t.Tekst)) && !_isDocent);
-                if (!toelichtingOk) allesGeldig = false;
+                bool niveauGekozen = ValideerPrestatieNiveau(item);
+                bool criteriumGekozen =
+                    false;
+
+                bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
+
+                item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
+                item.IsCriteriumInvalid = !niveauOfCriteriumOk;
+
+                bool toelichtingOk = ZijnAlleToelichtingenOk(item.Toelichtingen);
+
+                item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
+
+                if (!niveauOfCriteriumOk || !toelichtingOk)
+                    allesGeldig = false;
             }
 
             return allesGeldig;
+        }
+        
+        public bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
+        {
+            if (_isDocent)
+                return true;
+            
+            if (toelichtingen == null || !toelichtingen.Any())
+                return false;
+            
+            return toelichtingen.All(t => IsToelichtingCorrect(t));
+        }
+
+        private bool IsToelichtingCorrect(Toelichting toelichting)
+        {
+            return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
+                   toelichting.GeselecteerdeOptie != "Toelichting gekoppeld aan...";
+        }
+        
+        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
+        {
+            return item.InOntwikkeling
+                   || item.IsOpNiveau
+                   || item.IsBovenNiveau;
         }
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)
