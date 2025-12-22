@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace StudentSysteem.Core.Models
 {
@@ -209,6 +210,18 @@ namespace StudentSysteem.Core.Models
             get => _isToelichtingInvalid;
             set { _isToelichtingInvalid = value; Notify(nameof(IsToelichtingInvalid)); }
         }
+        
+        private bool _isCriteriumInvalid;
+        public bool IsCriteriumInvalid
+        {
+            get => _isCriteriumInvalid;
+            set
+            {
+                if (_isCriteriumInvalid == value) return;
+                _isCriteriumInvalid = value;
+                Notify();
+            }
+        }
 
         public bool IsOpNiveau =>
             OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd;
@@ -246,8 +259,8 @@ namespace StudentSysteem.Core.Models
             Notify(nameof(IsBovenNiveau));
         }
 
-        private void Notify(string prop) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        private void Notify([CallerMemberName] string prop = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         
         public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new ObservableCollection<Toelichting>();
 
