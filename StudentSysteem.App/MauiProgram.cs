@@ -24,9 +24,10 @@ namespace StudentSysteem.App
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
-                    fonts.AddFont("Poppins-Bold.ttf", "PoppinsBold");
-                    fonts.AddFont("Poppins-BoldItalic.ttf", "PoppinsBoldItalic");
+                    fonts.AddFont("Poppins-Regular.ttf", "Regular");
+                    fonts.AddFont("Poppins-Bold.ttf", "Bold");
+                    fonts.AddFont("Poppins-BoldItalic.ttf", "BoldItalic");
+                    fonts.AddFont("Poppins-Italic.ttf", "Italic");
                 });
 
 #if DEBUG

@@ -26,7 +26,7 @@ namespace StudentSysteem.Core.Data.Repositories
             (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id)
             VALUES (
                 'Maken domeinmodel',
-                'Het maken van een domeinmodel volgens een UML klassendiagram',
+                'Het maken van een domeinmodel volgens een UML klassendiagram.',
                 'Analyseren',
                 'https://leertaken.nl/2.-Processen/1.-Requirementsanalyseproces/1.-Uitleg-defini%C3%ABren-probleemdomein',
                 1)"];
