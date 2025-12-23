@@ -260,6 +260,8 @@ namespace StudentSysteem.Core.Models
             }
         }
 
+        public string HboiActiviteit { get; set; }
+
         // --- Toelichting ---
         private string _toelichting;
         public string Toelichting
