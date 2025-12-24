@@ -16,12 +16,12 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BeoordelingItem()
-        {
-            //Hoort niet in models, moet veranderd worden bij extra tijd. (Viewmodel)
-            VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
-            OptiesCommand = new Command(ShowOptiesPicker);
-        }
+        //public BeoordelingItem()
+        //{
+        //    //Hoort niet in models, moet veranderd worden bij extra tijd. (Viewmodel)
+        //    VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
+        //    OptiesCommand = new Command(ShowOptiesPicker);
+        //}
 
         public int PrestatiedoelId { get; set; }
 

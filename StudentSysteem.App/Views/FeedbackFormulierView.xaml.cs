@@ -12,7 +12,7 @@ namespace StudentSysteem.App.Views
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackFormulierService,
             IPrestatiedoelService prestatiedoelService,
-            IVaardigheidService vaardigheidService)
+            IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService
             )
         {

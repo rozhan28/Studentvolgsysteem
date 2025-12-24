@@ -25,7 +25,6 @@ namespace StudentSysteem.App.ViewModels
         private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly IVaardigheidService _vaardigheidService;
-        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly IToelichtingService _toelichtingService;
         private readonly bool _isDocent;
         
@@ -151,7 +150,7 @@ namespace StudentSysteem.App.ViewModels
                 {
                     if (item.Toelichtingen != null && item.Toelichtingen.Any())
                     {
-                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen, zelfEvaluatieId);
+                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), zelfEvaluatieId);
                     }
                 }
 
