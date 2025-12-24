@@ -16,6 +16,18 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public BeoordelingItem()
+        {
+            //Hoort niet in models, moet veranderd worden bij extra tijd. (Viewmodel)
+            VoegExtraToelichtingToeCommand = new Command(() => VoegExtraToelichtingToe());
+            OptiesCommand = new Command(ShowOptiesPicker);
+        }
+
+        public int PrestatiedoelId { get; set; }
+
+        public string PrestatiedoelBeschrijving { get; set; }
+        public string AiAssessmentScale { get; set; }
+
         private bool _isUpdating;
 
         public string Titel { get; set; }
@@ -189,6 +201,20 @@ namespace StudentSysteem.Core.Models
                 return string.Empty;
             }
         }
+        
+        // Leertaken url
+        private string _leertakenUrl;
+        public string LeertakenUrl
+        {
+            get => _leertakenUrl;
+            set 
+            { 
+                _leertakenUrl = value; 
+                Notify(nameof(LeertakenUrl));
+            }
+        }
+
+        public string HboiActiviteit { get; set; }
 
         private string _toelichting;
         public string Toelichting

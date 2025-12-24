@@ -18,7 +18,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [docent_id] INTEGER,
                     [vaardigheid_id] INTEGER)");
             List<string> VoegFeedback = [
-                @"INSERT OR REPLACE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
+                @"INSERT OR IGNORE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
             VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"
             ];
             VoegMeerdereInMetTransactie(VoegFeedback);

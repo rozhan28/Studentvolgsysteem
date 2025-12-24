@@ -7,15 +7,16 @@ namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper)
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
             : base(dbConnectieHelper)
         {
             MaakTabel(@"
                     CREATE TABLE IF NOT EXISTS Prestatiedoel (
-                        processtap_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
                         niveau TEXT NOT NULL,
                         beschrijving TEXT NOT NULL,
                         criterium_id INTEGER NOT NULL,
+                        ai_assessment_scale TEXT NOT NULL,
 
                         UNIQUE (niveau, criterium_id),
 
@@ -24,11 +25,12 @@ namespace StudentSysteem.Core.Data.Repositories
             
             List<string> seed = new()
         {
-            @"INSERT OR REPLACE INTO Prestatiedoel (niveau, beschrijving, criterium_id)
+            @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
               VALUES (
                 'Op niveau',
-                'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten',
-                1
+                'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
+                1,
+                'Samenwerking'
               )"
         };
             VoegMeerdereInMetTransactie(seed);
@@ -41,7 +43,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
             OpenVerbinding();
             using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"SELECT processtap_id, niveau, beschrijving, criterium_id FROM Prestatiedoel";
+            cmd.CommandText = @"SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale FROM Prestatiedoel";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -51,7 +53,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     Id = reader.GetInt32(0),
                     Niveau = reader.GetString(1),
                     Beschrijving = reader.GetString(2),
-                    CriteriumId = reader.GetInt32(3)
+                    CriteriumId = reader.GetInt32(3),
+                    AiAssessmentScale = reader.GetString(4)
                 });
             }
 
@@ -59,5 +62,4 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
     }
-
 }

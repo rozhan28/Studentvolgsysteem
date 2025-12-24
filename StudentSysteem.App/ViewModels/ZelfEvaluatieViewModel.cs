@@ -14,7 +14,7 @@ namespace StudentSysteem.App.ViewModels
 
         public int SlaZelfEvaluatieOp(int studentId)
         {
-            var zelfEvaluatie = new ZelfEvaluatie
+            ZelfEvaluatie zelfEvaluatie = new ZelfEvaluatie
             {
                 StudentId = studentId,
                 Datum = DateTime.Now,

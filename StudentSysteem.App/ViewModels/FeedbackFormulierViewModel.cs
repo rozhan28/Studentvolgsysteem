@@ -1,3 +1,5 @@
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -20,12 +22,26 @@ namespace StudentSysteem.App.ViewModels
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly bool _isDocent;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly IVaardigheidService _vaardigheidService;
+        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly IToelichtingService _toelichtingService;
+        private readonly bool _isDocent;
+        
+        public ICommand LeertakenCommand { get; }
 
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; set; }
+        private ObservableCollection<BeoordelingItem> _beoordelingen;
+        public ObservableCollection<BeoordelingItem> Beoordelingen
+        {
+            get => _beoordelingen;
+            set
+            {
+                _beoordelingen = value;
+                Notify(nameof(Beoordelingen));
+            }
+        }
+
 
         private string _statusMelding;
         public string StatusMelding
@@ -44,6 +60,7 @@ namespace StudentSysteem.App.ViewModels
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
+            IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService,
             bool isDocent = false)
         {
@@ -51,36 +68,62 @@ namespace StudentSysteem.App.ViewModels
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
-            _prestatiedoelService =  prestatiedoelService;
-            _isDocent = isDocent;
-            _toelichtingService = toelichtingService;
 
+            _prestatiedoelService = prestatiedoelService;
+            _vaardigheidService = vaardigheidService;
+            _toelichtingService = toelichtingService;
+            _isDocent = isDocent;
+            
+            Task.Run(async () => await InitialiseerPaginaAsync());
+            
             OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
+            LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
             VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));
             OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
+        }
 
-            Beoordelingen = new ObservableCollection<BeoordelingItem>
+
+        // Toegevoegd voor TC2-01.1 - voorkomt crashen
+        // Zorgt ervoor dat indien de database niet beschikbaar is, de applicatie niet crasht
+        private async Task InitialiseerPaginaAsync()
+        {
+            try 
             {
-                new BeoordelingItem {
-                    Titel = "Maken domeinmodel | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Maken domeinmodel",
-                    Beschrijving = "Het maken van een domeinmodel volgens een UML klassendiagram"
-                },
-                new BeoordelingItem
-                {
-                    Titel = "Bestuderen probleemstelling | Definiëren probleemdomein | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Bestuderen probleemstelling",
-                    Beschrijving = "Het probleem achterhalen"
-                },
-                new BeoordelingItem
-                {
-                    Titel = "Beschrijven stakeholders | Verzamelen requirement | Requirementsanalyseproces | Analyseren",
-                    Vaardigheid = "Beschrijven stakeholders",
-                    Beschrijving = "Het maken van een stakeholderanalyse"
-                }
-            };
+                LaadPrestatiedoelen();
+            }
+            catch (Exception ex)
+            {
+                StatusMelding = "Databasefout: De prestatiedoelen konden niet worden geladen.";
+                System.Diagnostics.Debug.WriteLine($"Fout: {ex.Message}");
+            }
+        }
+        
+        private void LaadPrestatiedoelen()
+        {
+            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+            
+            List<BeoordelingItem> items = doelen.Select(delegate(Prestatiedoel d)
+            {
+                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
 
-            foreach (BeoordelingItem item in Beoordelingen)
+                return new BeoordelingItem
+                {
+                    PrestatiedoelId = d.Id,
+                    Titel = $"Prestatiedoel {d.Id}",
+                    PrestatiedoelBeschrijving = d.Beschrijving,
+                    AiAssessmentScale = d.AiAssessmentScale,
+
+                    Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
+                    LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
+                    HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
+                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving
+                };
+            }).ToList();
+
+            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
+            
+                        foreach (BeoordelingItem item in Beoordelingen)
             {
                 if (item.Toelichtingen == null)
                     item.Toelichtingen = new ObservableCollection<Toelichting>();
@@ -102,13 +145,19 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
+                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+
                 foreach (BeoordelingItem item in Beoordelingen)
                 {
-                    _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), 1);
+                    if (item.Toelichtingen != null && item.Toelichtingen.Any())
+                    {
+                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen, zelfEvaluatieId);
+                    }
                 }
 
-                if (Application.Current?.MainPage != null)
-                    await _meldingService.ToonMeldingAsync("Succes", "Toelichting is opgeslagen!");
+                await _meldingService.ToonMeldingAsync(
+                    "Succes",
+                    "Toelichting is opgeslagen!");
             }
             catch (Exception ex)
             {
@@ -123,18 +172,16 @@ namespace StudentSysteem.App.ViewModels
             foreach (BeoordelingItem item in Beoordelingen)
             {
                 bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen =
-                    false;
+                bool criteriumGekozen = false;
 
                 bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
-
                 item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
                 item.IsCriteriumInvalid = !niveauOfCriteriumOk;
 
-                bool toelichtingOk = ZijnAlleToelichtingenOk(item.Toelichtingen);
-
-                item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
-
+                bool alleToelichtingenIngevuld = ZijnAlleToelichtingenOk(item.Toelichtingen);
+                bool toelichtingOk = _isDocent || alleToelichtingenIngevuld;
+                item.IsToelichtingInvalid = !toelichtingOk;
+               
                 if (!niveauOfCriteriumOk || !toelichtingOk)
                     allesGeldig = false;
             }
@@ -217,5 +264,13 @@ namespace StudentSysteem.App.ViewModels
 
         private void Notify(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        
+        private async Task OpenLeertakenUrl(string url)
+        {
+            if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                await Browser.Default.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
+            }
+        }
     }
 }

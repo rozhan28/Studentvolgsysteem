@@ -13,6 +13,8 @@
             <converters:InOntwikkelingConverter x:Key="InOntwikkeling"/>
             <converters:OpNiveauConverter x:Key="OpNiveau"/>
             <converters:BovenNiveauConverter x:Key="BovenNiveau"/>
+            <converters:AiConverter x:Key="AiIconConverter" />
+            <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
             <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
 
         </ResourceDictionary>
@@ -35,7 +37,7 @@
                                        BackgroundColor="White"
                                        Padding="10">
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
-                                        <Label Text="{Binding Titel}" FontSize="16" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Titel}" FontSize="16" FontFamily="Bold"/>
                                         <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
                                             <Label Text="{Binding PrestatieNiveau}" VerticalOptions="Center"/>
                                             <Image Source="chevron.png" HeightRequest="16" WidthRequest="16">
@@ -58,18 +60,37 @@
                                     <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20" Padding="0,10,0,10">
 
                                         <!-- Linkerkolom -->
-                                        <VerticalStackLayout Grid.Column="0" Spacing="5">
-                                            <Label Text="Vaardigheid" FontAttributes="Italic"/>
-                                            <Label Text="{Binding Vaardigheid}" FontAttributes="Bold"/>
-                                            <Label Text="{Binding Beschrijving}"/>
-                                            
-                                            <Label Text="Prestatiedoel" FontAttributes="Italic" Margin="0,15,0,0"/>
-                                            <Label Text="{Binding Beschrijving}"/>
+                                        <VerticalStackLayout Grid.Column="0" Spacing="15">
+
                                             <HorizontalStackLayout Spacing="5">
-                                                <Image Source="ai_samen.png" HeightRequest="100" WidthRequest="100"/>
-                                                <Button Text="Leertaken.nl"/>
+                                                <Label Text="HBO-I activiteit:" FontFamily="Italic"/>
+                                                <Label Text="{Binding HboiActiviteit}" FontFamily="Italic"/>
                                             </HorizontalStackLayout>
-                                        </VerticalStackLayout>
+
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="Vaardigheid" FontFamily="Italic"/>
+                                                <Label Text="{Binding Vaardigheid}" FontFamily="Bold"/>
+                                                <Label Text="{Binding Beschrijving}"/>
+                                            </VerticalStackLayout>
+                                            
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="Prestatiedoel" FontFamily="Italic" />
+                                                <Label Text="{Binding PrestatiedoelBeschrijving}"/>
+                                            </VerticalStackLayout>
+                                            
+                                            <VerticalStackLayout HorizontalOptions="Start">
+                                                <Button Text="Leertaken.nl" 
+                                                        VerticalOptions="Center"
+                                                        Command="{Binding BindingContext.LeertakenCommand, Source={x:Reference Feedbackformulier}}"
+                                                        CommandParameter="{Binding LeertakenUrl}"
+                                                        IsVisible="{Binding LeertakenUrl, Converter={StaticResource LeertakenLeegConverter}}" />
+                                            </VerticalStackLayout>
+                                                <VerticalStackLayout Spacing="10" HorizontalOptions="Start">
+                                                    <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" 
+                                                           HeightRequest="150" 
+                                                           WidthRequest="150"/>
+                                                </VerticalStackLayout>
+                                            </VerticalStackLayout>
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10">
@@ -85,7 +106,7 @@
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsInOntwikkeling, Converter={StaticResource InOntwikkeling}}"
                                                                              Padding="10">
-                                                            <Label Text="In ontwikkeling" FontAttributes="Bold"/>
+                                                            <Label Text="In ontwikkeling" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding InOntwikkeling}"/>
                                                                 <Label Text="Student laat nog onvoldoende beheersing zien." VerticalOptions="Center"/>
@@ -98,7 +119,7 @@
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsOpNiveau, Converter={StaticResource OpNiveau}}"
                                                                              Padding="10">
-                                                            <Label Text="Op niveau" FontAttributes="Bold"/>
+                                                            <Label Text="Op niveau" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
                                                                 <Label Text="Het domeinmodel weerspiegelt het domein" VerticalOptions="Center"/>
@@ -119,7 +140,7 @@
                                                         <VerticalStackLayout Spacing="10"
                                                                              BackgroundColor="{Binding IsBovenNiveau, Converter={StaticResource BovenNiveau}}"
                                                                              Padding="10">
-                                                            <Label Text="Boven niveau" FontAttributes="Bold"/>
+                                                            <Label Text="Boven niveau" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
                                                                 <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context." VerticalOptions="Center" />
@@ -137,7 +158,7 @@
                                             BackgroundColor="White"
                                             Padding="10">
                                         <VerticalStackLayout Spacing="5">
-                                            <Label Text="Toelichting" FontAttributes="Bold" />
+                                            <Label Text="Toelichting" FontFamily="Bold" />
 
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
                                                 <BindableLayout.ItemTemplate>
@@ -177,7 +198,7 @@
                 </BindableLayout.ItemTemplate>
             </VerticalStackLayout>
 
-            <Label Text="{Binding StatusMelding}" TextColor="Red" FontAttributes="Bold"/>
+            <Label Text="{Binding StatusMelding}" TextColor="Red" FontFamily="Bold"/>
 
             <HorizontalStackLayout HorizontalOptions="End">
                 <Button Text="Opslaan"

@@ -24,9 +24,10 @@ namespace StudentSysteem.App
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
-                    fonts.AddFont("Poppins-Bold.ttf", "PoppinsBold");
-                    fonts.AddFont("Poppins-BoldItalic.ttf", "PoppinsBoldItalic");
+                    fonts.AddFont("Poppins-Regular.ttf", "Regular");
+                    fonts.AddFont("Poppins-Bold.ttf", "Bold");
+                    fonts.AddFont("Poppins-BoldItalic.ttf", "BoldItalic");
+                    fonts.AddFont("Poppins-Italic.ttf", "Italic");
                 });
 
 #if DEBUG
@@ -55,6 +56,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
@@ -62,6 +64,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
             builder.Services.AddSingleton<DbConnectieHelper>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
