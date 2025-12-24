@@ -13,6 +13,8 @@ namespace StudentSysteem.App.Views
             IFeedbackFormulierService feedbackFormulierService,
             IPrestatiedoelService prestatiedoelService,
             IVaardigheidService vaardigheidService)
+            IToelichtingService toelichtingService
+            )
         {
             InitializeComponent();
 
@@ -25,6 +27,7 @@ namespace StudentSysteem.App.Views
                 feedbackFormulierService,
                 prestatiedoelService,
                 vaardigheidService,
+                toelichtingService,
                 isDocent
             );
         }

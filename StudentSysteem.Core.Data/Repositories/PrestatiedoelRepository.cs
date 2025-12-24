@@ -22,8 +22,7 @@ namespace StudentSysteem.Core.Data.Repositories
 
                         FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                     )");
-
-
+            
             List<string> seed = new()
         {
             @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)

@@ -15,6 +15,8 @@
             <converters:BovenNiveauConverter x:Key="BovenNiveau"/>
             <converters:AiConverter x:Key="AiIconConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -153,36 +155,42 @@
 
                                     <!-- Toelichting -->
                                     <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
-                                           BackgroundColor="White"
-                                           Padding="10">
+                                            BackgroundColor="White"
+                                            Padding="10">
                                         <VerticalStackLayout Spacing="5">
                                             <Label Text="Toelichting" FontFamily="Bold" />
 
-                                            <!-- Dropdown -->
-                                            <Button Text="{Binding GeselecteerdeOptie}" Command="{Binding OptiesCommand}" HorizontalOptions="Start"/>
-
-                                            <!-- Toelichtingsvak -->
-                                            <Editor HeightRequest="120"
-                                                    Placeholder="Voeg toelichting toe..."
-                                                    Text="{Binding Toelichting}" />
-
-                                            <!-- Extra feedback knop -->
-                                            <Button Text="+ Voeg extra feedback toe"
-                                                    HorizontalOptions="Center"
-                                                    MaximumWidthRequest="250"/>
-
-                                            <!-- Extra Toelichting CollectionView -->
-                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExtraToelichtingVak}" Spacing="10">
+                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
                                                 <BindableLayout.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:ExtraToelichting">
+                                                    <DataTemplate x:DataType="models:Toelichting">
                                                         <VerticalStackLayout Spacing="10">
-                                                            <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Extra toelichting..."/>
+                                                            <Button Text="{Binding GeselecteerdeOptie}"
+                                                                    Command="{Binding Source={x:Reference Feedbackformulier}, Path=BindingContext.OptiesCommand}"
+                                                                    CommandParameter="{Binding .}"
+                                                                    HorizontalOptions="Start"/>
+                                                            <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Toelichting..."/>
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>
                                             </VerticalStackLayout>
+
+                                            <Button Text="+ Voeg extra feedback toe"
+                                                    HorizontalOptions="Center"
+                                                    MaximumWidthRequest="250"
+                                                    Command="{Binding Source={x:Reference Feedbackformulier}, Path=BindingContext.VoegExtraToelichtingToeCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    IsVisible="{Binding KanExtraToelichtingToevoegen}"/>
+
+                                            <Label Text="Maximale feedback bereikt."
+                                                   TextColor="Gray"
+                                                   HorizontalOptions="Center"
+                                                   FontAttributes="Italic"
+                                                   IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource InvertBoolConverter}}"/>
+
                                         </VerticalStackLayout>
                                     </Border>
+
+
                                 </VerticalStackLayout>
                             </toolkit:Expander.Content>
                         </toolkit:Expander>
