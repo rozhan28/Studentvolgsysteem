@@ -1,6 +1,5 @@
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -77,8 +76,8 @@ namespace StudentSysteem.App.ViewModels
             LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
         }
 
-        // Toegevoegd voor T2.01 - voorkomt crashen
-        // Zorgt ervoor dat indien de datbaase niet beschikbaar is, de applicatie niet crasht
+        // Toegevoegd voor TC2-01.1 - voorkomt crashen
+        // Zorgt ervoor dat indien de database niet beschikbaar is, de applicatie niet crasht
         private async Task InitialiseerPaginaAsync()
         {
             try 
