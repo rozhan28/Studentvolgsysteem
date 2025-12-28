@@ -1,10 +1,8 @@
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,25 +10,23 @@ using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
         private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly IVaardigheidService _vaardigheidService;
         private readonly IToelichtingService _toelichtingService;
-        private readonly bool _isDocent;
-        
-        public ICommand LeertakenCommand { get; }
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
 
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
+        private readonly bool _isDocent;
+
         public ObservableCollection<BeoordelingItem> Beoordelingen
         {
             get => _beoordelingen;
@@ -40,71 +36,73 @@ namespace StudentSysteem.App.ViewModels
                 Notify(nameof(Beoordelingen));
             }
         }
-
+        private ObservableCollection<BeoordelingItem> _beoordelingen = new();
 
         private string _statusMelding;
         public string StatusMelding
         {
             get => _statusMelding;
-            set { _statusMelding = value; Notify(nameof(StatusMelding)); }
+            set
+            {
+                _statusMelding = value;
+                Notify(nameof(StatusMelding));
+            }
         }
 
         public ICommand OpslaanCommand { get; }
+        public ICommand LeertakenCommand { get; }
         public ICommand VoegExtraToelichtingToeCommand { get; }
         public ICommand OptiesCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfEvaluatieService,
             INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
             IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService,
+            IZelfEvaluatieService zelfEvaluatieService,
             bool isDocent = false)
         {
-            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
-
             _prestatiedoelService = prestatiedoelService;
             _vaardigheidService = vaardigheidService;
             _toelichtingService = toelichtingService;
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
+
             _isDocent = isDocent;
-            
-            Task.Run(async () => await InitialiseerPaginaAsync());
-            
+
             OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
-            LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
-            VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));
+            LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
+            VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(VoegExtraToelichtingToe);
             OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
+
+            Task.Run(async () => await InitialiseerPaginaAsync());
         }
 
-
-        // Toegevoegd voor TC2-01.1 - voorkomt crashen
-        // Zorgt ervoor dat indien de database niet beschikbaar is, de applicatie niet crasht
         private async Task InitialiseerPaginaAsync()
         {
-            try 
+            try
             {
                 LaadPrestatiedoelen();
             }
             catch (Exception ex)
             {
-                StatusMelding = "Databasefout: De prestatiedoelen konden niet worden geladen.";
-                System.Diagnostics.Debug.WriteLine($"Fout: {ex.Message}");
+                StatusMelding = "Databasefout: Prestatiedoelen konden niet worden geladen.";
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
-        
+
         private void LaadPrestatiedoelen()
         {
-            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-            
-            List<BeoordelingItem> items = doelen.Select(delegate(Prestatiedoel d)
+            var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            var vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+
+            var items = doelen.Select(d =>
             {
-                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
+                var vaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
 
                 return new BeoordelingItem
                 {
@@ -113,20 +111,18 @@ namespace StudentSysteem.App.ViewModels
                     PrestatiedoelBeschrijving = d.Beschrijving,
                     AiAssessmentScale = d.AiAssessmentScale,
 
-                    Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
-                    LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
-                    HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
-                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving
+                    Vaardigheid = vaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
+                    LeertakenUrl = vaardigheid?.LeertakenUrl,
+                    HboiActiviteit = vaardigheid?.HboiActiviteit,
+                    Beschrijving = vaardigheid?.VaardigheidBeschrijving,
+                    Toelichtingen = new ObservableCollection<Toelichting>()
                 };
             }).ToList();
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
-            
-                        foreach (BeoordelingItem item in Beoordelingen)
-            {
-                if (item.Toelichtingen == null)
-                    item.Toelichtingen = new ObservableCollection<Toelichting>();
 
+            foreach (var item in Beoordelingen)
+            {
                 item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
                 HookToelichtingen(item);
             }
@@ -146,17 +142,19 @@ namespace StudentSysteem.App.ViewModels
             {
                 int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
-                foreach (BeoordelingItem item in Beoordelingen)
+                foreach (var item in Beoordelingen)
                 {
                     if (item.Toelichtingen != null && item.Toelichtingen.Any())
                     {
-                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), zelfEvaluatieId);
+                        _feedbackService.SlaToelichtingenOp(
+                            item.Toelichtingen.ToList(),
+                            zelfEvaluatieId);
                     }
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Toelichting is opgeslagen!");
+                    "Evaluatie is succesvol opgeslagen.");
             }
             catch (Exception ex)
             {
@@ -168,49 +166,33 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (BeoordelingItem item in Beoordelingen)
+            foreach (var item in Beoordelingen)
             {
                 bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen = false;
+                item.IsPrestatieNiveauInvalid = !niveauGekozen;
 
-                bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
-                item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
-                item.IsCriteriumInvalid = !niveauOfCriteriumOk;
-
-                bool alleToelichtingenIngevuld = ZijnAlleToelichtingenOk(item.Toelichtingen);
-                bool toelichtingOk = _isDocent || alleToelichtingenIngevuld;
+                bool toelichtingOk = _isDocent || ZijnAlleToelichtingenOk(item.Toelichtingen);
                 item.IsToelichtingInvalid = !toelichtingOk;
-               
-                if (!niveauOfCriteriumOk || !toelichtingOk)
+
+                if (!niveauGekozen || !toelichtingOk)
                     allesGeldig = false;
             }
 
             return allesGeldig;
         }
-        
-        public bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
+
+        private bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
-            if (_isDocent)
-                return true;
-            
-            if (toelichtingen == null || !toelichtingen.Any())
-                return false;
-            
-            return toelichtingen.All(t => IsToelichtingCorrect(t));
+            if (_isDocent) return true;
+            if (toelichtingen == null || !toelichtingen.Any()) return false;
+
+            return toelichtingen.All(t =>
+                !string.IsNullOrWhiteSpace(t.Tekst) &&
+                t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
         }
 
-        private bool IsToelichtingCorrect(Toelichting toelichting)
-        {
-            return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
-                   toelichting.GeselecteerdeOptie != "Toelichting gekoppeld aan...";
-        }
-        
-        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
-        {
-            return item.InOntwikkeling
-                   || item.IsOpNiveau
-                   || item.IsBovenNiveau;
-        }
+        private static bool ValideerPrestatieNiveau(BeoordelingItem item) =>
+            item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)
         {
@@ -226,50 +208,47 @@ namespace StudentSysteem.App.ViewModels
         private async Task ShowOptiesPicker(Toelichting toelichting)
         {
             if (toelichting == null) return;
+
             var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
             if (parent == null) return;
 
-            List<string> opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
+            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
 
-            if (Application.Current?.MainPage == null) return;
-
-            String selected = await Application.Current.MainPage.DisplayActionSheet(
+            var gekozen = await Application.Current.MainPage.DisplayActionSheet(
                 "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
                 opties.ToArray());
 
-            if (!string.IsNullOrEmpty(selected) && selected != "Annuleren")
+            if (!string.IsNullOrEmpty(gekozen) && gekozen != "Annuleren")
             {
-                int idx = parent.Toelichtingen.IndexOf(toelichting);
-                Toelichting nieuwe = new() { Tekst = toelichting.Tekst, GeselecteerdeOptie = selected };
-                parent.Toelichtingen[idx] = nieuwe;
+                toelichting.GeselecteerdeOptie = gekozen;
                 Notify(nameof(Beoordelingen));
             }
         }
 
         private void HookToelichtingen(BeoordelingItem item)
         {
-            item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
-
             void Handler(object s, NotifyCollectionChangedEventArgs e)
             {
-                item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
-                MainThread.BeginInvokeOnMainThread(() => Notify(nameof(Beoordelingen)));
+                MainThread.BeginInvokeOnMainThread(() =>
+                    Notify(nameof(Beoordelingen)));
             }
 
             item.Toelichtingen.CollectionChanged += Handler;
         }
 
-        private void Notify(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        
         private async Task OpenLeertakenUrl(string url)
         {
-            if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            if (!string.IsNullOrWhiteSpace(url) &&
+                Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 await Browser.Default.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
             }
         }
+
+        private void Notify(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
+

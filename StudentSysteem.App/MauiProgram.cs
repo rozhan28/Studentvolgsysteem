@@ -8,8 +8,6 @@ using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Data.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace StudentSysteem.App
 {
@@ -34,8 +32,7 @@ namespace StudentSysteem.App
             builder.Logging.AddDebug();
 #endif
 
-
-            // Config 
+            // Config
             var assembly = typeof(MauiProgram).Assembly;
             using var stream = assembly.GetManifestResourceStream("StudentSysteem.App.appsettings.json");
 
@@ -51,8 +48,7 @@ namespace StudentSysteem.App
             // Helpers
             builder.Services.AddSingleton<DbConnectieHelper>();
 
-
-            // Repositories DEZE VOLGORDE AANHOUDEN AUB (anders crasht de solution!!)
+            // Repositories (VOLGORDE AANHOUDEN!)
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
@@ -64,8 +60,8 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<ICriteriumService, CriteriumService>();
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
-            builder.Services.AddSingleton<DbConnectieHelper>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
             // ViewModels
@@ -76,7 +72,7 @@ namespace StudentSysteem.App
 
             var app = builder.Build();
 
-            // Database initialisatie 
+            // Database initialisatie
             using (var scope = app.Services.CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
@@ -88,3 +84,4 @@ namespace StudentSysteem.App
         }
     }
 }
+

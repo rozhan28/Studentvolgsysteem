@@ -1,11 +1,15 @@
 using StudentSysteem.App.ViewModels;
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.Views
 {
     public partial class FeedbackFormulierView : ContentPage
     {
+        public FeedbackFormulierView(FeedbackFormulierViewModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+        }
+
         public FeedbackFormulierView(
             IZelfEvaluatieService zelfEvaluatieService,
             INavigatieService navigatieService,
@@ -14,7 +18,7 @@ namespace StudentSysteem.App.Views
             IPrestatiedoelService prestatiedoelService,
             IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService
-            )
+        )
         {
             InitializeComponent();
 
@@ -31,6 +35,6 @@ namespace StudentSysteem.App.Views
                 isDocent
             );
         }
-
     }
 }
+
