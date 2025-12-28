@@ -24,6 +24,8 @@ namespace StudentSysteem.App.ViewModels
         private readonly IVaardigheidService _vaardigheidService;
         private readonly IToelichtingService _toelichtingService;
         private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly ICriteriumService _criteriumService;
+
 
         private readonly bool _isDocent;
 
@@ -62,8 +64,10 @@ namespace StudentSysteem.App.ViewModels
             IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService,
             IZelfEvaluatieService zelfEvaluatieService,
+            ICriteriumService criteriumService,
             bool isDocent = false)
         {
+            _criteriumService = criteriumService;
             _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
@@ -123,9 +127,19 @@ namespace StudentSysteem.App.ViewModels
 
             foreach (var item in Beoordelingen)
             {
+                var opNiveau = _criteriumService.HaalOpNiveauCriteriaOp();
+                var bovenNiveau = _criteriumService.HaalBovenNiveauCriteriaOp();
+
+                foreach (var c in opNiveau)
+                    item.OpNiveauCriteria.Add(c);
+
+                foreach (var c in bovenNiveau)
+                    item.BovenNiveauCriteria.Add(c);
+
                 item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
                 HookToelichtingen(item);
             }
+
         }
 
         private async Task BewaarEvaluatieAsync()

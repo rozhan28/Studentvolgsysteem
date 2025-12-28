@@ -14,13 +14,9 @@ namespace StudentSysteem.Core.Services
         }
 
         public List<Criterium> HaalOpNiveauCriteriaOp()
-        {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Op niveau");
-        }
+            => _criteriumRepository.HaalCriteriaOpVoorNiveau("Op niveau");
 
         public List<Criterium> HaalBovenNiveauCriteriaOp()
-        {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Boven niveau");
-        }
+            => _criteriumRepository.HaalCriteriaOpVoorNiveau("Boven niveau");
     }
 }
