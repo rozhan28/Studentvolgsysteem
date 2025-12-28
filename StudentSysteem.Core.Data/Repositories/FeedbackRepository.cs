@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
 
 namespace StudentSysteem.Core.Data.Repositories
@@ -21,8 +22,19 @@ namespace StudentSysteem.Core.Data.Repositories
                     vaardigheid_id INTEGER
                 );
             ");
+
+            // Seed uit develop-branch behouden
+            List<string> voegFeedback = new()
+            {
+                @"INSERT OR IGNORE INTO Feedback
+                  (feedback_id, niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id)
+                  VALUES (1, '1', NULL, NULL, NULL, NULL, NULL, NULL)"
+            };
+
+            VoegMeerdereInMetTransactie(voegFeedback);
         }
 
+        // ===== Feature/US3 =====
         public int MaakFeedbackAan(string niveau)
         {
             OpenVerbinding();
@@ -46,6 +58,7 @@ namespace StudentSysteem.Core.Data.Repositories
             return feedbackId;
         }
 
+        // ===== Feature/US3 =====
         public void VoegToelichtingToe(int feedbackId, string toelichting)
         {
             OpenVerbinding();
@@ -63,5 +76,46 @@ namespace StudentSysteem.Core.Data.Repositories
             cmd.ExecuteNonQuery();
             SluitVerbinding();
         }
+
+        // ===== Develop =====
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
+        {
+            OpenVerbinding();
+            using var transactie = Verbinding.BeginTransaction();
+
+            try
+            {
+                foreach (Toelichting toelichting in toelichtingen)
+                {
+                    using var cmd = Verbinding.CreateCommand();
+                    cmd.CommandText = @"
+                        INSERT INTO Feedback (toelichting, datum, tijd, student_id)
+                        VALUES (@toelichting, @datum, @tijd, @studentId);
+                    ";
+
+                    cmd.Parameters.AddWithValue("@toelichting", toelichting.Tekst);
+
+                    var now = DateTime.Now;
+                    cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+
+                    cmd.Transaction = transactie;
+                    cmd.ExecuteNonQuery();
+                }
+
+                transactie.Commit();
+            }
+            catch
+            {
+                try { transactie.Rollback(); } catch { }
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
+        }
     }
 }
+

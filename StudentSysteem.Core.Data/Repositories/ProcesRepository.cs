@@ -10,8 +10,8 @@ namespace StudentSysteem.Core.Data.Repositories
         {
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Proces (
-                    [proces_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [naam] VARCHAR(50)
+                    proces_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    naam VARCHAR(50)
                 )");
 
             List<string> insertQueries = new()

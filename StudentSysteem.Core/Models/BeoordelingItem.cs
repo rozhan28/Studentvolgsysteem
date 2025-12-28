@@ -18,10 +18,15 @@ namespace StudentSysteem.Core.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int PrestatiedoelId { get; set; }
+
         public string Titel { get; set; }
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
         public string PrestatiedoelBeschrijving { get; set; }
+        public string AiAssessmentScale { get; set; }
+        public string HboiActiviteit { get; set; }
+
+        private bool _isUpdating;
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -34,6 +39,8 @@ namespace StudentSysteem.Core.Models
                 Notify();
             }
         }
+
+        // ===================== CRITERIA (US3_Niveau) =====================
 
         private Criterium _geselecteerdCriterium;
         public Criterium GeselecteerdCriterium
@@ -54,18 +61,17 @@ namespace StudentSysteem.Core.Models
             Niveau = "Algemeen"
         };
 
-        //Criteria uit DB
         public ObservableCollection<Criterium> OpNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
         public ObservableCollection<Criterium> BovenNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
-        //Dropdown criteria
         public ObservableCollection<Criterium> BeschikbareCriteria { get; }
             = new ObservableCollection<Criterium>();
 
-        //In ontwikkeling
+        // ===================== STATUS / NIVEAUS =====================
+
         private bool _inOntwikkeling;
         public bool InOntwikkeling
         {
@@ -73,18 +79,26 @@ namespace StudentSysteem.Core.Models
             set
             {
                 if (_inOntwikkeling == value) return;
+                if (_isUpdating) return;
 
+                _isUpdating = true;
                 _inOntwikkeling = value;
 
                 if (value)
+                {
                     ResetCriteria();
+                    _opNiveauDomeinWeerspiegelt = false;
+                    _opNiveauSyntaxCorrect = false;
+                    _opNiveauVastgelegd = false;
+                    _bovenNiveauVolledig = false;
+                }
 
                 UpdateStatus();
+                _isUpdating = false;
                 Notify();
             }
         }
 
-        //Niveaus
         public bool IsOpNiveau =>
             !InOntwikkeling &&
             OpNiveauCriteria.Any() &&
@@ -106,7 +120,8 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        // Kleuren
+        // ===================== KLEUR =====================
+
         private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
         public PrestatieNiveauKleur Kleur
         {
@@ -115,7 +130,7 @@ namespace StudentSysteem.Core.Models
             {
                 if (_kleur == value) return;
                 _kleur = value;
-                Notify();
+                Notify(nameof(Kleur));
             }
         }
 
@@ -130,59 +145,13 @@ namespace StudentSysteem.Core.Models
             else
                 Kleur = PrestatieNiveauKleur.NietIngeleverd;
 
-            Notify(nameof(InOntwikkeling));
             Notify(nameof(IsOpNiveau));
             Notify(nameof(IsBovenNiveau));
             Notify(nameof(PrestatieNiveau));
         }
 
-        private bool _isCriteriumInvalid;
-        public bool IsCriteriumInvalid
-        {
-            get => _isCriteriumInvalid;
-            set
-            {
-                if (_isCriteriumInvalid == value) return;
-                _isCriteriumInvalid = value;
-                Notify();
-            }
-        }
+        // ===================== VALIDATIE =====================
 
-
-        // Toelichting
-        private string _toelichting;
-        public string Toelichting
-        {
-            get => _toelichting;
-            set
-            {
-                if (_toelichting == value) return;
-                _toelichting = value;
-                Notify();
-            }
-        }
-
-        //Extra toelichting
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; }
-            = new ObservableCollection<ExtraToelichting>();
-
-        public ICommand VoegExtraToelichtingToeCommand { get; }
-
-        //Dropdown geselecteerde optie
-        private string _geselecteerdeOptie = "Toelichting koppelen aan...";
-        public string GeselecteerdeOptie
-        {
-            get => _geselecteerdeOptie;
-            set
-            {
-                _geselecteerdeOptie = value;
-                Notify();
-            }
-        }
-
-        public ICommand OptiesCommand { get; }
-
-        // Validatie
         private bool _isPrestatieNiveauInvalid;
         public bool IsPrestatieNiveauInvalid
         {
@@ -197,6 +166,63 @@ namespace StudentSysteem.Core.Models
             set { _isToelichtingInvalid = value; Notify(); }
         }
 
+        private bool _isCriteriumInvalid;
+        public bool IsCriteriumInvalid
+        {
+            get => _isCriteriumInvalid;
+            set
+            {
+                if (_isCriteriumInvalid == value) return;
+                _isCriteriumInvalid = value;
+                Notify();
+            }
+        }
+
+        // ===================== TOELICHTING =====================
+
+        private string _toelichting;
+        public string Toelichting
+        {
+            get => _toelichting;
+            set
+            {
+                if (_toelichting == value) return;
+                _toelichting = value;
+                Notify();
+            }
+        }
+
+        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; }
+            = new ObservableCollection<ExtraToelichting>();
+
+        public ObservableCollection<Toelichting> Toelichtingen { get; set; }
+            = new ObservableCollection<Toelichting>();
+
+        // ===================== COMMANDS =====================
+
+        public ICommand OptiesCommand { get; }
+        public ICommand VoegExtraToelichtingToeCommand { get; }
+
+        private string _geselecteerdeOptie = "Toelichting koppelen aan...";
+        public string GeselecteerdeOptie
+        {
+            get => _geselecteerdeOptie;
+            set
+            {
+                _geselecteerdeOptie = value;
+                Notify();
+            }
+        }
+
+        private string _leertakenUrl;
+        public string LeertakenUrl
+        {
+            get => _leertakenUrl;
+            set { _leertakenUrl = value; Notify(); }
+        }
+
+        // ===================== CONSTRUCTOR =====================
+
         public BeoordelingItem()
         {
             BeschikbareCriteria.Add(AlgemeenCriterium);
@@ -206,6 +232,8 @@ namespace StudentSysteem.Core.Models
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
             BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
         }
+
+        // ===================== HULPMETHODES =====================
 
         private async Task ToonCriteriaKeuze()
         {
@@ -227,7 +255,6 @@ namespace StudentSysteem.Core.Models
             GeselecteerdCriterium =
                 BeschikbareCriteria.FirstOrDefault(c => c.DisplayNaam == keuze);
         }
-
 
         private void ResetCriteria()
         {

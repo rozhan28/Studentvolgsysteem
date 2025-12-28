@@ -11,26 +11,27 @@ namespace StudentSysteem.Core.Data.Repositories
             : base(dbConnectieHelper)
         {
             MaakTabel(@"
-            CREATE TABLE IF NOT EXISTS Criterium (
-                criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                beschrijving TEXT NOT NULL,
-                niveau TEXT NOT NULL
-            );");
+                CREATE TABLE IF NOT EXISTS Criterium (
+                    criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    beschrijving TEXT NOT NULL,
+                    niveau TEXT NOT NULL
+                );");
 
             // Koppeltabel 
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
-                        feedback_id INTEGER NOT NULL,
-                        criterium_id INTEGER NOT NULL,
-                        niveau TEXT NOT NULL,
-                        PRIMARY KEY (feedback_id, criterium_id),
-                        FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
-                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-                    );
-                    ");
+            MaakTabel(@"
+                CREATE TABLE IF NOT EXISTS FeedbackCriterium (
+                    feedback_id INTEGER NOT NULL,
+                    criterium_id INTEGER NOT NULL,
+                    niveau TEXT NOT NULL,
+                    PRIMARY KEY (feedback_id, criterium_id),
+                    FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
+                    FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+                );
+            ");
 
             List<string> seed = new()
             {
-                // Op niveau
+                // OP NIVEAU (samengevoegd uit beide branches)
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (1, 'De syntax van het domeinmodel is correct volgens UML', 'Op niveau')",
 
@@ -43,11 +44,11 @@ namespace StudentSysteem.Core.Data.Repositories
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp', 'Op niveau')",
 
-                // Boven niveau
+                // BOVEN NIVEAU (samengevoegd)
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (5, 'Het domeinmodel is volledig en logisch', 'Boven niveau')",
 
-                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau) 
+                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'Boven niveau')"
             };
 
@@ -84,12 +85,11 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-
         public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(
             int prestatiedoelId,
             string niveau)
         {
-            List<Criterium> lijst = new List<Criterium>();
+            List<Criterium> lijst = new();
 
             OpenVerbinding();
 
@@ -121,8 +121,6 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-
-
         public void SlaGeselecteerdeCriteriaOp(
             int feedbackId,
             IEnumerable<Criterium> geselecteerdeCriteria,
@@ -140,12 +138,12 @@ namespace StudentSysteem.Core.Data.Repositories
                         INSERT OR REPLACE INTO FeedbackCriterium
                         (feedback_id, criterium_id, niveau)
                         VALUES (@feedbackId, @criteriumId, @niveau);
-                        ";
+                    ";
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
                     cmd.Parameters.AddWithValue("@niveau", niveau);
-                    
+
                     cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();
                 }
@@ -162,6 +160,5 @@ namespace StudentSysteem.Core.Data.Repositories
                 SluitVerbinding();
             }
         }
-
     }
 }
