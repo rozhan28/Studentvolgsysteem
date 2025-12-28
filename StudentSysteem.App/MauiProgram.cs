@@ -32,7 +32,7 @@ namespace StudentSysteem.App
             builder.Logging.AddDebug();
 #endif
 
-            // Config
+
             var assembly = typeof(MauiProgram).Assembly;
             using var stream = assembly.GetManifestResourceStream("StudentSysteem.App.appsettings.json");
 
@@ -45,14 +45,18 @@ namespace StudentSysteem.App
 
             builder.Configuration.AddConfiguration(config);
 
-            // Helpers
             builder.Services.AddSingleton<DbConnectieHelper>();
 
-            // Repositories (VOLGORDE AANHOUDEN!)
+            // Repositories
+            // LET OP: VOLGORDE ZO AANHOUDEN AUB! 
+            builder.Services.AddSingleton<IProcesRepository, ProcesRepository>();
+            builder.Services.AddSingleton<IProcesstapRepository, ProcesstapRepository>();
+
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
+
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
@@ -64,6 +68,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
+
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
 
@@ -73,15 +78,20 @@ namespace StudentSysteem.App
             var app = builder.Build();
 
             // Database initialisatie
+            // LET OP: VOLGORDE ZO AANHOUDEN AUB! 
             using (var scope = app.Services.CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
+                scope.ServiceProvider.GetRequiredService<IProcesRepository>();
+                scope.ServiceProvider.GetRequiredService<IProcesstapRepository>();
                 scope.ServiceProvider.GetRequiredService<IPrestatiedoelRepository>();
                 scope.ServiceProvider.GetRequiredService<IFeedbackRepository>();
+                scope.ServiceProvider.GetRequiredService<IVaardigheidRepository>();
             }
 
             return app;
         }
     }
 }
+
 

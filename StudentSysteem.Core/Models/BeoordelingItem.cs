@@ -87,10 +87,6 @@ namespace StudentSysteem.Core.Models
                 if (value)
                 {
                     ResetCriteria();
-                    _opNiveauDomeinWeerspiegelt = false;
-                    _opNiveauSyntaxCorrect = false;
-                    _opNiveauVastgelegd = false;
-                    _bovenNiveauVolledig = false;
                 }
 
                 UpdateStatus();
@@ -192,8 +188,6 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; }
-            = new ObservableCollection<ExtraToelichting>();
 
         public ObservableCollection<Toelichting> Toelichtingen { get; set; }
             = new ObservableCollection<Toelichting>();
