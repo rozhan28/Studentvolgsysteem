@@ -24,6 +24,5 @@ namespace StudentSysteem.Core.Models
             LeertakenUrl = leertakenUrl;
             Prestatiedoel_id = prestatiedoelId;
         }
-
     }
 }
