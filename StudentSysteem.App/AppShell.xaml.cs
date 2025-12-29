@@ -1,4 +1,4 @@
-﻿using StudentSysteem.App.ViewModels;
+﻿using StudentSysteem.App.Views;
 
 namespace StudentSysteem.App;
 
@@ -9,11 +9,13 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-        Title = "Feedbackformulier";
-        Routing.RegisterRoute(nameof(FeedbackFormulierViewModel), typeof(FeedbackFormulierViewModel));
         
+        //Gebruikernsaam is een placeholder. Dit moet uiteindelijk vervangen worden bij UC Inloggen.       
         gebruikersNaam = "Naam";
         BindingContext = this;
+
+        //Registreert routes voor navigatie naar het feedbackformulier (detailpagina)
+        Routing.RegisterRoute(nameof(FeedbackFormulierView), typeof(FeedbackFormulierView));
     }
     
     private void OnDashboardClicked(object sender, EventArgs e)

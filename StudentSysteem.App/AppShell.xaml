@@ -19,7 +19,7 @@
             </Border>
 
             <Label BindingContext="{x:Reference StepWise}"
-                   Text="{Binding Path=Title}"
+                   Text="{Binding Source={x:Reference StepWise}, Path=CurrentItem.Title}"
                    Grid.Column="1"
                    FontSize="22"
                    TextColor="{StaticResource White}"
@@ -39,9 +39,19 @@
             </HorizontalStackLayout>
         </Grid>
     </Shell.TitleView>
+
+    <!-- 
+    Elke ShellContent stelt één pagina voor in de app.
+    - Title: wordt automatisch getoond in de blauwe header
+    - ContentTemplate: Laat de View pagina inhoud zien
+    -->
+    <ShellContent
+        Title="VoortgangsDashboard"
+        ContentTemplate="{DataTemplate views:VoortgangsDashboardView}"
+        Route="Dashboard"/>
     
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:FeedbackFormulierView}"
-        Route="Dashboard"/>
+    Title="Feedbackformulier"
+    ContentTemplate="{DataTemplate views:FeedbackFormulierView}"
+    Route="Feedback"/>
 </Shell>
