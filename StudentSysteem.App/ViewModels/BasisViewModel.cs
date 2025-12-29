@@ -1,6 +1,9 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace StudentSysteem.App.ViewModels;
 
-public class BasisViewModel
+public partial class BasisViewModel : ObservableObject
 {
-    private string Titel = "";
+    [ObservableProperty]
+    string titel = "";
 }

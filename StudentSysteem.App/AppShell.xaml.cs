@@ -1,13 +1,14 @@
-﻿using StudentSysteem.App.Views;
+﻿using StudentSysteem.App.ViewModels;
+using StudentSysteem.App.Views;
 
 namespace StudentSysteem.App;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
+    public AppShell(GlobaleViewModel globaal)
     {
         InitializeComponent();
-        
+        BindingContext = globaal;
         Routing.RegisterRoute("Login", typeof(LoginView));
         Routing.RegisterRoute(nameof(StartView), typeof(StartView));
         Routing.RegisterRoute(nameof(FeedbackFormulierView), typeof(FeedbackFormulierView));

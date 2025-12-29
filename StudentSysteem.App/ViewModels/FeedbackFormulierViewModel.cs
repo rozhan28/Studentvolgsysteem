@@ -16,15 +16,15 @@ using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class FeedbackFormulierViewModel : INotifyPropertyChanged
+    public class FeedbackFormulierViewModel : BasisViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly IVaardigheidService _vaardigheidService;
         private readonly IToelichtingService _toelichtingService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
         
         public ICommand LeertakenCommand { get; }
@@ -39,7 +39,6 @@ namespace StudentSysteem.App.ViewModels
                 Notify(nameof(Beoordelingen));
             }
         }
-
 
         private string _statusMelding;
         public string StatusMelding
@@ -59,7 +58,7 @@ namespace StudentSysteem.App.ViewModels
             IPrestatiedoelService prestatiedoelService,
             IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService,
-            bool isDocent = false)
+            GlobaleViewModel globaal)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _meldingService = meldingService;
@@ -68,7 +67,7 @@ namespace StudentSysteem.App.ViewModels
             _prestatiedoelService = prestatiedoelService;
             _vaardigheidService = vaardigheidService;
             _toelichtingService = toelichtingService;
-            _isDocent = isDocent;
+            _isDocent = globaal.IngelogdeGebruiker?.Rol == Role.Docent;
             
             Task.Run(async () => await InitialiseerPaginaAsync());
             

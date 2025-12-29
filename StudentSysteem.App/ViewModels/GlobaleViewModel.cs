@@ -1,6 +1,9 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using StudentSysteem.Core.Models;
+
 namespace StudentSysteem.App.ViewModels;
 
 public partial class GlobaleViewModel : BasisViewModel
 {
-    public string gebruikersNaam = "Naam";
+    [ObservableProperty] private Gebruiker ingelogdeGebruiker;
 }

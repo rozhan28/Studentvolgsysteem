@@ -1,33 +1,41 @@
-using StudentSysteem.Core.Services;
+using CommunityToolkit.Mvvm.Input;
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.ViewModels;
 
-public class LoginViewModel : BasisViewModel
+public partial class LoginViewModel : BasisViewModel
 {
     private readonly GlobaleViewModel _globaal;
-    
-    public LoginViewModel(GlobaleViewModel globaal)
+    private readonly IStudentService _studentService;
+    private readonly IDocentService _docentService;
+
+    public LoginViewModel(GlobaleViewModel globaal, IStudentService studentService, IDocentService docentService)
     {
         _globaal = globaal;
+        _studentService = studentService;
+        _docentService = docentService;
     }
-    
+
+    [RelayCommand]
     private void LoginStudent()
     {
-        // 1. Gebruik je bestaande Service
-        GebruikerSessie.LoginAls("Student");
-
-        // 2. Update de globale staat voor de UI (de header)
-        // Straks haal je 'Sanne' hier op uit je Repository
-        _globaal.gebruikersNaam = "Sanne"; 
-
-        // 3. Switch naar de AppShell (volgens docent-methode)
-        Application.Current.MainPage = new AppShell();
+        Student student = _studentService.LoginStudent();
+        if (student != null)
+        {
+            _globaal.IngelogdeGebruiker = student;
+            Application.Current.MainPage = new AppShell(_globaal);
+        }
     }
-    
+
+    [RelayCommand]
     private void LoginDocent()
     {
-        GebruikerSessie.LoginAls("Docent");
-        _globaal.gebruikersNaam = "Docent Naam";
-        Application.Current.MainPage = new AppShell();
+        Docent docent = _docentService.LoginDocent();
+        if (docent != null)
+        {
+            _globaal.IngelogdeGebruiker = docent;
+            Application.Current.MainPage = new AppShell(_globaal);
+        }
     }
 }

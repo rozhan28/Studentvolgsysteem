@@ -11,13 +11,11 @@
                FontSize="24"
                HorizontalOptions="Center"/>
 
-        <Button x:Name="BtnZelfEvaluatie"
-        Text="Vul zelfevaluatie in"
-        Clicked="OpZelfEvaluatieGeklikt"/>
+        <Button Text="Vul zelfevaluatie in"
+                Command="{Binding GaNaarFeedbackCommand}" />
 
-        <Button x:Name="BtnFeedback"
-        Text="Geef feedback"
-        Clicked="OpFeedbackGeklikt"/>
+        <Button Text="Geef feedback" 
+                Command="{Binding GaNaarFeedbackCommand}" />
 
     </VerticalStackLayout>
 </ContentPage>

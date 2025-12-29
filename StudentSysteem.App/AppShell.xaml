@@ -4,6 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:StudentSysteem.App.Views"
+    xmlns:views2="clr-namespace:StudentSysteem.App.ViewModels"
+    xmlns:local="clr-namespace:StudentSysteem.App"
     x:Name="Stepwise"
     FlyoutBehavior="Disabled">
     
@@ -19,21 +21,21 @@
                         Clicked="OpDashboardGeklikt"/>
             </Border>
 
-            <Label Text="{Binding CurrentPage.Title, Source={x:Reference Stepwise}}"
+            <Label Text="{Binding CurrentItem.Title, Source={x:Reference Stepwise}}"
                    Grid.Column="1"
                    FontSize="22"
                    TextColor="White"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"/>
 
-            <HorizontalStackLayout Grid.Column="2" 
-                                   Spacing="5" 
+            <HorizontalStackLayout Grid.Column="2"
+                                   Spacing="5"
                                    VerticalOptions="Center">
-                <Label Text="{Binding GebruikersNaam}"
+                <Label Text="{Binding IngelogdeGebruiker.Naam}"
                        FontSize="16"
                        TextColor="{StaticResource White}"
                        VerticalOptions="Center"/>
-                <Image Source="person_icon.png"
+                <Image Source="gebruiker.png"
                        HeightRequest="35"
                        VerticalOptions="Center"/>
             </HorizontalStackLayout>
@@ -41,11 +43,11 @@
     </Shell.TitleView>
     
     <ShellContent
+        Title="Start"
+        ContentTemplate="{DataTemplate views:StartView}"
+        Route="Start" />
+    <ShellContent
         Title="Inloggen"
         ContentTemplate="{DataTemplate views:LoginView}"
         Route="Login" />
-    <ShellContent
-        Title="Start"
-        ContentTemplate="{DataTemplate views:StartView}"
-        Route="Start"/>
 </Shell>

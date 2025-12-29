@@ -57,6 +57,8 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
+            builder.Services.AddSingleton<IStudentRepository, StudentRepository>();
+            builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
@@ -65,12 +67,15 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
+            builder.Services.AddSingleton<IStudentService, StudentService>();
+            builder.Services.AddSingleton<IDocentService, DocentService>();
 
             // ViewModels
-            builder.Services.AddTransient<FeedbackFormulierViewModel>();
             builder.Services.AddSingleton<GlobaleViewModel>();
-            builder.Services.AddTransient<LoginViewModel>();
-
+            builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<StartView>().AddTransient<StartViewModel>(); 
+            builder.Services.AddTransient<FeedbackFormulierView>().AddTransient<FeedbackFormulierViewModel>();
+            
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
