@@ -101,6 +101,8 @@ namespace StudentSysteem.App.ViewModels
 
         private void LaadPrestatiedoelen()
         {
+            Beoordelingen.Clear();   
+
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             var vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
 
@@ -114,7 +116,6 @@ namespace StudentSysteem.App.ViewModels
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving,
                     AiAssessmentScale = d.AiAssessmentScale,
-
                     Vaardigheid = vaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
                     LeertakenUrl = vaardigheid?.LeertakenUrl,
                     HboiActiviteit = vaardigheid?.HboiActiviteit,
@@ -123,9 +124,7 @@ namespace StudentSysteem.App.ViewModels
                 };
             }).ToList();
 
-            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
-
-            foreach (var item in Beoordelingen)
+            foreach (var item in items)
             {
                 var opNiveau = _criteriumService.HaalOpNiveauCriteriaOp();
                 var bovenNiveau = _criteriumService.HaalBovenNiveauCriteriaOp();
@@ -138,9 +137,11 @@ namespace StudentSysteem.App.ViewModels
 
                 item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
                 HookToelichtingen(item);
-            }
 
+                Beoordelingen.Add(item);
+            }
         }
+
 
         private async Task BewaarEvaluatieAsync()
         {
@@ -202,7 +203,9 @@ namespace StudentSysteem.App.ViewModels
 
             return toelichtingen.All(t =>
                 !string.IsNullOrWhiteSpace(t.Tekst) &&
-                t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
+                t.GekoppeldCriterium != null
+            );
+
         }
 
         private static bool ValideerPrestatieNiveau(BeoordelingItem item) =>
@@ -218,28 +221,30 @@ namespace StudentSysteem.App.ViewModels
                 item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
             });
         }
-
         private async Task ShowOptiesPicker(Toelichting toelichting)
         {
             if (toelichting == null) return;
 
-            var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
+            var parent = Beoordelingen.FirstOrDefault(b =>
+                b.Toelichtingen.Contains(toelichting));
+
             if (parent == null) return;
 
-            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
+            var opties = parent.BeschikbareCriteria;
 
             var gekozen = await Application.Current.MainPage.DisplayActionSheet(
-                "Toelichting gekoppeld aan...",
+                "Koppel toelichting aan criterium",
                 "Annuleren",
                 null,
-                opties.ToArray());
+                opties.Select(o => o.DisplayNaam).ToArray());
 
-            if (!string.IsNullOrEmpty(gekozen) && gekozen != "Annuleren")
-            {
-                toelichting.GeselecteerdeOptie = gekozen;
-                Notify(nameof(Beoordelingen));
-            }
+            if (gekozen == "Annuleren" || string.IsNullOrWhiteSpace(gekozen))
+                return;
+
+            toelichting.GekoppeldCriterium =
+                opties.First(c => c.DisplayNaam == gekozen);
         }
+
 
         private void HookToelichtingen(BeoordelingItem item)
         {

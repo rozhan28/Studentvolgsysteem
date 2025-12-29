@@ -22,19 +22,9 @@ namespace StudentSysteem.Core.Data.Repositories
                     vaardigheid_id INTEGER
                 );
             ");
-
-            // Seed uit develop-branch behouden
-            List<string> voegFeedback = new()
-            {
-                @"INSERT OR IGNORE INTO Feedback
-                  (feedback_id, niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id)
-                  VALUES (1, '1', NULL, NULL, NULL, NULL, NULL, NULL)"
-            };
-
-            VoegMeerdereInMetTransactie(voegFeedback);
         }
 
-        // ===== Feature/US3 =====
+        // Feature/US3
         public int MaakFeedbackAan(string niveau)
         {
             OpenVerbinding();
@@ -58,7 +48,6 @@ namespace StudentSysteem.Core.Data.Repositories
             return feedbackId;
         }
 
-        // ===== Feature/US3 =====
         public void VoegToelichtingToe(int feedbackId, string toelichting)
         {
             OpenVerbinding();
@@ -77,7 +66,6 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
         }
 
-        // ===== Develop =====
         public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
         {
             OpenVerbinding();

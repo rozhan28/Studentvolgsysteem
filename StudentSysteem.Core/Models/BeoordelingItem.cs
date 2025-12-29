@@ -17,6 +17,7 @@ namespace StudentSysteem.Core.Models
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+
         public int PrestatiedoelId { get; set; }
 
         public string Titel { get; set; }
@@ -25,8 +26,10 @@ namespace StudentSysteem.Core.Models
         public string PrestatiedoelBeschrijving { get; set; }
         public string AiAssessmentScale { get; set; }
         public string HboiActiviteit { get; set; }
+        public string LeertakenUrl { get; set; }
 
         private bool _isUpdating;
+
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -36,20 +39,6 @@ namespace StudentSysteem.Core.Models
             {
                 if (_isExpanded == value) return;
                 _isExpanded = value;
-                Notify();
-            }
-        }
-
-        // ===================== CRITERIA (US3_Niveau) =====================
-
-        private Criterium _geselecteerdCriterium;
-        public Criterium GeselecteerdCriterium
-        {
-            get => _geselecteerdCriterium;
-            set
-            {
-                if (_geselecteerdCriterium == value) return;
-                _geselecteerdCriterium = value;
                 Notify();
             }
         }
@@ -67,10 +56,32 @@ namespace StudentSysteem.Core.Models
         public ObservableCollection<Criterium> BovenNiveauCriteria { get; }
             = new ObservableCollection<Criterium>();
 
-        public ObservableCollection<Criterium> BeschikbareCriteria { get; }
-            = new ObservableCollection<Criterium>();
+        public IEnumerable<Criterium> BeschikbareCriteria
+        {
+            get
+            {
+                yield return AlgemeenCriterium;
 
-        // ===================== STATUS / NIVEAUS =====================
+                foreach (var c in OpNiveauCriteria)
+                    yield return c;
+
+                foreach (var c in BovenNiveauCriteria)
+                    yield return c;
+            }
+        }
+
+        private Criterium _geselecteerdCriterium;
+        public Criterium GeselecteerdCriterium
+        {
+            get => _geselecteerdCriterium;
+            set
+            {
+                if (_geselecteerdCriterium == value) return;
+                _geselecteerdCriterium = value;
+                Notify();
+            }
+        }
+
 
         private bool _inOntwikkeling;
         public bool InOntwikkeling
@@ -78,19 +89,17 @@ namespace StudentSysteem.Core.Models
             get => _inOntwikkeling;
             set
             {
-                if (_inOntwikkeling == value) return;
-                if (_isUpdating) return;
+                if (_inOntwikkeling == value || _isUpdating) return;
 
                 _isUpdating = true;
                 _inOntwikkeling = value;
 
                 if (value)
-                {
                     ResetCriteria();
-                }
 
                 UpdateStatus();
                 _isUpdating = false;
+
                 Notify();
             }
         }
@@ -116,7 +125,6 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        // ===================== KLEUR =====================
 
         private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
         public PrestatieNiveauKleur Kleur
@@ -126,7 +134,7 @@ namespace StudentSysteem.Core.Models
             {
                 if (_kleur == value) return;
                 _kleur = value;
-                Notify(nameof(Kleur));
+                Notify();
             }
         }
 
@@ -146,7 +154,6 @@ namespace StudentSysteem.Core.Models
             Notify(nameof(PrestatieNiveau));
         }
 
-        // ===================== VALIDATIE =====================
 
         private bool _isPrestatieNiveauInvalid;
         public bool IsPrestatieNiveauInvalid
@@ -166,68 +173,25 @@ namespace StudentSysteem.Core.Models
         public bool IsCriteriumInvalid
         {
             get => _isCriteriumInvalid;
-            set
-            {
-                if (_isCriteriumInvalid == value) return;
-                _isCriteriumInvalid = value;
-                Notify();
-            }
-        }
-
-        // ===================== TOELICHTING =====================
-
-        private string _toelichting;
-        public string Toelichting
-        {
-            get => _toelichting;
-            set
-            {
-                if (_toelichting == value) return;
-                _toelichting = value;
-                Notify();
-            }
+            set { _isCriteriumInvalid = value; Notify(); }
         }
 
 
         public ObservableCollection<Toelichting> Toelichtingen { get; set; }
             = new ObservableCollection<Toelichting>();
 
-        // ===================== COMMANDS =====================
 
         public ICommand OptiesCommand { get; }
-        public ICommand VoegExtraToelichtingToeCommand { get; }
 
-        private string _geselecteerdeOptie = "Toelichting koppelen aan...";
-        public string GeselecteerdeOptie
-        {
-            get => _geselecteerdeOptie;
-            set
-            {
-                _geselecteerdeOptie = value;
-                Notify();
-            }
-        }
-
-        private string _leertakenUrl;
-        public string LeertakenUrl
-        {
-            get => _leertakenUrl;
-            set { _leertakenUrl = value; Notify(); }
-        }
-
-        // ===================== CONSTRUCTOR =====================
 
         public BeoordelingItem()
         {
-            BeschikbareCriteria.Add(AlgemeenCriterium);
 
             OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
 
-            OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
-            BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
         }
 
-        // ===================== HULPMETHODES =====================
+
 
         private async Task ToonCriteriaKeuze()
         {
@@ -241,13 +205,11 @@ namespace StudentSysteem.Core.Models
                 null,
                 opties);
 
-            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze))
+            if (string.IsNullOrWhiteSpace(keuze) || keuze == "Annuleren")
                 return;
 
-            GeselecteerdeOptie = keuze;
-
             GeselecteerdCriterium =
-                BeschikbareCriteria.FirstOrDefault(c => c.DisplayNaam == keuze);
+                BeschikbareCriteria.First(c => c.DisplayNaam == keuze);
         }
 
         private void ResetCriteria()
@@ -257,17 +219,6 @@ namespace StudentSysteem.Core.Models
 
             foreach (var c in BovenNiveauCriteria)
                 c.IsGeselecteerd = false;
-        }
-
-        private void HookCriteria(ObservableCollection<Criterium> criteria)
-        {
-            foreach (var c in criteria)
-            {
-                c.PropertyChanged += (_, __) =>
-                {
-                    UpdateStatus();
-                };
-            }
         }
 
         private void Notify([CallerMemberName] string prop = "")

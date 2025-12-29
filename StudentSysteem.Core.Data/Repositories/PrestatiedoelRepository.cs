@@ -34,7 +34,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 );
             ");
 
-            // ===== Seed Prestatiedoelen (US3) =====
             List<string> seedPrestatiedoel = new()
             {
                 @"INSERT OR IGNORE INTO Prestatiedoel (prestatiedoel_id, niveau, beschrijving)
@@ -52,7 +51,6 @@ namespace StudentSysteem.Core.Data.Repositories
                   )"
             };
 
-            // ===== Seed koppelingen (US3) =====
             List<string> seedKoppeling = new()
             {
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 1)",
@@ -63,7 +61,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 6)"
             };
 
-            // ===== Seed AI / develop =====
             List<string> seedAi = new()
             {
                 @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
