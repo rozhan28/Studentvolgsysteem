@@ -18,6 +18,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(FeedbackFormulierView), typeof(FeedbackFormulierView));
     }
     
+    //Navigeert naar VoortsgangsDashboardView
     private void OnDashboardClicked(object sender, EventArgs e)
     {
         Shell.Current.GoToAsync("//Dashboard");
