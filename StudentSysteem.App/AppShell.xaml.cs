@@ -10,7 +10,7 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         
-        //Gebruikernsaam is een placeholder. Dit moet uiteindelijk vervangen worden bij UC Inloggen.       
+        //Wordt gebruikt in AppShell.xalm en deze code moet uiteindelijk vervangen worden bij UC Inloggen.       
         gebruikersNaam = "Naam";
         BindingContext = this;
 

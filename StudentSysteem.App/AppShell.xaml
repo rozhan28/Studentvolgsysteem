@@ -52,6 +52,10 @@
         Route="Dashboard"/>
     
     <ShellContent
-    Title="Feedbackformulier"
+    Title="FeedbackFormulier"
+    ContentTemplate="{DataTemplate views:FeedbackFormulierView}"/>
+
+    <ShellContent
+    Title="ZelfEvaluatie"
     ContentTemplate="{DataTemplate views:FeedbackFormulierView}"/>
 </Shell>
