@@ -4,10 +4,11 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:StudentSysteem.App.Views"
-    x:Name="StepWise">
+    x:Name="Stepwise"
+    FlyoutBehavior="Disabled">
     
     <Shell.TitleView>
-        <Grid ColumnDefinitions="Auto,*,Auto" 
+        <Grid ColumnDefinitions="Auto,*,Auto"
               BackgroundColor="{StaticResource Primary}">
             
             <Border StrokeThickness="0"
@@ -15,21 +16,20 @@
                 <Button Text="Dashboard"
                         BackgroundColor="{StaticResource White}"
                         TextColor="{StaticResource Primary}"
-                        Clicked="OnDashboardClicked"/>
+                        Clicked="OpDashboardGeklikt"/>
             </Border>
 
-            <Label BindingContext="{x:Reference StepWise}"
-                   Text="{Binding Path=Title}"
+            <Label Text="{Binding CurrentPage.Title, Source={x:Reference Stepwise}}"
                    Grid.Column="1"
                    FontSize="22"
-                   TextColor="{StaticResource White}"
+                   TextColor="White"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"/>
 
             <HorizontalStackLayout Grid.Column="2" 
                                    Spacing="5" 
                                    VerticalOptions="Center">
-                <Label Text="{Binding gebruikersNaam}"
+                <Label Text="{Binding GebruikersNaam}"
                        FontSize="16"
                        TextColor="{StaticResource White}"
                        VerticalOptions="Center"/>
@@ -41,7 +41,11 @@
     </Shell.TitleView>
     
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:FeedbackFormulierView}"
-        Route="Dashboard"/>
+        Title="Inloggen"
+        ContentTemplate="{DataTemplate views:LoginView}"
+        Route="Login" />
+    <ShellContent
+        Title="Start"
+        ContentTemplate="{DataTemplate views:StartView}"
+        Route="Start"/>
 </Shell>

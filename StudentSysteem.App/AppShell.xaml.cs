@@ -1,23 +1,20 @@
-﻿using StudentSysteem.App.ViewModels;
+﻿using StudentSysteem.App.Views;
 
 namespace StudentSysteem.App;
 
 public partial class AppShell : Shell
 {
-    public string gebruikersNaam { get; set; }
-    
     public AppShell()
     {
         InitializeComponent();
-        Title = "Feedbackformulier";
-        Routing.RegisterRoute(nameof(FeedbackFormulierViewModel), typeof(FeedbackFormulierViewModel));
         
-        gebruikersNaam = "Naam";
-        BindingContext = this;
+        Routing.RegisterRoute("Login", typeof(LoginView));
+        Routing.RegisterRoute(nameof(StartView), typeof(StartView));
+        Routing.RegisterRoute(nameof(FeedbackFormulierView), typeof(FeedbackFormulierView));
     }
     
-    private void OnDashboardClicked(object sender, EventArgs e)
+    private void OpDashboardGeklikt(object sender, EventArgs e)
     {
-        Shell.Current.GoToAsync("//Dashboard");
+        Shell.Current.GoToAsync("//Login");
     }
 }

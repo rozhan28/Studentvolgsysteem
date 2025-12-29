@@ -15,7 +15,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     [klas] VARCHAR(5))");
 
             List<string> insertQueries = [@"INSERT OR REPLACE INTO Student(student_id, naam, email, studentnummer, klas) 
-                                        VALUES(NULL, 'MockData2', NULL, NULL, NULL)"];
+                                        VALUES(NULL, 'Sanne', sanne.abrahamse@windesheim.nl, 1199564, ICTOOSDDa)"];
             VoegMeerdereInMetTransactie(insertQueries);
         }
     }

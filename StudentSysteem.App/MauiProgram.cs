@@ -60,16 +60,16 @@ namespace StudentSysteem.App
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
-            builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
-            builder.Services.AddSingleton<DbConnectieHelper>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
+            builder.Services.AddSingleton<GlobaleViewModel>();
+            builder.Services.AddTransient<LoginViewModel>();
 
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();

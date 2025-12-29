@@ -14,26 +14,24 @@ public partial class StartView : ContentPage
     {
         if (GebruikerSessie.HuidigeRol == "Student")
         {
-            BtnZelfreview.IsVisible = true;
+            BtnZelfEvaluatie.IsVisible = true;
             BtnFeedback.IsVisible = true;
         }
         else if (GebruikerSessie.HuidigeRol == "Docent")
         {
-            BtnZelfreview.IsVisible = false;
+            BtnZelfEvaluatie.IsVisible = false;
             BtnFeedback.IsVisible = true;
         }
     }
 
-    private async void OnSelfReviewClicked(object sender, EventArgs e)
+    private async void OpZelfEvaluatieGeklikt(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
-        await Navigation.PushAsync(page);
+        await Shell.Current.GoToAsync("Feedbackformulier");
     }
 
-    private async void OnFeedbackClicked(object sender, EventArgs e)
+    private async void OpFeedbackGeklikt(object sender, EventArgs e)
     {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
-        await Navigation.PushAsync(page);
+        await Shell.Current.GoToAsync("Feedbackformulier");
     }
 }
 

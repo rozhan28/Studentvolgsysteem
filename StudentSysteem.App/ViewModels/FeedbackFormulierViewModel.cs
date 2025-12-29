@@ -1,4 +1,4 @@
-using StudentSysteem.Core.Interfaces.Services;
+﻿using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 ﻿using System;
 using System.Collections.ObjectModel;
@@ -19,7 +19,6 @@ namespace StudentSysteem.App.ViewModels
     public class FeedbackFormulierViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        private readonly INavigatieService _navigatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
@@ -55,7 +54,6 @@ namespace StudentSysteem.App.ViewModels
 
         public FeedbackFormulierViewModel(
             IZelfEvaluatieService zelfEvaluatieService,
-            INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
             IPrestatiedoelService prestatiedoelService,
@@ -64,7 +62,6 @@ namespace StudentSysteem.App.ViewModels
             bool isDocent = false)
         {
             _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
-            _navigatieService = navigatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
 

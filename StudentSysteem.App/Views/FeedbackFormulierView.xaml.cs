@@ -8,7 +8,6 @@ namespace StudentSysteem.App.Views
     {
         public FeedbackFormulierView(
             IZelfEvaluatieService zelfEvaluatieService,
-            INavigatieService navigatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackFormulierService,
             IPrestatiedoelService prestatiedoelService,
@@ -22,7 +21,6 @@ namespace StudentSysteem.App.Views
 
             BindingContext = new FeedbackFormulierViewModel(
                 zelfEvaluatieService,
-                navigatieService,
                 meldingService,
                 feedbackFormulierService,
                 prestatiedoelService,

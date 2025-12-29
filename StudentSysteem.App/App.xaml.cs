@@ -1,14 +1,14 @@
-﻿namespace StudentSysteem.App;
+﻿using StudentSysteem.App.ViewModels;
+using StudentSysteem.App.Views;
+
+namespace StudentSysteem.App;
 
 public partial class App : Application
 {
-	public App()
+	public App(LoginViewModel viewModel)
 	{
 		InitializeComponent();
-	}
-
-	protected override Window CreateWindow(IActivationState? activationState)
-	{
-		return new Window(new AppShell());
+		
+		MainPage = new LoginView(viewModel);
 	}
 }

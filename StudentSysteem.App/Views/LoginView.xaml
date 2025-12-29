@@ -11,11 +11,11 @@
 
         <Button Text="Ik ben student"
                 WidthRequest="250"
-                Clicked="OnStudentClicked"/>
+                Command="{Binding LoginStudentCommand}"/>
 
         <Button Text="Ik ben docent"
                 WidthRequest="250"
-                Clicked="OnDocentClicked"/>
+                Command="{Binding LoginDocentCommand}"/>
 
     </VerticalStackLayout>
 
