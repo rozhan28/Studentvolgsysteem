@@ -56,6 +56,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<ILeeruitkomstRepository, LeeruitkomstRepository>();
             builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
             builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
             builder.Services.AddSingleton<IStudentRepository, StudentRepository>();
@@ -66,6 +67,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
+            builder.Services.AddSingleton<ILeeruitkomstService, LeeruitkomstService>();
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
             builder.Services.AddSingleton<IClusterService, ClusterService>();
@@ -89,11 +91,12 @@ namespace StudentSysteem.App
                 scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
                 scope.ServiceProvider.GetRequiredService<IPrestatiedoelRepository>();
                 scope.ServiceProvider.GetRequiredService<IFeedbackRepository>();
+                scope.ServiceProvider.GetRequiredService<ILeeruitkomstRepository>();
+                scope.ServiceProvider.GetRequiredService<IVaardigheidRepository>();
                 scope.ServiceProvider.GetRequiredService<IClusterRepository>();
                 scope.ServiceProvider.GetRequiredService<IStudentRepository>();
                 scope.ServiceProvider.GetRequiredService<IDocentRepository>();
             }
-
             return app;
         }
     }

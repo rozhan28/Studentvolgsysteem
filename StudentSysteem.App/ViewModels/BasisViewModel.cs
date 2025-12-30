@@ -4,6 +4,5 @@ namespace StudentSysteem.App.ViewModels;
 
 public partial class BasisViewModel : ObservableObject
 {
-    [ObservableProperty]
-    string titel = "";
+    [ObservableProperty] private string titel;
 }

@@ -9,26 +9,26 @@ namespace StudentSysteem.Core.Data.Repositories
     {
         private readonly List<Vaardigheid> vaardigheidLijst = new();
 
-
         public VaardigheidRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Vaardigheid (
                     vaardigheid_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     naam VARCHAR(255),
                     beschrijving TEXT,
-                    hboi_activiteit VARCHAR(255),
                     leertaken_url VARCHAR(255),
                     prestatiedoel_id INTEGER,
                     processtap_id INTEGER,
-                    FOREIGN KEY(prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id))");
+                    leeruitkomst_id INTEGER,
+                    FOREIGN KEY(prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id),
+                    FOREIGN KEY(leeruitkomst_id) REFERENCES Leeruitkomst(leeruitkomst_id))");
 
             List<string> VoegVaardigheid = [@"INSERT OR IGNORE INTO Vaardigheid
-            (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id)
+            (naam, beschrijving, leertaken_url, prestatiedoel_id, leeruitkomst_id)
             VALUES (
                 'Maken domeinmodel',
                 'Het maken van een domeinmodel volgens een UML klassendiagram.',
-                'Analyseren',
                 'https://leertaken.nl/2.-Processen/1.-Requirementsanalyseproces/1.-Uitleg-defini%C3%ABren-probleemdomein',
+                1,
                 1)"];
             VoegMeerdereInMetTransactie(VoegVaardigheid);
         }
@@ -36,7 +36,8 @@ namespace StudentSysteem.Core.Data.Repositories
         public List<Vaardigheid> HaalAlleVaardighedenOp()
         {
             vaardigheidLijst.Clear();
-            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id FROM Vaardigheid";
+            string selectQuery = "SELECT v.vaardigheid_id, v.naam, v.beschrijving, v.leertaken_url, v.prestatiedoel_id, v.leeruitkomst_id, l.hboi_activiteit FROM Vaardigheid v " +
+                                 "LEFT JOIN Leeruitkomst l ON v.leeruitkomst_id = l.leeruitkomst_id";
             OpenVerbinding();
 
             using (SqliteCommand command = new(selectQuery, Verbinding))
@@ -48,10 +49,11 @@ namespace StudentSysteem.Core.Data.Repositories
                     int Vaardigheid_id = reader.GetInt32(0);
                     string VaardigheidNaam = reader.GetString(1);
                     string VaardigheidBeschrijving = reader.GetString(2);
-                    string HboiActiviteit = reader.GetString(3);
-                    string LeertakenUrl = reader.GetString(4);
-                    int PrestatiedoelId = reader.GetInt32(5);
-                    vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl, PrestatiedoelId));
+                    string LeertakenUrl = reader.GetString(3);
+                    int PrestatiedoelId = reader.GetInt32(4);
+                    int LeeruitkomstId = reader.GetInt32(5);
+                    string HboiActiviteit = reader.GetString(6);
+                    vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, LeertakenUrl, PrestatiedoelId, LeeruitkomstId, HboiActiviteit));
                 }
             }
             SluitVerbinding();

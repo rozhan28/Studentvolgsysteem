@@ -1,7 +1,6 @@
 ﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Services
 {

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using StudentSysteem.Core.Interfaces.Services;
@@ -16,9 +17,9 @@ using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class FeedbackFormulierViewModel : BasisViewModel
+    [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
+    public partial class FeedbackFormulierViewModel : BasisViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IPrestatiedoelService _prestatiedoelService;
@@ -28,6 +29,17 @@ namespace StudentSysteem.App.ViewModels
         private readonly bool _isDocent;
         
         public ICommand LeertakenCommand { get; }
+        
+        
+        // Begin code voor paginatitel in header
+        [ObservableProperty]
+        bool isZelfEvaluatie;
+
+        public void UpdateTitelGebaseerdOpStatus()
+        {
+            Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
+        }
+        // Einde code voor paginatitel in header
 
         private ObservableCollection<BeoordelingItem> _beoordelingen;
         public ObservableCollection<BeoordelingItem> Beoordelingen
@@ -36,7 +48,7 @@ namespace StudentSysteem.App.ViewModels
             set
             {
                 _beoordelingen = value;
-                Notify(nameof(Beoordelingen));
+                OnPropertyChanged();
             }
         }
 
@@ -44,7 +56,7 @@ namespace StudentSysteem.App.ViewModels
         public string StatusMelding
         {
             get => _statusMelding;
-            set { _statusMelding = value; Notify(nameof(StatusMelding)); }
+            set { _statusMelding = value; OnPropertyChanged(); }
         }
 
         public ICommand OpslaanCommand { get; }
@@ -140,19 +152,19 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+                int idVorigRecord = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
                 foreach (BeoordelingItem item in Beoordelingen)
                 {
                     if (item.Toelichtingen != null && item.Toelichtingen.Any())
                     {
-                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), zelfEvaluatieId);
+                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), idVorigRecord);
                     }
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Toelichting is opgeslagen!");
+                    IsZelfEvaluatie ? "Je zelfevaluatie is opgeslagen!" : "De feedback is succesvol opgeslagen!");
             }
             catch (Exception ex)
             {
@@ -197,6 +209,9 @@ namespace StudentSysteem.App.ViewModels
 
         private bool IsToelichtingCorrect(Toelichting toelichting)
         {
+            if (_isDocent)
+                return true;
+            
             return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
                    toelichting.GeselecteerdeOptie != "Toelichting gekoppeld aan...";
         }
@@ -240,7 +255,7 @@ namespace StudentSysteem.App.ViewModels
                 int idx = parent.Toelichtingen.IndexOf(toelichting);
                 Toelichting nieuwe = new() { Tekst = toelichting.Tekst, GeselecteerdeOptie = selected };
                 parent.Toelichtingen[idx] = nieuwe;
-                Notify(nameof(Beoordelingen));
+                OnPropertyChanged(nameof(Beoordelingen));
             }
         }
 
@@ -251,14 +266,11 @@ namespace StudentSysteem.App.ViewModels
             void Handler(object s, NotifyCollectionChangedEventArgs e)
             {
                 item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
-                MainThread.BeginInvokeOnMainThread(() => Notify(nameof(Beoordelingen)));
+                MainThread.BeginInvokeOnMainThread(() => OnPropertyChanged(nameof(Beoordelingen)));
             }
 
             item.Toelichtingen.CollectionChanged += Handler;
         }
-
-        private void Notify(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         
         private async Task OpenLeertakenUrl(string url)
         {

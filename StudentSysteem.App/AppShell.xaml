@@ -21,7 +21,8 @@
                         Clicked="OpDashboardGeklikt"/>
             </Border>
 
-            <Label Text="{Binding CurrentItem.Title, Source={x:Reference Stepwise}}"
+            <Label x:Name="ShellTitelLabel" 
+                   Text="Start"
                    Grid.Column="1"
                    FontSize="22"
                    TextColor="White"

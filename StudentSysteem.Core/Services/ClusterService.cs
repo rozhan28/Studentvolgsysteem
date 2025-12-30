@@ -18,9 +18,8 @@ public class ClusterService : IClusterService
         return _clusterRepository.HaalOp();
     }
 
-    public List<Cluster> HaalAlleClustersOp()
+    public IEnumerable<Cluster> HaalAlleClustersOp()
     {
-        List<Cluster> clusters = _clusterRepository.HaalAlleClustersOp();
-        return clusters;
+        return _clusterRepository.HaalAlleClustersOp();
     }
 }

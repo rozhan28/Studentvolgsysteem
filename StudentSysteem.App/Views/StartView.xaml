@@ -13,7 +13,7 @@
 
         <Button Text="Vul zelfevaluatie in"
                 IsVisible="{Binding IsStudent}"
-                Command="{Binding GaNaarFeedbackCommand}" />
+                Command="{Binding GaNaarZelfEvaluatieCommand}" />
 
         <Button Text="Geef feedback" 
                 IsVisible="{Binding IsIngelogd}"

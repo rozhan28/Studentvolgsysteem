@@ -5,5 +5,5 @@ namespace StudentSysteem.Core.Interfaces.Services;
 public interface IClusterService
 {
     public Cluster? HaalOp();
-    public List<Cluster> HaalAlleClustersOp();
+    public IEnumerable<Cluster> HaalAlleClustersOp();
 }

@@ -3,7 +3,7 @@ using StudentSysteem.Core.Interfaces.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class ZelfEvaluatieViewModel
+    public partial class ZelfEvaluatieViewModel : BasisViewModel
     {
         private readonly IZelfEvaluatieService _zelfEvaluatieService;
 
@@ -20,8 +20,7 @@ namespace StudentSysteem.App.ViewModels
                 Datum = DateTime.Now,
                 PrestatieNiveau = "Geselecteerd" 
             };
-
-            return _zelfEvaluatieService.Add(zelfEvaluatie);
+            return _zelfEvaluatieService.VoegToe(zelfEvaluatie);
         }
     }
 }

@@ -5,7 +5,8 @@
              xmlns:converters="clr-namespace:StudentSysteem.App.Converters"
              xmlns:models="clr-namespace:StudentSysteem.Core.Models;assembly=StudentSysteem.Core"
              x:Class="StudentSysteem.App.Views.FeedbackFormulierView"
-             x:Name="Feedbackformulier">
+             x:Name="Feedbackformulier"
+             Title="{Binding Titel}">
 
     <ContentPage.Resources>
         <ResourceDictionary>

@@ -15,16 +15,17 @@ namespace StudentSysteem.Core.Services
 
         public void SlaToelichtingenOp(List<Toelichting> toelichtingen, int studentId = 1)
         {
-            foreach (Toelichting toelichting in toelichtingen)
-            {
-                if (string.IsNullOrWhiteSpace(toelichting.Tekst))
-                    throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
-            }
-
             if (studentId <= 0)
-                throw new ArgumentException("StudentId moet groter zijn dan 0.", nameof(studentId));
-
-            _feedbackRepository.VoegToelichtingenToe(toelichtingen, studentId);
+                throw new ArgumentException("StudentId moet groter zijn dan 0.");
+            
+            List<Toelichting> gevuldeToelichtingen = toelichtingen
+                .Where(t => !string.IsNullOrWhiteSpace(t.Tekst))
+                .ToList();
+            
+            if (gevuldeToelichtingen.Count > 0)
+            {
+                _feedbackRepository.VoegToelichtingenToe(gevuldeToelichtingen, studentId);
+            }
         }
     }
 }

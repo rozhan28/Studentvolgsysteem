@@ -18,10 +18,9 @@ public class DocentService : IDocentService
         return _docentRepository.HaalOp();
     }
 
-    public List<Docent> HaalAlleDocentenOp()
+    public IEnumerable<Docent> HaalAlleDocentenOp()
     {
-        List<Docent> docenten = _docentRepository.HaalAlleDocentenOp();
-        return docenten;
+        return _docentRepository.HaalAlleDocentenOp();
     }
     
     public Docent LoginDocent()

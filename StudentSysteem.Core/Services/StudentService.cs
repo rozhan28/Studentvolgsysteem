@@ -18,10 +18,9 @@ public class StudentService : IStudentService
         return _studentRepository.HaalOp();
     }
 
-    public List<Student> HaalAlleStudentenOp()
+    public IEnumerable<Student> HaalAlleStudentenOp()
     {
-        List<Student> studenten = _studentRepository.HaalAlleStudentenOp();
-        return studenten;
+        return _studentRepository.HaalAlleStudentenOp();
     }
     
     public Student LoginStudent()

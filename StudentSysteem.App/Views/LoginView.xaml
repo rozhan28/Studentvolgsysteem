@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="StudentSysteem.App.Views.LoginView"
-             Title="Inloggen">
+             Title="Inloggen"
+             Shell.NavBarIsVisible="False">
 
     <VerticalStackLayout Padding="20" Spacing="20"
                          VerticalOptions="Center" HorizontalOptions="Center">
@@ -10,11 +11,9 @@
         <Label Text="Kies uw rol" FontSize="26" />
 
         <Button Text="Ik ben student"
-                WidthRequest="250"
                 Command="{Binding LoginStudentCommand}"/>
 
         <Button Text="Ik ben docent"
-                WidthRequest="250"
                 Command="{Binding LoginDocentCommand}"/>
 
     </VerticalStackLayout>

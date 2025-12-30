@@ -5,6 +5,6 @@ namespace StudentSysteem.Core.Interfaces.Services;
 public interface IStudentService
 {
     public Student? HaalOp();
-    public List<Student> HaalAlleStudentenOp();
+    public IEnumerable<Student> HaalAlleStudentenOp();
     public Student? LoginStudent();
 }

@@ -4,6 +4,6 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IPrestatiedoelService
     {
-        List<Prestatiedoel> HaalPrestatiedoelenOp();
+        IEnumerable<Prestatiedoel> HaalPrestatiedoelenOp();
     }
 }

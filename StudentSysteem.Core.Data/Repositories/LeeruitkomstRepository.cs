@@ -1,5 +1,7 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+﻿using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -13,8 +15,37 @@ namespace StudentSysteem.Core.Data.Repositories
                     hboi_activiteit VARCHAR(50))");
 
             List<string> insertQueries = [@"INSERT OR REPLACE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
-                                        VALUES(NULL, 'MockData', NULL)"];
+                                        VALUES(1, 'Analyseren', 'Analyseren')"];
             VoegMeerdereInMetTransactie(insertQueries);
+        }
+
+        public Leeruitkomst? HaalOp()
+        {
+            List<Leeruitkomst> alleLeeruitkomsten = HaalAlleLeeruitkomstenOp();
+            return alleLeeruitkomsten.FirstOrDefault();
+        }
+
+        public List<Leeruitkomst> HaalAlleLeeruitkomstenOp()
+        {
+            List<Leeruitkomst> leeruitkomsten = new();
+            leeruitkomsten.Clear();
+            string selectQuery = "SELECT leeruitkomst_id, naam, hboi_activiteit FROM Leeruitkomst";
+            OpenVerbinding();
+
+            using (SqliteCommand command = new(selectQuery, Verbinding))
+            {
+                SqliteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int LeeruitkomstId = reader.GetInt32(0);
+                    string LeeruitkomstNaam = reader.GetString(1);
+                    string HboiActiviteit = reader.GetString(2);
+                    leeruitkomsten.Add(new(LeeruitkomstId, LeeruitkomstNaam, HboiActiviteit));
+                }
+            }
+            SluitVerbinding();
+            return leeruitkomsten;
         }
     }
 }
