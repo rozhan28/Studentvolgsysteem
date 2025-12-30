@@ -42,11 +42,10 @@
             </HorizontalStackLayout>
         </Grid>
     </Shell.TitleView>
-    
+
     <ShellContent
         Title="Start"
-        ContentTemplate="{DataTemplate views:StartView}"
-        Route="Start" />
+        ContentTemplate="{DataTemplate views:StartView}"/>
     <ShellContent
         Title="Inloggen"
         ContentTemplate="{DataTemplate views:LoginView}"
