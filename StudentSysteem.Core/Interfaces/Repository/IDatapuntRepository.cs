@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
-    public class IDatapuntRepository
+    public interface IDatapuntRepository
     {
-
+        public List<Datapunt> HaalAlleDatapuntenOp();
     }
 }

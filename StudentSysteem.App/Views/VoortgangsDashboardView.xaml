@@ -24,7 +24,7 @@
                         Stroke="#ccc"
                         StrokeThickness="1"
                         BackgroundColor="#f0f0f0">
-                    <Label Text="{Binding Vaardigheden[0].HboiActiviteit}"
+                    <Label Text="{Binding Leeruitkomsten[0].HboiActiviteit}"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center"/>
@@ -34,7 +34,7 @@
                         Stroke="#ccc"
                         StrokeThickness="1"
                         BackgroundColor="#f0f0f0">
-                    <Label Text="{Binding Vaardigheden[1].HboiActiviteit}"
+                    <Label Text="{Binding Leeruitkomsten[1].HboiActiviteit}"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center"/>
@@ -44,7 +44,7 @@
                         Stroke="#ccc"
                         StrokeThickness="1"
                         BackgroundColor="#f0f0f0">
-                    <Label Text="{Binding Vaardigheden[2].HboiActiviteit}"
+                    <Label Text="{Binding Leeruitkomsten[2].HboiActiviteit}"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center"/>
@@ -54,7 +54,7 @@
                         Stroke="#ccc"
                         StrokeThickness="1"
                         BackgroundColor="#f0f0f0">
-                    <Label Text="{Binding HboiActiviteiten[3]}"
+                    <Label Text="{Binding Leeruitkomsten[3].HboiActiviteit}"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center"/>
@@ -64,7 +64,7 @@
                         Stroke="#ccc"
                         StrokeThickness="1"
                         BackgroundColor="#f0f0f0">
-                    <Label Text="{Binding HboiActiviteiten[4]}"
+                    <Label Text="{Binding Leeruitkomsten[4].HboiActiviteit}"
                            FontAttributes="Bold"
                            HorizontalTextAlignment="Center"
                            VerticalTextAlignment="Center"/>

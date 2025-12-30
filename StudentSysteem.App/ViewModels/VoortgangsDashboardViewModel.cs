@@ -6,23 +6,23 @@ namespace StudentSysteem.App.ViewModels
 {
     public class VoortgangsDashboardViewModel
     {
-        private readonly IVaardigheidService _vaardigheidService;
+        private readonly ILeeruitkomstService _leeruitkomstService;
 
-        public ObservableCollection<Vaardigheid> Vaardigheden { get; }
+        public ObservableCollection<Leeruitkomst> Leeruitkomsten { get; } = new ObservableCollection<Leeruitkomst>();
 
-        public VoortgangsDashboardViewModel(IVaardigheidService vaardigheidService)
+        public VoortgangsDashboardViewModel(ILeeruitkomstService leeruitkomstService)
         {
-            _vaardigheidService = vaardigheidService;
-            LaadVaardigheid();
+            _leeruitkomstService = leeruitkomstService;
+            LaadLeeruitkomsten();
         }
 
-        private void LaadVaardigheid()
+        private void LaadLeeruitkomsten()
         {
-            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+            IEnumerable<Leeruitkomst> leeruitkomstService = _leeruitkomstService.HaalAlleLeeruitkomstenOp();
 
-            foreach (Vaardigheid vaardigheid in vaardigheden.Take(5))
+            foreach (Leeruitkomst leeruitkomst in leeruitkomstService.Take(5))
             {
-                HboiActiviteiten.Add(vaardigheid.HboiActiviteit);
+                Leeruitkomsten.Add(leeruitkomst);
             }
         }
     }
