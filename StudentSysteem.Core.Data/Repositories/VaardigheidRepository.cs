@@ -13,14 +13,14 @@ namespace StudentSysteem.Core.Data.Repositories
         public VaardigheidRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Vaardigheid (
-                    [vaardigheid_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [naam] VARCHAR(255),
-                    [beschrijving] TEXT,
-                    [hboi_activiteit] VARCHAR(255),
-                    [leertaken_url] VARCHAR(255),
-                    [prestatiedoel_id] INTEGER,
-                    [processtap_id] INTEGER,
-                    FOREIGN KEY([prestatiedoel_id]) REFERENCES Prestatiedoel(prestatiedoel_id))");
+                    vaardigheid_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    naam VARCHAR(255),
+                    beschrijving TEXT,
+                    hboi_activiteit VARCHAR(255),
+                    leertaken_url VARCHAR(255),
+                    prestatiedoel_id INTEGER,
+                    processtap_id INTEGER,
+                    FOREIGN KEY(prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id))");
 
             List<string> VoegVaardigheid = [@"INSERT OR IGNORE INTO Vaardigheid
             (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id)

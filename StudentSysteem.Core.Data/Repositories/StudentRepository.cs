@@ -10,11 +10,11 @@ namespace StudentSysteem.Core.Data.Repositories
         public StudentRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Student (
-                    [student_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [naam] VARCHAR(50),
-                    [email] VARCHAR(50),
-                    [studentnummer] VARCHAR(50),
-                    [klas] VARCHAR(5))");
+                    student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    naam VARCHAR(50),
+                    email VARCHAR(50),
+                    studentnummer INTEGER,
+                    klas VARCHAR(5))");
 
             List<string> insertQueries = [@"INSERT OR REPLACE INTO Student(student_id, naam, email, studentnummer, klas) 
                                         VALUES(1, 'Sanne', 'sanne.abrahamse@windesheim.nl', '1199564', 'ICTOOSDDa')"];
@@ -47,7 +47,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     int StudentId = reader.GetInt32(0);
                     string StudentNaam = reader.GetString(1);
                     string StudentEmail = reader.GetString(2);
-                    string StudentNummer = reader.GetString(3);
+                    int StudentNummer = reader.GetInt32(3);
                     string Klas = reader.GetString(4);
                     studenten.Add(new(StudentId, StudentNaam, StudentEmail, StudentNummer, Klas));
                 }

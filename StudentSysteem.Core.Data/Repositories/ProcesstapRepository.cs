@@ -12,8 +12,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     naam VARCHAR(255),
                     proces_id INTEGER,
                     criterium_id INTEGER,
-                    FOREIGN KEY([proces_id]) REFERENCES Proces(proces_id),
-                    FOREIGN KEY([criterium_id]) REFERENCES Criterium(criterium_id))");
+                    FOREIGN KEY(proces_id) REFERENCES Proces(proces_id),
+                    FOREIGN KEY(criterium_id) REFERENCES Criterium(criterium_id))");
 
             List<string> insertQueries = [@"INSERT OR REPLACE INTO Processtap (naam, proces_id)
                                          VALUES ('Definiëren probleemdomein', 1)"];

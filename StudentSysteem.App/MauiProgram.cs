@@ -57,6 +57,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
             builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
+            builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
             builder.Services.AddSingleton<IStudentRepository, StudentRepository>();
             builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
 
@@ -67,6 +68,7 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
             builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
+            builder.Services.AddSingleton<IClusterService, ClusterService>();
             builder.Services.AddSingleton<IStudentService, StudentService>();
             builder.Services.AddSingleton<IDocentService, DocentService>();
 
@@ -87,6 +89,9 @@ namespace StudentSysteem.App
                 scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
                 scope.ServiceProvider.GetRequiredService<IPrestatiedoelRepository>();
                 scope.ServiceProvider.GetRequiredService<IFeedbackRepository>();
+                scope.ServiceProvider.GetRequiredService<IClusterRepository>();
+                scope.ServiceProvider.GetRequiredService<IStudentRepository>();
+                scope.ServiceProvider.GetRequiredService<IDocentRepository>();
             }
 
             return app;

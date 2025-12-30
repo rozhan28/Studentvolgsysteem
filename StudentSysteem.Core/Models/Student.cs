@@ -4,7 +4,7 @@ public class Student : Gebruiker
 {
     public string Klas { get; set; }
     
-    public Student(int id, string naam, string email, string nummer, string klas) : base(naam, Role.Student)
+    public Student(int id, string naam, string email, int nummer, string klas) : base(naam, Role.Student)
     {
         Id = id;
         Email = email;

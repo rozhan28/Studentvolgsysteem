@@ -9,14 +9,14 @@ namespace StudentSysteem.Core.Data.Repositories
         public FeedbackRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Feedback (
-                    [feedback_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [niveauaanduiding] VARCHAR(255),
-                    [toelichting] TEXT,
-                    [datum] TEXT,
-                    [tijd] TEXT,
-                    [student_id] INTEGER,
-                    [docent_id] INTEGER,
-                    [vaardigheid_id] INTEGER)");
+                    feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    niveauaanduiding VARCHAR(255),
+                    toelichting TEXT,
+                    datum TEXT,
+                    tijd TEXT,
+                    student_id INTEGER,
+                    docent_id INTEGER,
+                    vaardigheid_id INTEGER)");
             List<string> VoegFeedback = [
                 @"INSERT OR IGNORE INTO Feedback(niveauaanduiding, toelichting, datum, tijd, student_id, docent_id, vaardigheid_id) 
             VALUES('1', 'NULL', NULL, NULL, NULL, NULL, NULL)"

@@ -10,11 +10,12 @@ namespace StudentSysteem.Core.Data.Repositories
         public DocentRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"CREATE TABLE IF NOT EXISTS Docent (
-                    [docent_id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                    [naam] VARCHAR(50),
-                    [email] VARCHAR(50),
-                    [nummer] VARCHAR(50),
-                    [cluster_id] INTEGER)");
+                    docent_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    naam VARCHAR(50),
+                    email VARCHAR(50),
+                    nummer INTEGER,
+                    cluster_id INTEGER,
+                    FOREIGN KEY(cluster_id) REFERENCES Cluster(cluster_id))");
 
             List<string> insertQueries = [@"INSERT OR REPLACE INTO Docent(docent_id, naam, email, nummer) 
                                         VALUES(1, 'Ernst', 'er.bolt@windesheim.nl', '123456')"];
@@ -47,7 +48,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     int DocentId = reader.GetInt32(0);
                     string DocentNaam = reader.GetString(1);
                     string DocentEmail = reader.GetString(2);
-                    string DocentNummer = reader.GetString(3);
+                    int DocentNummer = reader.GetInt32(3);
                     docenten.Add(new(DocentId, DocentNaam, DocentEmail, DocentNummer));
                 }
             }
