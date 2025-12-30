@@ -12,9 +12,11 @@
                HorizontalOptions="Center"/>
 
         <Button Text="Vul zelfevaluatie in"
+                IsVisible="{Binding IsStudent}"
                 Command="{Binding GaNaarFeedbackCommand}" />
 
         <Button Text="Geef feedback" 
+                IsVisible="{Binding IsIngelogd}"
                 Command="{Binding GaNaarFeedbackCommand}" />
 
     </VerticalStackLayout>
