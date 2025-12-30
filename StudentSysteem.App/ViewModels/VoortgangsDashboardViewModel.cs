@@ -8,15 +8,15 @@ namespace StudentSysteem.App.ViewModels
     {
         private readonly IVaardigheidService _vaardigheidService;
 
-        public ObservableCollection<string> HboiActiviteiten { get; } = new ObservableCollection<string>();
+        public ObservableCollection<Vaardigheid> Vaardigheden { get; }
 
         public VoortgangsDashboardViewModel(IVaardigheidService vaardigheidService)
         {
             _vaardigheidService = vaardigheidService;
-            LaadVaardigheidData();
+            LaadVaardigheid();
         }
 
-        private void LaadVaardigheidData()
+        private void LaadVaardigheid()
         {
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
 

@@ -14,6 +14,5 @@
             HboiActiviteit = hboiActiviteit;
             Datapunt_id = datapunt_id;
         }
-
     }
 }
