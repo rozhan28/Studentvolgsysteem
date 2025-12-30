@@ -1,22 +1,29 @@
 ﻿using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
+using System.Collections.ObjectModel;
 
+namespace StudentSysteem.App.ViewModels
+{
+    public class VoortgangsDashboardViewModel
+    {
+        private readonly IVaardigheidService _vaardigheidService;
 
-//namespace StudentSysteem.App.ViewModels
-//{
-//    public class VoortgangsDashboardViewModel
-//    {
+        public ObservableCollection<string> HboiActiviteiten { get; } = new ObservableCollection<string>();
 
-//    //    private readonly IVaardigheidService _vaardigheidService;
+        public VoortgangsDashboardViewModel(IVaardigheidService vaardigheidService)
+        {
+            _vaardigheidService = vaardigheidService;
+            LaadVaardigheidData();
+        }
 
-//    //    public VoortgangsDashboardViewModel(IVaardigheidService vaardigheidService)
-//    //    {
-//    //        _vaardigheidService = vaardigheidService;
-//    //        LaadData();
-//    //    }
+        private void LaadVaardigheidData()
+        {
+            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
 
-
-
-//    //    IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-//    //}
-//}
+            foreach (Vaardigheid vaardigheid in vaardigheden.Take(5))
+            {
+                HboiActiviteiten.Add(vaardigheid.HboiActiviteit);
+            }
+        }
+    }
+}

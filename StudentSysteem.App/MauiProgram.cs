@@ -70,9 +70,11 @@ namespace StudentSysteem.App
 
             // ViewModels
             builder.Services.AddTransient<FeedbackFormulierViewModel>();
+            builder.Services.AddTransient<VoortgangsDashboardViewModel>();
 
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
+            builder.Services.AddTransient<VoortgangsDashboardView>();
 
             var app = builder.Build();
 

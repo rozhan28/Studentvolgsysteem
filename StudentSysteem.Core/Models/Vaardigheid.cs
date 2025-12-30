@@ -6,7 +6,6 @@ namespace StudentSysteem.Core.Models
 {
     public class Vaardigheid
     {
-        //US2 properties
         public int Vaardigheid_id { get; set; }
         public string VaardigheidNaam { get; set; }
         public string VaardigheidBeschrijving { get; set; }
