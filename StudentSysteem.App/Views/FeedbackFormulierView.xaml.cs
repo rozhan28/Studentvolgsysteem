@@ -9,7 +9,7 @@ namespace StudentSysteem.App.Views
             InitializeComponent();
             BindingContext = viewModel;
         }
-        
+
         // Code voor paginatitel
         protected override void OnAppearing()
         {

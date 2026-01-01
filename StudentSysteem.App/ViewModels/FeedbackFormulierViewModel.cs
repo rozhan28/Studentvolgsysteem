@@ -1,6 +1,4 @@
-﻿using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -11,6 +9,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
+using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 using StudentSysteem.Core.Services;
@@ -20,17 +19,32 @@ namespace StudentSysteem.App.ViewModels
     [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
     public partial class FeedbackFormulierViewModel : BasisViewModel
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private readonly ICriteriumRepository _criteriumRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IPrestatiedoelService _prestatiedoelService;
+        private readonly IZelfEvaluatieService _zelfEvaluatieService;
         private readonly IMeldingService _meldingService;
         private readonly IFeedbackFormulierService _feedbackService;
-        private readonly IPrestatiedoelService _prestatiedoelService;
         private readonly IVaardigheidService _vaardigheidService;
         private readonly IToelichtingService _toelichtingService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
         private readonly bool _isDocent;
-        
-        public ICommand LeertakenCommand { get; }
-        
-        
+
+        private ObservableCollection<BeoordelingItem> _beoordelingen;
+        public ObservableCollection<BeoordelingItem> Beoordelingen
+        {
+            get => _beoordelingen;
+            set { _beoordelingen = value; OnPropertyChanged(); }
+        }
+
+        private string _statusMelding;
+        public string StatusMelding
+        {
+            get => _statusMelding;
+            set { _statusMelding = value; OnPropertyChanged(); }
+        }
+
         // Begin code voor paginatitel in header
         [ObservableProperty]
         bool isZelfEvaluatie;
@@ -41,96 +55,83 @@ namespace StudentSysteem.App.ViewModels
         }
         // Einde code voor paginatitel in header
 
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
-        public ObservableCollection<BeoordelingItem> Beoordelingen
-        {
-            get => _beoordelingen;
-            set
-            {
-                _beoordelingen = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _statusMelding;
-        public string StatusMelding
-        {
-            get => _statusMelding;
-            set { _statusMelding = value; OnPropertyChanged(); }
-        }
-
         public ICommand OpslaanCommand { get; }
         public ICommand VoegExtraToelichtingToeCommand { get; }
         public ICommand OptiesCommand { get; }
+        public ICommand LeertakenCommand { get; }
+
+        private readonly Dictionary<int, bool> _geselecteerdeCriteria = new();
+        private readonly Dictionary<int, string> _toelichtingen = new();
 
         public FeedbackFormulierViewModel(
+            IPrestatiedoelService prestatiedoelService,
+            ICriteriumRepository criteriumRepository,
+            IFeedbackRepository feedbackRepository,
             IZelfEvaluatieService zelfEvaluatieService,
             IMeldingService meldingService,
             IFeedbackFormulierService feedbackService,
-            IPrestatiedoelService prestatiedoelService,
             IVaardigheidService vaardigheidService,
             IToelichtingService toelichtingService,
             GlobaleViewModel globaal)
         {
-            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
+            _prestatiedoelService = prestatiedoelService;
+            _criteriumRepository = criteriumRepository;
+            _feedbackRepository = feedbackRepository;
+            _zelfEvaluatieService = zelfEvaluatieService;
             _meldingService = meldingService;
             _feedbackService = feedbackService;
-
-            _prestatiedoelService = prestatiedoelService;
             _vaardigheidService = vaardigheidService;
             _toelichtingService = toelichtingService;
+
             _isDocent = globaal.IngelogdeGebruiker?.Rol == Role.Docent;
-            
+
             Task.Run(async () => await InitialiseerPaginaAsync());
-            
+
             OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
             LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
             VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));
             OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
         }
 
-
-        // Toegevoegd voor TC2-01.1 - voorkomt crashen
-        // Zorgt ervoor dat indien de database niet beschikbaar is, de applicatie niet crasht
         private async Task InitialiseerPaginaAsync()
         {
-            try 
+            try
             {
                 LaadPrestatiedoelen();
             }
             catch (Exception ex)
             {
                 StatusMelding = "Databasefout: De prestatiedoelen konden niet worden geladen.";
-                System.Diagnostics.Debug.WriteLine($"Fout: {ex.Message}");
+                Debug.WriteLine($"Fout: {ex.Message}");
             }
         }
-        
+
         private void LaadPrestatiedoelen()
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-            
-            List<BeoordelingItem> items = doelen.Select(delegate(Prestatiedoel d)
+
+            List<BeoordelingItem> items = doelen.Select(d =>
             {
                 Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
-
                 return new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving,
                     AiAssessmentScale = d.AiAssessmentScale,
-
                     Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
                     LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
                     HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
-                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving
+                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
+                    OpNiveauCriteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Op niveau").ToList(),
+                    BovenNiveauCriteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Boven niveau").ToList()
                 };
             }).ToList();
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
-            
-                        foreach (BeoordelingItem item in Beoordelingen)
+
+            foreach (var item in Beoordelingen)
             {
                 if (item.Toelichtingen == null)
                     item.Toelichtingen = new ObservableCollection<Toelichting>();
@@ -152,14 +153,16 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                int idVorigRecord = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
+                int idVorigRecord = _zelfEvaluatieService.Add(new ZelfEvaluatie
+                {
+                    StudentId = 1,
+                    PrestatieNiveau = "Ingevuld"
+                });
 
-                foreach (BeoordelingItem item in Beoordelingen)
+                foreach (var item in Beoordelingen)
                 {
                     if (item.Toelichtingen != null && item.Toelichtingen.Any())
-                    {
                         _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), idVorigRecord);
-                    }
                 }
 
                 await _meldingService.ToonMeldingAsync(
@@ -176,52 +179,42 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (BeoordelingItem item in Beoordelingen)
+            foreach (var item in Beoordelingen)
             {
                 bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen = false;
+                bool criteriumGekozen =
+                    item.BeschikbareCriteria.Any(c => _geselecteerdeCriteria.TryGetValue(c.Id, out var val) && val);
 
                 bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
                 item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
                 item.IsCriteriumInvalid = !niveauOfCriteriumOk;
 
-                bool alleToelichtingenIngevuld = ZijnAlleToelichtingenOk(item.Toelichtingen);
-                bool toelichtingOk = _isDocent || alleToelichtingenIngevuld;
+                bool toelichtingOk = _isDocent || ZijnAlleToelichtingenOk(item.Toelichtingen);
                 item.IsToelichtingInvalid = !toelichtingOk;
-               
+
                 if (!niveauOfCriteriumOk || !toelichtingOk)
                     allesGeldig = false;
             }
 
             return allesGeldig;
         }
-        
+
         public bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
-            if (_isDocent)
-                return true;
-            
-            if (toelichtingen == null || !toelichtingen.Any())
-                return false;
-            
+            if (_isDocent) return true;
+            if (toelichtingen == null || !toelichtingen.Any()) return false;
             return toelichtingen.All(t => IsToelichtingCorrect(t));
         }
 
         private bool IsToelichtingCorrect(Toelichting toelichting)
         {
-            if (_isDocent)
-                return true;
-            
+            if (_isDocent) return true;
             return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
                    toelichting.GeselecteerdeOptie != "Toelichting gekoppeld aan...";
         }
-        
-        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
-        {
-            return item.InOntwikkeling
-                   || item.IsOpNiveau
-                   || item.IsBovenNiveau;
-        }
+
+        private static bool ValideerPrestatieNiveau(BeoordelingItem item) =>
+            item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)
         {
@@ -240,11 +233,10 @@ namespace StudentSysteem.App.ViewModels
             var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
             if (parent == null) return;
 
-            List<string> opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
-
+            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
             if (Application.Current?.MainPage == null) return;
 
-            String selected = await Application.Current.MainPage.DisplayActionSheet(
+            string selected = await Application.Current.MainPage.DisplayActionSheet(
                 "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
@@ -271,7 +263,7 @@ namespace StudentSysteem.App.ViewModels
 
             item.Toelichtingen.CollectionChanged += Handler;
         }
-        
+
         private async Task OpenLeertakenUrl(string url)
         {
             if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
@@ -279,5 +271,9 @@ namespace StudentSysteem.App.ViewModels
                 await Browser.Default.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
             }
         }
+
+        private void Notify(string prop) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+

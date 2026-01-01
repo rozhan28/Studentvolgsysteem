@@ -1,7 +1,7 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
-using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -10,40 +10,69 @@ namespace StudentSysteem.Core.Data.Repositories
         public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
             : base(dbConnectieHelper)
         {
+            // Prestatiedoel-tabel
             MaakTabel(@"
-                    CREATE TABLE IF NOT EXISTS Prestatiedoel (
-                        prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        niveau TEXT NOT NULL,
-                        beschrijving TEXT NOT NULL,
-                        criterium_id INTEGER NOT NULL,
-                        ai_assessment_scale TEXT NOT NULL,
+                CREATE TABLE IF NOT EXISTS Prestatiedoel (
+                    prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    niveau TEXT NOT NULL,
+                    beschrijving TEXT NOT NULL,
+                    criterium_id INTEGER,
+                    ai_assessment_scale TEXT
+                );
+            ");
 
-                        UNIQUE (niveau, criterium_id),
+            // Koppeltabel PrestatiedoelCriterium
+            MaakTabel(@"
+                CREATE TABLE IF NOT EXISTS PrestatiedoelCriterium (
+                    prestatiedoel_id INTEGER NOT NULL,
+                    criterium_id INTEGER NOT NULL,
+                    PRIMARY KEY (prestatiedoel_id, criterium_id),
+                    FOREIGN KEY (prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id),
+                    FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+                );
+            ");
 
-                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-                    )");
-            
-            List<string> seed = new()
-        {
-            @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
-              VALUES (
-                'Op niveau',
-                'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
-                1,
-                'Samenwerking'
-              )"
-        };
-            VoegMeerdereInMetTransactie(seed);
+            // Seed Prestatiedoelen
+            List<string> seedPrestatiedoelen = new()
+            {
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
+                  VALUES ('Op niveau',
+                          'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
+                          1,
+                          'Samenwerking')",
+
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
+                  VALUES ('Op niveau',
+                          'Toepassen van modelleertechnieken door principes toe te passen volgens de ontwerprichtlijnen van HBO-ICT.',
+                          4,
+                          'Techniek')"
+            };
+
+            // Seed koppeling met criteria (PrestatiedoelCriterium)
+            List<string> seedKoppeling = new()
+            {
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 1)",
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 2)",
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 3)",
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 5)",
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 4)",
+                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 6)"
+            };
+
+            VoegMeerdereInMetTransactie(seedPrestatiedoelen);
+            VoegMeerdereInMetTransactie(seedKoppeling);
         }
-
 
         public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
         {
-            List<Prestatiedoel> lijst = new();
+            var lijst = new List<Prestatiedoel>();
 
             OpenVerbinding();
             using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale FROM Prestatiedoel";
+            cmd.CommandText = @"
+                SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale
+                FROM Prestatiedoel;
+            ";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -53,8 +82,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     Id = reader.GetInt32(0),
                     Niveau = reader.GetString(1),
                     Beschrijving = reader.GetString(2),
-                    CriteriumId = reader.GetInt32(3),
-                    AiAssessmentScale = reader.GetString(4)
+                    CriteriumId = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
+                    AiAssessmentScale = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
                 });
             }
 
