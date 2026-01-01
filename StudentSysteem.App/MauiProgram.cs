@@ -22,9 +22,10 @@ namespace StudentSysteem.App
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
-                    fonts.AddFont("Poppins-Bold.ttf", "PoppinsBold");
-                    fonts.AddFont("Poppins-BoldItalic.ttf", "PoppinsBoldItalic");
+                    fonts.AddFont("Poppins-Regular.ttf", "Regular");
+                    fonts.AddFont("Poppins-Bold.ttf", "Bold");
+                    fonts.AddFont("Poppins-BoldItalic.ttf", "BoldItalic");
+                    fonts.AddFont("Poppins-Italic.ttf", "Italic");
                 });
 
 #if DEBUG
@@ -53,18 +54,31 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
             builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
             builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddSingleton<ILeeruitkomstRepository, LeeruitkomstRepository>();
+            builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
+            builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
+            builder.Services.AddSingleton<IStudentRepository, StudentRepository>();
+            builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
 
             // Services
             builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
-            builder.Services.AddSingleton<INavigatieService, NavigatieService>();
             builder.Services.AddSingleton<IMeldingService, MeldingService>();
             builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
             builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
             builder.Services.AddSingleton<ICriteriumService, CriteriumService>();
+            builder.Services.AddSingleton<ILeeruitkomstService, LeeruitkomstService>();
+            builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
+            builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
+            builder.Services.AddSingleton<IClusterService, ClusterService>();
+            builder.Services.AddSingleton<IStudentService, StudentService>();
+            builder.Services.AddSingleton<IDocentService, DocentService>();
 
             // ViewModels
-            builder.Services.AddTransient<FeedbackFormulierViewModel>();
-
+            builder.Services.AddSingleton<GlobaleViewModel>();
+            builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<StartView>().AddTransient<StartViewModel>(); 
+            builder.Services.AddTransient<FeedbackFormulierView>().AddTransient<FeedbackFormulierViewModel>();
+            
             // Views
             builder.Services.AddTransient<FeedbackFormulierView>();
 
@@ -76,8 +90,12 @@ namespace StudentSysteem.App
                 scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
                 scope.ServiceProvider.GetRequiredService<IPrestatiedoelRepository>();
                 scope.ServiceProvider.GetRequiredService<IFeedbackRepository>();
+                scope.ServiceProvider.GetRequiredService<ILeeruitkomstRepository>();
+                scope.ServiceProvider.GetRequiredService<IVaardigheidRepository>();
+                scope.ServiceProvider.GetRequiredService<IClusterRepository>();
+                scope.ServiceProvider.GetRequiredService<IStudentRepository>();
+                scope.ServiceProvider.GetRequiredService<IDocentRepository>();
             }
-
             return app;
         }
     }

@@ -1,6 +1,9 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -9,10 +12,11 @@ namespace StudentSysteem.Core.Data.Repositories
         public FeedbackRepository(DbConnectieHelper dbConnectieHelper)
             : base(dbConnectieHelper)
         {
+            // Feedbacktabel
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Feedback (
                     feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    niveauaanduiding TEXT NOT NULL,
+                    niveauaanduiding TEXT,
                     toelichting TEXT,
                     datum TEXT,
                     tijd TEXT,
@@ -23,6 +27,7 @@ namespace StudentSysteem.Core.Data.Repositories
             ");
         }
 
+        // Maakt een nieuwe feedback aan en geeft de feedback_id terug
         public int MaakFeedbackAan(string niveau)
         {
             OpenVerbinding();
@@ -35,17 +40,16 @@ namespace StudentSysteem.Core.Data.Repositories
             ";
 
             cmd.Parameters.AddWithValue("@niveau", niveau);
-
             var now = DateTime.Now;
             cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
 
             int feedbackId = Convert.ToInt32(cmd.ExecuteScalar());
-
             SluitVerbinding();
             return feedbackId;
         }
 
+        // Voegt toelichting toe aan een bestaand feedbackrecord
         public void VoegToelichtingToe(int feedbackId, string toelichting)
         {
             OpenVerbinding();
@@ -62,6 +66,51 @@ namespace StudentSysteem.Core.Data.Repositories
 
             cmd.ExecuteNonQuery();
             SluitVerbinding();
+        }
+
+        // Voeg meerdere feedbackrecords toe in een transactie
+        public void VoegMeerdereInMetTransactie(List<string> regels)
+        {
+            base.VoegMeerdereInMetTransactie(regels);
+        }
+
+        // Voeg meerdere toelichtingen toe voor een student in één transactie
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
+        {
+            OpenVerbinding();
+            using var transactie = Verbinding.BeginTransaction();
+            try
+            {
+                foreach (Toelichting toelichting in toelichtingen)
+                {
+                    using var cmd = Verbinding.CreateCommand();
+                    cmd.CommandText = @"
+                        INSERT INTO Feedback (toelichting, datum, tijd, student_id) 
+                        VALUES (@toelichting, @datum, @tijd, @studentId);
+                    ";
+
+                    cmd.Parameters.AddWithValue("@toelichting", toelichting.Tekst);
+                    var now = DateTime.Now;
+                    cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+
+                    cmd.Transaction = transactie;
+                    cmd.ExecuteNonQuery();
+                }
+
+                transactie.Commit();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                try { transactie.Rollback(); } catch { }
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
         }
     }
 }

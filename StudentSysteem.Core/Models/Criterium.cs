@@ -11,8 +11,7 @@ namespace StudentSysteem.Core.Models
         public string Beschrijving { get; set; }
         public string Niveau { get; set; }
 
-        public string DisplayNaam =>
-            $"{Beschrijving} ({Niveau})";
+        public string DisplayNaam => $"{Beschrijving} ({Niveau})";
 
         private bool _isGeselecteerd;
         public bool IsGeselecteerd

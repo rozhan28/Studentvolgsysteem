@@ -2,6 +2,7 @@
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -28,6 +29,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     );
                     ");
 
+            // Seed-data
             List<string> seed = new()
             {
                 // Op niveau
@@ -84,7 +86,6 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-
         public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(
             int prestatiedoelId,
             string niveau)
@@ -120,8 +121,6 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
             return lijst;
         }
-
-
 
         public void SlaGeselecteerdeCriteriaOp(
             int feedbackId,
@@ -162,6 +161,5 @@ namespace StudentSysteem.Core.Data.Repositories
                 SluitVerbinding();
             }
         }
-
     }
 }
