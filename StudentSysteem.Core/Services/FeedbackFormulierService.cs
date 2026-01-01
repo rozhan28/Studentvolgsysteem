@@ -1,5 +1,9 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace StudentSysteem.Core.Services
 {
@@ -12,6 +16,7 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
+        // Voor individuele toelichting
         public void SlaToelichtingOp(int feedbackId, string toelichting)
         {
             if (feedbackId <= 0)
@@ -21,6 +26,22 @@ namespace StudentSysteem.Core.Services
                 throw new ArgumentException("Toelichting mag niet leeg zijn.", nameof(toelichting));
 
             _feedbackRepository.VoegToelichtingToe(feedbackId, toelichting);
+        }
+
+        // Voor meerdere toelichtingen tegelijk
+        public void SlaToelichtingenOp(List<Toelichting> toelichtingen, int studentId = 1)
+        {
+            if (studentId <= 0)
+                throw new ArgumentException("StudentId moet groter zijn dan 0.");
+
+            List<Toelichting> gevuldeToelichtingen = toelichtingen
+                .Where(t => !string.IsNullOrWhiteSpace(t.Tekst))
+                .ToList();
+
+            if (gevuldeToelichtingen.Count > 0)
+            {
+                _feedbackRepository.VoegToelichtingenToe(gevuldeToelichtingen, studentId);
+            }
         }
     }
 }

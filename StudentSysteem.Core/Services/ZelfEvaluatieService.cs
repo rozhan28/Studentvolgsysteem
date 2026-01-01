@@ -7,7 +7,7 @@ namespace StudentSysteem.Core.Services
     {
         private static readonly List<ZelfEvaluatie> _reflecties = new();
 
-        public int Add(ZelfEvaluatie reflectie)
+        public int VoegToe(ZelfEvaluatie reflectie)
         {
             if (string.IsNullOrWhiteSpace(reflectie.PrestatieNiveau))
                 throw new ArgumentException("Selecteer een prestatieniveau.");
@@ -17,7 +17,7 @@ namespace StudentSysteem.Core.Services
             return _reflecties.Count;
         }
 
-        public List<ZelfEvaluatie> HaalOpVoorStudent(int studentId)
+        public IEnumerable<ZelfEvaluatie> HaalOpVoorStudent(int studentId)
         {
             return _reflecties
                 .Where(x => x.StudentId == studentId)

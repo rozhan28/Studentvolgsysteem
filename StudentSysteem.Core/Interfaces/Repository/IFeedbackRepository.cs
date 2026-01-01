@@ -1,8 +1,11 @@
-﻿namespace StudentSysteem.Core.Interfaces.Repository
+using StudentSysteem.Core.Models;
+using System.Collections.Generic;
+
+namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IFeedbackRepository
     {
-        int MaakFeedbackAan(string niveau);
-        void VoegToelichtingToe(int feedbackId, string toelichting);
+        void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId);
     }
 }
+

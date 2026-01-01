@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace StudentSysteem.Core.Models
@@ -9,10 +9,9 @@ namespace StudentSysteem.Core.Models
 
         public int Id { get; set; }
         public string Beschrijving { get; set; }
-        public string Niveau { get; set; }
+        public string Niveau { get; set; } = "Algemeen"; 
 
-        public string DisplayNaam =>
-            $"{Beschrijving} ({Niveau})";
+        public string DisplayNaam => $"{Beschrijving} ({Niveau})";
 
         private bool _isGeselecteerd;
         public bool IsGeselecteerd
@@ -30,3 +29,4 @@ namespace StudentSysteem.Core.Models
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+

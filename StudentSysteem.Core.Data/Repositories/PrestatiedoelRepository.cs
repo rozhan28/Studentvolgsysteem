@@ -1,20 +1,29 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
+using System;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper)
+        private readonly ICriteriumRepository _criteriumRepository;
+
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
             : base(dbConnectieHelper)
         {
-            // Prestatiedoel
+            _criteriumRepository = criteriumRepository;
+
+            // Prestatiedoel tabel
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Prestatiedoel (
                     prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     niveau TEXT NOT NULL,
-                    beschrijving TEXT NOT NULL
+                    beschrijving TEXT NOT NULL,
+                    criterium_id INTEGER NOT NULL,
+                    ai_assessment_scale TEXT NOT NULL,
+                    FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                 );
             ");
 
@@ -29,35 +38,27 @@ namespace StudentSysteem.Core.Data.Repositories
                 );
             ");
 
-            List<string> seedPrestatiedoel = new()
+            // Seed data
+            List<string> seed = new()
             {
-                @"INSERT OR IGNORE INTO Prestatiedoel (prestatiedoel_id, niveau, beschrijving)
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
                   VALUES (
-                    1,
                     'Op niveau',
-                    'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten'
+                    'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
+                    1,
+                    'Samenwerking'
                   )",
 
-                @"INSERT OR IGNORE INTO Prestatiedoel (prestatiedoel_id, niveau, beschrijving)
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
                   VALUES (
-                    2,
                     'Op niveau',
-                    'Toepassen van modelleertechnieken door principes toe te passen volgens de ontwerprichtlijnen van HBO-ICT.'
+                    'Toepassen van modelleertechnieken door principes toe te passen volgens de ontwerprichtlijnen van HBO-ICT.',
+                    2,
+                    'Technisch inzicht'
                   )"
             };
 
-            List<string> seedKoppeling = new()
-            {
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 1)",
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 2)",
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 3)",
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 5)",
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 4)",
-                @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 6)"
-            };
-
-            VoegMeerdereInMetTransactie(seedPrestatiedoel);
-            VoegMeerdereInMetTransactie(seedKoppeling);
+            VoegMeerdereInMetTransactie(seed);
         }
 
         public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
@@ -67,7 +68,7 @@ namespace StudentSysteem.Core.Data.Repositories
             OpenVerbinding();
             using var cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
-                SELECT prestatiedoel_id, niveau, beschrijving
+                SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale
                 FROM Prestatiedoel;
             ";
 
@@ -78,7 +79,9 @@ namespace StudentSysteem.Core.Data.Repositories
                 {
                     Id = reader.GetInt32(0),
                     Niveau = reader.GetString(1),
-                    Beschrijving = reader.GetString(2)
+                    Beschrijving = reader.GetString(2),
+                    CriteriumId = reader.GetInt32(3),
+                    AiAssessmentScale = reader.GetString(4)
                 });
             }
 
@@ -87,3 +90,4 @@ namespace StudentSysteem.Core.Data.Repositories
         }
     }
 }
+

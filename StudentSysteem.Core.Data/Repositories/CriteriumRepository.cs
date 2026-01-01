@@ -1,7 +1,8 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -10,24 +11,28 @@ namespace StudentSysteem.Core.Data.Repositories
         public CriteriumRepository(DbConnectieHelper dbConnectieHelper)
             : base(dbConnectieHelper)
         {
+            // Tabel Criterium
             MaakTabel(@"
-            CREATE TABLE IF NOT EXISTS Criterium (
-                criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                beschrijving TEXT NOT NULL,
-                niveau TEXT NOT NULL
-            );");
+                CREATE TABLE IF NOT EXISTS Criterium (
+                    criterium_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    beschrijving TEXT NOT NULL,
+                    niveau TEXT NOT NULL
+                );
+            ");
 
-            // Koppeltabel 
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
-                        feedback_id INTEGER NOT NULL,
-                        criterium_id INTEGER NOT NULL,
-                        niveau TEXT NOT NULL,
-                        PRIMARY KEY (feedback_id, criterium_id),
-                        FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
-                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-                    );
-                    ");
+            // Koppeltabel Feedback <-> Criterium
+            MaakTabel(@"
+                CREATE TABLE IF NOT EXISTS FeedbackCriterium (
+                    feedback_id INTEGER NOT NULL,
+                    criterium_id INTEGER NOT NULL,
+                    niveau TEXT NOT NULL,
+                    PRIMARY KEY (feedback_id, criterium_id),
+                    FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
+                    FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+                );
+            ");
 
+            // Seed data
             List<string> seed = new()
             {
                 // Op niveau
@@ -47,7 +52,7 @@ namespace StudentSysteem.Core.Data.Repositories
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (5, 'Het domeinmodel is volledig en logisch', 'Boven niveau')",
 
-                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau) 
+                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'Boven niveau')"
             };
 
@@ -66,7 +71,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 FROM Criterium
                 WHERE niveau = @niveau;
             ";
-
             cmd.Parameters.AddWithValue("@niveau", niveau);
 
             using SqliteDataReader reader = cmd.ExecuteReader();
@@ -84,12 +88,9 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-
-        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(
-            int prestatiedoelId,
-            string niveau)
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, string niveau)
         {
-            List<Criterium> lijst = new List<Criterium>();
+            List<Criterium> lijst = new();
 
             OpenVerbinding();
 
@@ -102,7 +103,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 WHERE pc.prestatiedoel_id = @prestatiedoelId
                   AND c.niveau = @niveau;
             ";
-
             cmd.Parameters.AddWithValue("@prestatiedoelId", prestatiedoelId);
             cmd.Parameters.AddWithValue("@niveau", niveau);
 
@@ -121,12 +121,7 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-
-
-        public void SlaGeselecteerdeCriteriaOp(
-            int feedbackId,
-            IEnumerable<Criterium> geselecteerdeCriteria,
-            string niveau)
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria, string niveau)
         {
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();
@@ -140,12 +135,12 @@ namespace StudentSysteem.Core.Data.Repositories
                         INSERT OR REPLACE INTO FeedbackCriterium
                         (feedback_id, criterium_id, niveau)
                         VALUES (@feedbackId, @criteriumId, @niveau);
-                        ";
+                    ";
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
                     cmd.Parameters.AddWithValue("@niveau", niveau);
-                    
+
                     cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();
                 }
@@ -162,6 +157,5 @@ namespace StudentSysteem.Core.Data.Repositories
                 SluitVerbinding();
             }
         }
-
     }
 }

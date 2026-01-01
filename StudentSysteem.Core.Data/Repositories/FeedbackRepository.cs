@@ -1,6 +1,9 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -9,10 +12,11 @@ namespace StudentSysteem.Core.Data.Repositories
         public FeedbackRepository(DbConnectieHelper dbConnectieHelper)
             : base(dbConnectieHelper)
         {
+            // Feedback tabel
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Feedback (
                     feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    niveauaanduiding TEXT NOT NULL,
+                    niveauaanduiding TEXT,
                     toelichting TEXT,
                     datum TEXT,
                     tijd TEXT,
@@ -23,45 +27,73 @@ namespace StudentSysteem.Core.Data.Repositories
             ");
         }
 
-        public int MaakFeedbackAan(string niveau)
+        /// Maakt een nieuwe feedback aan en geeft het feedbackId terug.
+        public int MaakFeedbackAan(string niveau, int? studentId = null, int? docentId = null, int? vaardigheidId = null)
         {
             OpenVerbinding();
-
             using var cmd = Verbinding.CreateCommand();
+
+            var now = DateTime.Now;
+
             cmd.CommandText = @"
-                INSERT INTO Feedback (niveauaanduiding, datum, tijd)
-                VALUES (@niveau, @datum, @tijd);
+                INSERT INTO Feedback (niveauaanduiding, datum, tijd, student_id, docent_id, vaardigheid_id)
+                VALUES (@niveau, @datum, @tijd, @studentId, @docentId, @vaardigheidId);
                 SELECT last_insert_rowid();
             ";
 
-            cmd.Parameters.AddWithValue("@niveau", niveau);
-
-            var now = DateTime.Now;
+            cmd.Parameters.AddWithValue("@niveau", niveau ?? string.Empty);
             cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@studentId", studentId.HasValue ? studentId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@docentId", docentId.HasValue ? docentId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@vaardigheidId", vaardigheidId.HasValue ? vaardigheidId.Value : (object)DBNull.Value);
 
             int feedbackId = Convert.ToInt32(cmd.ExecuteScalar());
-
             SluitVerbinding();
+
             return feedbackId;
         }
-
-        public void VoegToelichtingToe(int feedbackId, string toelichting)
+        
+        /// Voegt meerdere toelichtingen toe voor één student (in transactie).
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
         {
+            if (toelichtingen == null || toelichtingen.Count == 0) return;
+
             OpenVerbinding();
+            using var transactie = Verbinding.BeginTransaction();
 
-            using var cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"
-                UPDATE Feedback
-                SET toelichting = @toelichting
-                WHERE feedback_id = @feedbackId;
-            ";
+            try
+            {
+                foreach (var toelichting in toelichtingen)
+                {
+                    using var cmd = Verbinding.CreateCommand();
+                    cmd.CommandText = @"
+                        INSERT INTO Feedback (toelichting, datum, tijd, student_id)
+                        VALUES (@toelichting, @datum, @tijd, @studentId);
+                    ";
 
-            cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
-            cmd.Parameters.AddWithValue("@toelichting", toelichting);
+                    var now = DateTime.Now;
+                    cmd.Parameters.AddWithValue("@toelichting", toelichting.Tekst ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@datum", now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@tijd", now.ToString("HH:mm:ss"));
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
 
-            cmd.ExecuteNonQuery();
-            SluitVerbinding();
+                    cmd.Transaction = transactie;
+                    cmd.ExecuteNonQuery();
+                }
+
+                transactie.Commit();
+            }
+            catch
+            {
+                try { transactie.Rollback(); } catch { }
+                throw;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
         }
     }
 }
+

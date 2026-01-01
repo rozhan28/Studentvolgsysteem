@@ -1,30 +1,47 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
+using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace StudentSysteem.App.ViewModels
 {
-    public class FeedbackFormulierViewModel : INotifyPropertyChanged
+    [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
+    public partial class FeedbackFormulierViewModel : BasisViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private readonly ICriteriumRepository _criteriumRepository;
-        private readonly IFeedbackRepository _feedbackRepository;
-        private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly IZelfEvaluatieService _zelfEvaluatieService;
         private readonly IMeldingService _meldingService;
+        private readonly IFeedbackFormulierService _feedbackService;
+        private readonly IPrestatiedoelService _prestatiedoelService;
+        private readonly IVaardigheidService _vaardigheidService;
+        private readonly IToelichtingService _toelichtingService;
+        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
 
         private readonly bool _isDocent;
 
-        public ObservableCollection<BeoordelingItem> Beoordelingen { get; }
-            = new();
+        public ICommand OpslaanCommand { get; }
+        public ICommand VoegExtraToelichtingToeCommand { get; }
+        public ICommand OptiesCommand { get; }
+        public ICommand LeertakenCommand { get; }
 
-        private readonly Dictionary<int, bool> _geselecteerdeCriteria = new();
-        private readonly Dictionary<int, string> _toelichtingen = new();
+        [ObservableProperty]
+        private bool isZelfEvaluatie;
+
+        private ObservableCollection<BeoordelingItem> _beoordelingen;
+        public ObservableCollection<BeoordelingItem> Beoordelingen
+        {
+            get => _beoordelingen;
+            set
+            {
+                _beoordelingen = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string _statusMelding;
         public string StatusMelding
@@ -33,192 +50,207 @@ namespace StudentSysteem.App.ViewModels
             set
             {
                 _statusMelding = value;
-                Notify(nameof(StatusMelding));
+                OnPropertyChanged();
             }
         }
 
-        public ICommand OpslaanCommand { get; }
-
         public FeedbackFormulierViewModel(
-            IPrestatiedoelService prestatiedoelService,
-            ICriteriumRepository criteriumRepository,
-            IFeedbackRepository feedbackRepository,
             IZelfEvaluatieService zelfEvaluatieService,
-            IMeldingService meldingService)
+            IMeldingService meldingService,
+            IFeedbackFormulierService feedbackService,
+            IPrestatiedoelService prestatiedoelService,
+            IVaardigheidService vaardigheidService,
+            IToelichtingService toelichtingService,
+            GlobaleViewModel globaal)
         {
-            _prestatiedoelService = prestatiedoelService;
-            _criteriumRepository = criteriumRepository;
-            _feedbackRepository = feedbackRepository;
-            _zelfEvaluatieService = zelfEvaluatieService;
+            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
             _meldingService = meldingService;
+            _feedbackService = feedbackService;
+            _prestatiedoelService = prestatiedoelService;
+            _vaardigheidService = vaardigheidService;
+            _toelichtingService = toelichtingService;
 
-            _isDocent = GebruikerSessie.HuidigeRol == "Docent";
+            _isDocent = globaal.IngelogdeGebruiker?.Rol == Role.Docent;
 
-            OpslaanCommand = new Command(async () => await BewaarReflectieAsync());
-            LaadPrestatiedoelen();
+            OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
+            VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(VoegExtraToelichtingToe);
+            OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
+            LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
+
+            Task.Run(async () => await InitialiseerPaginaAsync());
         }
 
-        #region Criterium UI-state
-
-        public bool IsCriteriumGeselecteerd(Criterium criterium)
+        private async Task InitialiseerPaginaAsync()
         {
-            return _geselecteerdeCriteria.TryGetValue(criterium.Id, out var value) && value;
+            try
+            {
+                LaadPrestatiedoelen();
+            }
+            catch (Exception ex)
+            {
+                StatusMelding = "Fout bij laden van prestatiedoelen.";
+                Debug.WriteLine(ex);
+            }
         }
-
-        public void ZetCriteriumGeselecteerd(Criterium criterium, bool waarde)
-        {
-            _geselecteerdeCriteria[criterium.Id] = waarde;
-            Notify(nameof(Beoordelingen));
-        }
-
-        public string GetToelichting(Criterium criterium)
-        {
-            return _toelichtingen.TryGetValue(criterium.Id, out var value)
-                ? value
-                : string.Empty;
-        }
-
-        public void ZetToelichting(Criterium criterium, string tekst)
-        {
-            _toelichtingen[criterium.Id] = tekst;
-            Notify(nameof(Beoordelingen));
-        }
-
-        #endregion
 
         private void LaadPrestatiedoelen()
         {
             var doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            var vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
 
-            foreach (var d in doelen)
+            var items = doelen.Select(d =>
             {
-                var item = new BeoordelingItem
+                var vaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
+
+                return new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
-                    PrestatiedoelBeschrijving = d.Beschrijving
+                    PrestatiedoelBeschrijving = d.Beschrijving,
+                    AiAssessmentScale = d.AiAssessmentScale,
+                    Vaardigheid = vaardigheid?.VaardigheidNaam ?? "Geen vaardigheid",
+                    LeertakenUrl = vaardigheid?.LeertakenUrl,
+                    HboiActiviteit = vaardigheid?.HboiActiviteit,
+                    Beschrijving = vaardigheid?.VaardigheidBeschrijving,
+                    Toelichtingen = new ObservableCollection<Toelichting>()
                 };
+            }).ToList();
 
-                var opNiveau = _criteriumRepository
-                    .HaalCriteriaOpVoorPrestatiedoel(d.Id, "Op niveau");
+            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
 
-                var bovenNiveau = _criteriumRepository
-                    .HaalCriteriaOpVoorPrestatiedoel(d.Id, "Boven niveau");
-
-                foreach (var c in opNiveau)
-                {
-                    item.OpNiveauCriteria.Add(c);
-                    item.BeschikbareCriteria.Add(c);
-                }
-
-                foreach (var c in bovenNiveau)
-                {
-                    item.BovenNiveauCriteria.Add(c);
-                    item.BeschikbareCriteria.Add(c);
-                }
-
-                Beoordelingen.Add(item);
+            foreach (var item in Beoordelingen)
+            {
+                item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
+                HookToelichtingen(item);
             }
         }
 
-        private async Task BewaarReflectieAsync()
+        private async Task BewaarEvaluatieAsync()
         {
             StatusMelding = string.Empty;
 
             if (!ValideerBeoordelingen())
             {
-                StatusMelding = "Controleer alle velden a.u.b.";
+                StatusMelding = "Controleer alle velden.";
                 return;
             }
 
             try
             {
-                _zelfEvaluatieService.Add(new ZelfEvaluatie
-                {
-                    StudentId = 1,
-                    PrestatieNiveau = "Ingevuld"
-                });
+                int zelfEvaluatieId = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
 
                 foreach (var item in Beoordelingen)
                 {
-                    string niveau =
-                        item.IsBovenNiveau ? "Boven niveau" :
-                        item.IsOpNiveau ? "Op niveau" :
-                        item.InOntwikkeling ? "In ontwikkeling" :
-                        null;
-
-                    if (niveau == null)
-                        continue;
-
-                    int feedbackId = _feedbackRepository.MaakFeedbackAan(niveau);
-
-                    foreach (var criterium in item.BeschikbareCriteria)
-                    {
-                        if (!IsCriteriumGeselecteerd(criterium))
-                            continue;
-
-                        _criteriumRepository.SlaGeselecteerdeCriteriaOp(
-                            feedbackId,
-                            new List<Criterium> { criterium },
-                            niveau);
-
-                        var toelichting = GetToelichting(criterium);
-                        if (!string.IsNullOrWhiteSpace(toelichting))
-                        {
-                            _feedbackRepository.VoegToelichtingToe(
-                                feedbackId,
-                                toelichting);
-                        }
-                    }
+                    _feedbackService.SlaToelichtingenOp(
+                        item.Toelichtingen.ToList(),
+                        zelfEvaluatieId);
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    "Zelfevaluatie en feedback zijn opgeslagen!");
+                    IsZelfEvaluatie
+                        ? "Zelfevaluatie opgeslagen"
+                        : "Feedback opgeslagen");
             }
             catch (Exception ex)
             {
-                StatusMelding = $"Fout bij opslaan: {ex.Message}";
+                StatusMelding = $"Opslaan mislukt: {ex.Message}";
             }
         }
 
         private bool ValideerBeoordelingen()
         {
-            bool allesGeldig = true;
+            bool geldig = true;
 
             foreach (var item in Beoordelingen)
             {
-                bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen =
-                    item.BeschikbareCriteria.Any(c => IsCriteriumGeselecteerd(c));
+                bool niveauOk =
+                    item.InOntwikkeling ||
+                    item.IsOpNiveau ||
+                    item.IsBovenNiveau;
 
-                bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
+                bool toelichtingOk =
+                    _isDocent ||
+                    ZijnAlleToelichtingenOk(item.Toelichtingen);
 
-                item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
-                item.IsCriteriumInvalid = !niveauOfCriteriumOk;
+                item.IsPrestatieNiveauInvalid = !niveauOk;
+                item.IsToelichtingInvalid = !toelichtingOk;
 
-                bool toelichtingOk = _isDocent ||
-                    item.BeschikbareCriteria.Any(c =>
-                        IsCriteriumGeselecteerd(c) &&
-                        !string.IsNullOrWhiteSpace(GetToelichting(c)));
-
-                item.IsToelichtingInvalid = !_isDocent && !toelichtingOk;
-
-                if (!niveauOfCriteriumOk || !toelichtingOk)
-                    allesGeldig = false;
+                if (!niveauOk || !toelichtingOk)
+                    geldig = false;
             }
 
-            return allesGeldig;
+            return geldig;
         }
 
-        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
+        private bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
-            return item.InOntwikkeling
-                || item.IsOpNiveau
-                || item.IsBovenNiveau;
+            if (toelichtingen == null || !toelichtingen.Any())
+                return false;
+
+            return toelichtingen.All(t =>
+                !string.IsNullOrWhiteSpace(t.Tekst) &&
+                t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
         }
 
-        private void Notify(string prop) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        private void VoegExtraToelichtingToe(BeoordelingItem item)
+        {
+            if (item == null) return;
+            if (item.Toelichtingen.Count >= _toelichtingService.TotaleOptiesCount) return;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
+            });
+        }
+
+        private async Task ShowOptiesPicker(Toelichting toelichting)
+        {
+            if (toelichting == null) return;
+
+            var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
+            if (parent == null) return;
+
+            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
+
+            string selected = await Application.Current.MainPage.DisplayActionSheet(
+                "Toelichting gekoppeld aan...",
+                "Annuleren",
+                null,
+                opties.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(selected) && selected != "Annuleren")
+            {
+                int index = parent.Toelichtingen.IndexOf(toelichting);
+                parent.Toelichtingen[index] = new Toelichting
+                {
+                    Tekst = toelichting.Tekst,
+                    GeselecteerdeOptie = selected
+                };
+
+                OnPropertyChanged(nameof(Beoordelingen));
+            }
+        }
+
+        private void HookToelichtingen(BeoordelingItem item)
+        {
+            item.KanExtraToelichtingToevoegen =
+                item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+
+            item.Toelichtingen.CollectionChanged += (_, _) =>
+            {
+                item.KanExtraToelichtingToevoegen =
+                    item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                    OnPropertyChanged(nameof(Beoordelingen)));
+            };
+        }
+
+        private async Task OpenLeertakenUrl(string url)
+        {
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                await Browser.Default.OpenAsync(url);
+        }
     }
 }
