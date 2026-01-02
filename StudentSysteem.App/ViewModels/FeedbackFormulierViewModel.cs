@@ -1,6 +1,4 @@
-﻿using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -11,108 +9,117 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
+using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.ViewModels
 {
     [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
-    public partial class FeedbackFormulierViewModel : BasisViewModel
+    public partial class FeedbackFormulierViewModel : BasisViewModel, INotifyPropertyChanged
     {
-        private readonly IMeldingService _meldingService;
-        private readonly IFeedbackFormulierService _feedbackService;
+        private readonly IProcesRepository _procesRepository;
+        private readonly IProcesstapRepository _processtapRepository;
+        private readonly IVaardigheidRepository _vaardigheidRepository;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly IVaardigheidService _vaardigheidService;
+        private readonly ICriteriumRepository _criteriumRepository;
+        private readonly IFeedbackFormulierService _feedbackService;
         private readonly IToelichtingService _toelichtingService;
-        private readonly ZelfEvaluatieViewModel _zelfEvaluatieViewModel;
+        private readonly IMeldingService _meldingService;
+        private readonly IZelfEvaluatieService _zelfEvaluatieService;
+
         private readonly bool _isDocent;
-        
-        public ICommand LeertakenCommand { get; }
-        
-        
-        // Begin code voor paginatitel in header
-        [ObservableProperty]
-        bool isZelfEvaluatie;
 
-        public void UpdateTitelGebaseerdOpStatus()
-        {
-            Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
-        }
-        // Einde code voor paginatitel in header
-
-        private ObservableCollection<BeoordelingItem> _beoordelingen;
-        public ObservableCollection<BeoordelingItem> Beoordelingen
-        {
-            get => _beoordelingen;
-            set
-            {
-                _beoordelingen = value;
-                OnPropertyChanged();
-            }
-        }
+        public ObservableCollection<BeoordelingItem> Beoordelingen { get; } = new();
 
         private string _statusMelding;
         public string StatusMelding
         {
             get => _statusMelding;
-            set { _statusMelding = value; OnPropertyChanged(); }
+            set
+            {
+                if (_statusMelding == value) return;
+                _statusMelding = value;
+                OnPropertyChanged(nameof(StatusMelding));
+            }
         }
+
+        public ICommand OptiesCommand { get; }
+
+
+
+        [ObservableProperty]
+        private bool isZelfEvaluatie;
 
         public ICommand OpslaanCommand { get; }
         public ICommand VoegExtraToelichtingToeCommand { get; }
-        public ICommand OptiesCommand { get; }
+        public ICommand LeertakenCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IZelfEvaluatieService zelfEvaluatieService,
-            IMeldingService meldingService,
-            IFeedbackFormulierService feedbackService,
+            IProcesRepository procesRepository,
+            IProcesstapRepository processtapRepository,
+            IVaardigheidRepository vaardigheidRepository,
             IPrestatiedoelService prestatiedoelService,
-            IVaardigheidService vaardigheidService,
+            ICriteriumRepository criteriumRepository,
+            IFeedbackFormulierService feedbackService,
             IToelichtingService toelichtingService,
+            IMeldingService meldingService,
+            IZelfEvaluatieService zelfEvaluatieService,
             GlobaleViewModel globaal)
         {
-            _zelfEvaluatieViewModel = new ZelfEvaluatieViewModel(zelfEvaluatieService);
-            _meldingService = meldingService;
-            _feedbackService = feedbackService;
-
+            _procesRepository = procesRepository;
+            _processtapRepository = processtapRepository;
+            _vaardigheidRepository = vaardigheidRepository;
             _prestatiedoelService = prestatiedoelService;
-            _vaardigheidService = vaardigheidService;
+            _criteriumRepository = criteriumRepository;
+            _feedbackService = feedbackService;
             _toelichtingService = toelichtingService;
+            _meldingService = meldingService;
+            _zelfEvaluatieService = zelfEvaluatieService;
+
             _isDocent = globaal.IngelogdeGebruiker?.Rol == Role.Docent;
-            
-            Task.Run(async () => await InitialiseerPaginaAsync());
-            
+
             OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
-            LeertakenCommand = new Command<string>(async (url) => await OpenLeertakenUrl(url));
-            VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(item => VoegExtraToelichtingToe(item));
-            OptiesCommand = new Command<Toelichting>(async t => await ShowOptiesPicker(t));
+            VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(VoegExtraToelichtingToe);
+            LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
+            OptiesCommand = new Command<Toelichting>(async t => await ToonCriteriaKeuze(t));
+
+            Task.Run(InitialiseerPaginaAsync);
         }
 
-
-        // Toegevoegd voor TC2-01.1 - voorkomt crashen
-        // Zorgt ervoor dat indien de database niet beschikbaar is, de applicatie niet crasht
         private async Task InitialiseerPaginaAsync()
         {
-            try 
+            try
             {
-                LaadPrestatiedoelen();
+                LaadStructuur();
             }
             catch (Exception ex)
             {
-                StatusMelding = "Databasefout: De prestatiedoelen konden niet worden geladen.";
-                System.Diagnostics.Debug.WriteLine($"Fout: {ex.Message}");
+                StatusMelding = "Fout bij laden formulier.";
+                Debug.WriteLine(ex);
             }
         }
-        
-        private void LaadPrestatiedoelen()
+
+        public void UpdateTitelGebaseerdOpStatus()
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
     
             List<BeoordelingItem> items = doelen.Select(d =>
+            Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
+        }
+
+        private void LaadStructuur()
+        {
+            MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Clear());
+
+            var processen = _procesRepository.HaalAlleProcessenOp();
+            var vaardigheden = _vaardigheidRepository.HaalAlleVaardighedenOp();
+            var prestatiedoelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+
+            foreach (var proces in processen)
             {
-                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
+                var stappen = _processtapRepository.HaalProcesstappenOpVoorProces(proces.Id);
 
                 var item = new BeoordelingItem
                 {
@@ -136,8 +143,47 @@ namespace StudentSysteem.App.ViewModels
                 if (item.Toelichtingen == null)
                     item.Toelichtingen = new ObservableCollection<Toelichting>();
 
-                item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
-                HookToelichtingen(item);
+                foreach (var stap in stappen)
+                {
+                    var vaardighedenVoorStap =
+                        vaardigheden.Where(v => v.ProcesstapId == stap.Id);
+
+                    foreach (var vaardigheid in vaardighedenVoorStap)
+                    {
+                        var doel = prestatiedoelen
+                            .FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
+
+                        if (doel == null) continue;
+
+                        var item = new BeoordelingItem
+                        {
+                            Proces = proces.Naam,
+                            Processtap = stap.Naam,
+                            Vaardigheid = vaardigheid.Naam,
+                            Beschrijving = vaardigheid.Beschrijving,
+                            HboiActiviteit = vaardigheid.HboiActiviteit,
+                            LeertakenUrl = vaardigheid.LeertakenUrl,
+                            PrestatiedoelId = doel.Id,
+                            PrestatiedoelBeschrijving = doel.Beschrijving,
+                            AiAssessmentScale = doel.AiAssessmentScale,
+                            Toelichtingen = new ObservableCollection<Toelichting>
+                            {
+                                _toelichtingService.MaakNieuweToelichting()
+                            }
+                        };
+
+                        item.OpNiveauCriteria = new ObservableCollection<Criterium>(
+                            _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Op niveau"));
+
+                        item.BovenNiveauCriteria = new ObservableCollection<Criterium>(
+                            _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Boven niveau"));
+
+                        HookToelichtingen(item);
+
+                        MainThread.BeginInvokeOnMainThread(() =>
+                            Beoordelingen.Add(item));
+                    }
+                }
             }
         }
 
@@ -153,23 +199,28 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                int idVorigRecord = _zelfEvaluatieViewModel.SlaZelfEvaluatieOp(1);
-
-                foreach (BeoordelingItem item in Beoordelingen)
+                int evaluatieId = _zelfEvaluatieService.VoegToe(new ZelfEvaluatie
                 {
-                    if (item.Toelichtingen != null && item.Toelichtingen.Any())
-                    {
-                        _feedbackService.SlaToelichtingenOp(item.Toelichtingen.ToList(), idVorigRecord);
-                    }
+                    StudentId = 1,
+                    PrestatieNiveau = "Ingevuld"
+                });
+
+                foreach (var item in Beoordelingen)
+                {
+                    if (item.Toelichtingen.Any())
+                        _feedbackService.SlaToelichtingenOp(
+                            item.Toelichtingen.ToList(), evaluatieId);
                 }
 
                 await _meldingService.ToonMeldingAsync(
                     "Succes",
-                    IsZelfEvaluatie ? "Je zelfevaluatie is opgeslagen!" : "De feedback is succesvol opgeslagen!");
+                    IsZelfEvaluatie
+                        ? "Zelfevaluatie opgeslagen."
+                        : "Feedback opgeslagen.");
             }
             catch (Exception ex)
             {
-                StatusMelding = $"Fout bij opslaan: {ex.Message}";
+                StatusMelding = $"Opslaan mislukt: {ex.Message}";
             }
         }
 
@@ -177,49 +228,33 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (BeoordelingItem item in Beoordelingen)
+            foreach (var item in Beoordelingen)
             {
-                bool niveauGekozen = ValideerPrestatieNiveau(item);
-                bool criteriumGekozen = false;
+                bool niveauOk =
+                    item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
 
-                bool niveauOfCriteriumOk = niveauGekozen || criteriumGekozen;
-                item.IsPrestatieNiveauInvalid = !niveauOfCriteriumOk;
-                item.IsCriteriumInvalid = !niveauOfCriteriumOk;
+                item.IsPrestatieNiveauInvalid = !niveauOk;
 
-                bool alleToelichtingenIngevuld = ZijnAlleToelichtingenOk(item.Toelichtingen);
-                bool toelichtingOk = _isDocent || alleToelichtingenIngevuld;
+                bool toelichtingOk =
+                    _isDocent || ZijnAlleToelichtingenOk(item.Toelichtingen);
+
                 item.IsToelichtingInvalid = !toelichtingOk;
-               
-                if (!niveauOfCriteriumOk || !toelichtingOk)
+
+                if (!niveauOk || !toelichtingOk)
                     allesGeldig = false;
             }
 
             return allesGeldig;
         }
-        
-        public bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
-        {
-            if (_isDocent)
-                return true;
-            
-            if (toelichtingen == null || !toelichtingen.Any())
-                return false;
-            
-            return toelichtingen.All(t => IsToelichtingCorrect(t));
-        }
 
-        private bool IsToelichtingCorrect(Toelichting toelichting)
+        private bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
-            if (_isDocent)
-                return true;
-            
-            return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
-                   toelichting.GeselecteerdeOptie != "Toelichting gekoppeld aan...";
-        }
-        
-        private static bool ValideerPrestatieNiveau(BeoordelingItem item)
-        {
-            return item.GeselecteerdNiveau != Niveauaanduiding.NietIngeleverd;
+            if (_isDocent) return true;
+            if (toelichtingen == null || !toelichtingen.Any()) return false;
+
+            return toelichtingen.All(t =>
+                !string.IsNullOrWhiteSpace(t.Tekst) &&
+                t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
         }
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)
@@ -227,56 +262,59 @@ namespace StudentSysteem.App.ViewModels
             if (item == null) return;
             if (item.Toelichtingen.Count >= _toelichtingService.TotaleOptiesCount) return;
 
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
-            });
-        }
-
-        private async Task ShowOptiesPicker(Toelichting toelichting)
-        {
-            if (toelichting == null) return;
-            var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
-            if (parent == null) return;
-
-            List<string> opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
-
-            if (Application.Current?.MainPage == null) return;
-
-            String selected = await Application.Current.MainPage.DisplayActionSheet(
-                "Toelichting gekoppeld aan...",
-                "Annuleren",
-                null,
-                opties.ToArray());
-
-            if (!string.IsNullOrEmpty(selected) && selected != "Annuleren")
-            {
-                int idx = parent.Toelichtingen.IndexOf(toelichting);
-                Toelichting nieuwe = new() { Tekst = toelichting.Tekst, GeselecteerdeOptie = selected };
-                parent.Toelichtingen[idx] = nieuwe;
-                OnPropertyChanged(nameof(Beoordelingen));
-            }
+            item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
         }
 
         private void HookToelichtingen(BeoordelingItem item)
         {
-            item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+            item.KanExtraToelichtingToevoegen =
+                item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
 
-            void Handler(object s, NotifyCollectionChangedEventArgs e)
+            item.Toelichtingen.CollectionChanged += (_, _) =>
             {
-                item.KanExtraToelichtingToevoegen = item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
-                MainThread.BeginInvokeOnMainThread(() => OnPropertyChanged(nameof(Beoordelingen)));
-            }
-
-            item.Toelichtingen.CollectionChanged += Handler;
+                item.KanExtraToelichtingToevoegen =
+                    item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+            };
         }
-        
+
         private async Task OpenLeertakenUrl(string url)
         {
-            if (!string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            if (!string.IsNullOrWhiteSpace(url) &&
+                Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
-                await Browser.Default.OpenAsync(url, BrowserLaunchMode.SystemPreferred);
+                await Browser.Default.OpenAsync(url);
             }
         }
+
+        private async Task ToonCriteriaKeuze(Toelichting toelichting)
+        {
+            if (toelichting == null) return;
+
+            var parent = Beoordelingen
+                .FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
+
+            if (parent == null) return;
+
+            var opties = parent.OpNiveauCriteria
+                .Concat(parent.BovenNiveauCriteria)
+                .Select(c => c.DisplayNaam)
+                .Distinct()
+                .ToList();
+
+            opties.Insert(0, "Algemeen");
+
+            string keuze = await Shell.Current.DisplayActionSheet(
+                "Koppel toelichting aan criterium",
+                "Annuleren",
+                null,
+                opties.ToArray());
+
+            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze))
+                return;
+
+            toelichting.GeselecteerdeOptie = keuze;
+        }
+
+
     }
 }

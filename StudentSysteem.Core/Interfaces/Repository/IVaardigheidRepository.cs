@@ -1,9 +1,10 @@
 ﻿using StudentSysteem.Core.Models;
+using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IVaardigheidRepository
     {
-        public List<Vaardigheid> HaalAlleVaardighedenOp();
+        List<Vaardigheid> HaalAlleVaardighedenOp();
     }
 }

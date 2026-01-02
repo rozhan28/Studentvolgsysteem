@@ -1,30 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StudentSysteem.Core.Models
+﻿namespace StudentSysteem.Core.Models
 {
     public class Vaardigheid
     {
-        public int Vaardigheid_id { get; set; }
-        public string VaardigheidNaam { get; set; }
-        public string VaardigheidBeschrijving { get; set; }
+        public int Id { get; set; }
+        public string Naam { get; set; }
+        public string Beschrijving { get; set; }
         public string LeertakenUrl { get; set; }
-        public int Prestatiedoel_id { get; set; }
-        public int Leeruitkomst_id { get; set; }
-        public int Processtap_id { get; set; }
+        public int PrestatiedoelId { get; set; }
+        public int ProcesstapId { get; set; }
+        public int LeeruitkomstId { get; set; }
         public string HboiActiviteit { get; set; }
 
-        public Vaardigheid(int vaardigheid_id, string vaardigheidNaam, string vaardigheidBeschrijving, string leertakenUrl, int prestatiedoelId, int leeruitkomstId, string hboiActiviteit)
+        public Vaardigheid() { }
+
+        public Vaardigheid(int id, string naam, string beschrijving, string leertakenUrl,
+                           int prestatiedoelId, int leeruitkomstId, string hboiActiviteit)
         {
-            Vaardigheid_id = vaardigheid_id;
-            VaardigheidNaam = vaardigheidNaam;
-            VaardigheidBeschrijving = vaardigheidBeschrijving;
+            Id = id;
+            Naam = naam;
+            Beschrijving = beschrijving;
             LeertakenUrl = leertakenUrl;
-            Prestatiedoel_id = prestatiedoelId;
-            Leeruitkomst_id = leeruitkomstId;
+            PrestatiedoelId = prestatiedoelId;
+            LeeruitkomstId = leeruitkomstId;
             HboiActiviteit = hboiActiviteit;
         }
 
+        public string VaardigheidNaam => Naam;
+        public string VaardigheidBeschrijving => Beschrijving;
     }
 }

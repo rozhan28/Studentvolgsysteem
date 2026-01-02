@@ -15,7 +15,6 @@
             <converters:AiConverter x:Key="AiIconConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
             <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
-
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -30,37 +29,52 @@
                         <toolkit:Expander Margin="0,0,0,0"
                                           IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
 
-                            <!-- Expanders -->
+                            <!-- Expander Header -->
                             <toolkit:Expander.Header>
                                 <Border Stroke="#ccc"
-                                       BackgroundColor="White"
-                                       Padding="10">
+                                    BackgroundColor="White"
+                                    Padding="10">   
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
-                                        <Label Text="{Binding Titel}" FontSize="16" FontFamily="Bold"/>
-                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                            <Label Text="{Binding PrestatieNiveau}" VerticalOptions="Center"/>
-                                            <Image Source="chevron.png" HeightRequest="16" WidthRequest="16">
+
+                                        <Label Text="{Binding ExpanderTitel}"
+                                           FontSize="16"
+                                           FontFamily="Bold"
+                                           VerticalOptions="Center"/>       
+                                        <HorizontalStackLayout Grid.Column="1"
+                                         Spacing="5"
+                                         VerticalOptions="Center">    
+
+                                            <Label Text="{Binding PrestatieNiveau}"
+                                             VerticalOptions="Center"/>
+
+                                            <Image Source="chevron.png"
+                                               HeightRequest="16"
+                                               WidthRequest="16">   
                                                 <Image.Triggers>
-                                                    <DataTrigger TargetType="Image" Binding="{Binding IsExpanded}" Value="True">
-                                                        <Setter Property="Rotation" Value="180"/>
+                                                    <DataTrigger TargetType="Image"
+                                                     Binding="{Binding IsExpanded}"
+                                                     Value="True">  
+                                                        <Setter Property="Rotation"
+                                                        Value="180"/>
                                                     </DataTrigger>
                                                 </Image.Triggers>
                                             </Image>
+
                                         </HorizontalStackLayout>
+
                                     </Grid>
                                 </Border>
                             </toolkit:Expander.Header>
 
-                            <!-- Content -->
+
+                            <!-- Expander Content -->
                             <toolkit:Expander.Content>
                                 <VerticalStackLayout Spacing="20">
 
-                                    <!-- Grid met linker + rechter kolom -->
                                     <Grid ColumnDefinitions="2*,3*" ColumnSpacing="20" Padding="0,10,0,10">
 
                                         <!-- Linkerkolom -->
                                         <VerticalStackLayout Grid.Column="0" Spacing="15">
-
                                             <HorizontalStackLayout Spacing="5">
                                                 <Label Text="HBO-I activiteit:" FontFamily="Italic"/>
                                                 <Label Text="{Binding HboiActiviteit}" FontFamily="Italic"/>
@@ -84,20 +98,19 @@
                                                         CommandParameter="{Binding LeertakenUrl}"
                                                         IsVisible="{Binding LeertakenUrl, Converter={StaticResource LeertakenLeegConverter}}" />
                                             </VerticalStackLayout>
-                                                <VerticalStackLayout Spacing="10" HorizontalOptions="Start">
-                                                    <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" 
-                                                           HeightRequest="150" 
-                                                           WidthRequest="150"/>
-                                                </VerticalStackLayout>
+
+                                            <VerticalStackLayout Spacing="10" HorizontalOptions="Start">
+                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" 
+                                                       HeightRequest="150" 
+                                                       WidthRequest="150"/>
                                             </VerticalStackLayout>
+                                        </VerticalStackLayout>
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10">
-
                                             <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
-
                                                 <VerticalStackLayout Spacing="15">
 
                                                     <!-- In ontwikkeling -->
@@ -123,18 +136,16 @@
                                                                              ConverterParameter=OpNiveau}"
                                                                              Padding="10">
                                                             <Label Text="Op niveau" FontFamily="Bold"/>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauDomeinWeerspiegelt}" />
-                                                                <Label Text="Het domeinmodel weerspiegelt het domein" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauSyntaxCorrect}" />
-                                                                <Label Text="De syntax van het domeinmodel is correct volgens UML" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding OpNiveauVastgelegd}" />
-                                                                <Label Text="Het domeinmodel is op een logische locatie vastgelegd" VerticalOptions="Center"/>
-                                                            </HorizontalStackLayout>
+                                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
+                                                                <BindableLayout.ItemTemplate>
+                                                                    <DataTemplate x:DataType="models:Criterium">
+                                                                        <HorizontalStackLayout Spacing="10">
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
+                                                                        </HorizontalStackLayout>
+                                                                    </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
+                                                            </VerticalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>
 
@@ -146,10 +157,16 @@
                                                                              ConverterParameter=BovenNiveau}"
                                                                              Padding="10">
                                                             <Label Text="Boven niveau" FontFamily="Bold"/>
-                                                            <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding BovenNiveauVolledig}" />
-                                                                <Label Text="Het domeinmodel is volledig, helder en sluit logisch aan bij de context." VerticalOptions="Center" />
-                                                            </HorizontalStackLayout>
+                                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
+                                                                <BindableLayout.ItemTemplate>
+                                                                    <DataTemplate x:DataType="models:Criterium">
+                                                                        <HorizontalStackLayout Spacing="10">
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
+                                                                        </HorizontalStackLayout>
+                                                                    </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
+                                                            </VerticalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>
 
@@ -191,7 +208,6 @@
                                                    HorizontalOptions="Center"
                                                    FontAttributes="Italic"
                                                    IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource InvertBoolConverter}}"/>
-
                                         </VerticalStackLayout>
                                     </Border>
                                 </VerticalStackLayout>

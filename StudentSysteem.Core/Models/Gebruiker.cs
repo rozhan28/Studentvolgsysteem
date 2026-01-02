@@ -8,6 +8,8 @@ public class Gebruiker
     public int Nummer { get; set; }
     public Role Rol { get; set; }
 
+    public Gebruiker() { }
+
     public Gebruiker(string naam, Role rol)
     {
         Naam = naam;
