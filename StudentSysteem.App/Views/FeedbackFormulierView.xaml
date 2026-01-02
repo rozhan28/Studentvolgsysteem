@@ -34,23 +34,40 @@
                             <!-- Expander Header -->
                             <toolkit:Expander.Header>
                                 <Border Stroke="#ccc"
-                                       BackgroundColor="White"
-                                       Padding="10">
+                                    BackgroundColor="White"
+                                    Padding="10">   
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
-                                        <Label Text="{Binding Titel}" FontSize="16" FontFamily="Bold"/>
-                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                            <Label Text="{Binding PrestatieNiveau}" VerticalOptions="Center"/>
-                                            <Image Source="chevron.png" HeightRequest="16" WidthRequest="16">
+
+                                        <Label Text="{Binding ExpanderTitel}"
+                                           FontSize="16"
+                                           FontFamily="Bold"
+                                           VerticalOptions="Center"/>       
+                                        <HorizontalStackLayout Grid.Column="1"
+                                         Spacing="5"
+                                         VerticalOptions="Center">    
+
+                                            <Label Text="{Binding PrestatieNiveau}"
+                                             VerticalOptions="Center"/>
+
+                                            <Image Source="chevron.png"
+                                               HeightRequest="16"
+                                               WidthRequest="16">   
                                                 <Image.Triggers>
-                                                    <DataTrigger TargetType="Image" Binding="{Binding IsExpanded}" Value="True">
-                                                        <Setter Property="Rotation" Value="180"/>
+                                                    <DataTrigger TargetType="Image"
+                                                     Binding="{Binding IsExpanded}"
+                                                     Value="True">  
+                                                        <Setter Property="Rotation"
+                                                        Value="180"/>
                                                     </DataTrigger>
                                                 </Image.Triggers>
                                             </Image>
+
                                         </HorizontalStackLayout>
+
                                     </Grid>
                                 </Border>
                             </toolkit:Expander.Header>
+
 
                             <!-- Expander Content -->
                             <toolkit:Expander.Content>

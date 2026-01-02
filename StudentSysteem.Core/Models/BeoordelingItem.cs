@@ -29,6 +29,9 @@ namespace StudentSysteem.Core.Models
         public string LeertakenUrl { get; set; } = "";
         public string HboiActiviteit { get; set; } = "";
         public string Beschrijving { get; set; } = "";
+        public string Proces { get; set; }
+        public string Processtap { get; set; }
+
 
         // Criteria
         public ObservableCollection<Criterium> OpNiveauCriteria { get; set; } = new();
@@ -58,6 +61,10 @@ namespace StudentSysteem.Core.Models
             get => _kanExtraToelichtingToevoegen;
             set { _kanExtraToelichtingToevoegen = value; Notify(); }
         }
+
+
+        public string ExpanderTitel =>
+        $"{Proces} | {Processtap} | {Vaardigheid}";
 
         // Status
         private bool _inOntwikkeling;

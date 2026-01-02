@@ -1,5 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Models;  
 using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
@@ -9,7 +10,6 @@ namespace StudentSysteem.Core.Data.Repositories
         public ProcesRepository(DbConnectieHelper dbConnectieHelper)
             : base(dbConnectieHelper)
         {
-            // Tabel Proces
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Proces (
                     proces_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,16 +17,24 @@ namespace StudentSysteem.Core.Data.Repositories
                 );
             ");
 
-            // Seed-data
             List<string> insertQueries = new()
             {
                 @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (1, 'Requirementsanalyseproces')",
                 @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (2, 'Ontwerpproces')"
             };
-            VoegMeerdereInMetTransactie(insertQueries);
-
 
             VoegMeerdereInMetTransactie(insertQueries);
+        }
+
+        public IEnumerable<Proces> HaalAlleProcessenOp()
+        {
+            return VoerSelectUit(
+                "SELECT proces_id, naam FROM Proces",
+                r => new Proces
+                {
+                    Id = r.GetInt32(0),
+                    Naam = r.GetString(1)
+                });
         }
     }
 }

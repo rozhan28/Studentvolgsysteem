@@ -60,14 +60,14 @@ namespace StudentSysteem.Core.Data.Repositories
             vaardigheidLijst.Clear();
 
             string selectQuery = @"
-                SELECT v.vaardigheid_id, v.naam, v.beschrijving, v.hboi_activiteit, v.leertaken_url, 
-                       v.prestatiedoel_id, v.processtap_id, v.leeruitkomst_id
-                FROM Vaardigheid v";
+            SELECT v.vaardigheid_id, v.naam, v.beschrijving, v.hboi_activiteit, 
+                   v.leertaken_url, v.prestatiedoel_id, v.processtap_id, v.leeruitkomst_id
+            FROM Vaardigheid v";
 
             OpenVerbinding();
 
-            using (SqliteCommand command = new(selectQuery, Verbinding))
-            using (SqliteDataReader reader = command.ExecuteReader())
+            using (var command = new SqliteCommand(selectQuery, Verbinding))
+            using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -78,9 +78,9 @@ namespace StudentSysteem.Core.Data.Repositories
                         Beschrijving = reader.GetString(2),
                         HboiActiviteit = reader.IsDBNull(3) ? null : reader.GetString(3),
                         LeertakenUrl = reader.IsDBNull(4) ? null : reader.GetString(4),
-                        PrestatiedoelId = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
-                        ProcesstapId = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
-                        LeeruitkomstId = reader.IsDBNull(7) ? 0 : reader.GetInt32(7)
+                        PrestatiedoelId = reader.GetInt32(5),
+                        ProcesstapId = reader.GetInt32(6),
+                        LeeruitkomstId = reader.GetInt32(7)
                     });
                 }
             }
@@ -88,5 +88,6 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
             return vaardigheidLijst;
         }
+
     }
 }
