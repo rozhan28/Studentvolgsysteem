@@ -186,6 +186,11 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
+        public void LaadVaardigheid()
+        {
+
+        }
+
         private async Task BewaarEvaluatieAsync()
         {
             StatusMelding = string.Empty;

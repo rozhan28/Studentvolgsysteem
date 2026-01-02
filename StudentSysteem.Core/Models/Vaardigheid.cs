@@ -11,8 +11,6 @@
         public int LeeruitkomstId { get; set; }
         public string HboiActiviteit { get; set; }
 
-        public Vaardigheid() { }
-
         public Vaardigheid(int id, string naam, string beschrijving, string leertakenUrl,
                            int prestatiedoelId, int leeruitkomstId, string hboiActiviteit)
         {
