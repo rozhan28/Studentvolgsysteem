@@ -5,6 +5,6 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IDatapuntService
     {
-        IEnumerable<Datapunt> HaalAlleDatapuntenOp();
+        IEnumerable<Datapunt> HaalAlleDatapuntenOpVanStudent(int StudentId);
     }
 }
