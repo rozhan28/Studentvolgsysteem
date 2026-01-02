@@ -29,7 +29,9 @@ namespace StudentSysteem.Core.Models
         public string Proces { get; set; }
         public string Processtap { get; set; }
         private bool _isExpanded;
-        public bool IsExpanded
+        public bool IsExpanded;
+        public string ExpanderTitel =>
+            $"{Proces} | {Processtap} | {Vaardigheid}";
         
         //public string Titel { get; set; } = "";
 
@@ -49,6 +51,7 @@ namespace StudentSysteem.Core.Models
         public string PrestatiedoelNiveau { get; set; } = string.Empty;
         
         private Niveauaanduiding _geselecteerdNiveau;
+
         public Niveauaanduiding GeselecteerdNiveau
         {
             get => _geselecteerdNiveau;
@@ -58,21 +61,22 @@ namespace StudentSysteem.Core.Models
                 _geselecteerdNiveau = value;
                 Notify(nameof(GeselecteerdNiveau));
             }
-            
-            // Toelichtingen
-            public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
-
-private bool _kanExtraToelichtingToevoegen;
-public bool KanExtraToelichtingToevoegen
-{
-    get => _kanExtraToelichtingToevoegen;
-    set { _kanExtraToelichtingToevoegen = value; Notify(); }
-}
         }
 
-// Prestatiedoel-balk
-        public string ExpanderTitel =>
-        $"{Proces} | {Processtap} | {Vaardigheid}";
+        // Toelichtingen
+        public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
+
+        private bool _kanExtraToelichtingToevoegen;
+
+        public bool KanExtraToelichtingToevoegen
+        {
+            get => _kanExtraToelichtingToevoegen;
+            set
+            {
+                _kanExtraToelichtingToevoegen = value;
+                Notify();
+            }
+        }
 
         // Status
         private bool _inOntwikkeling;
