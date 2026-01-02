@@ -48,9 +48,7 @@ namespace StudentSysteem.Core.Models
         }
         
         // Niveauaanduiding
-        public string PrestatiedoelNiveau { get; set; } = string.Empty;
-        
-        private Niveauaanduiding _geselecteerdNiveau;
+        private Niveauaanduiding _geselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
 
         public Niveauaanduiding GeselecteerdNiveau
         {
@@ -60,6 +58,7 @@ namespace StudentSysteem.Core.Models
                 if (_geselecteerdNiveau == value) return;
                 _geselecteerdNiveau = value;
                 Notify(nameof(GeselecteerdNiveau));
+                Notify(nameof(PrestatieNiveau));
             }
         }
 
@@ -96,8 +95,8 @@ namespace StudentSysteem.Core.Models
         public bool IsOpNiveau => !InOntwikkeling && OpNiveauCriteria.Any(c => c.IsGeselecteerd);
         public bool IsBovenNiveau => !InOntwikkeling && BovenNiveauCriteria.Any(c => c.IsGeselecteerd);
 
-        private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
-        public PrestatieNiveauKleur Kleur
+        private Niveauaanduiding _kleur = Niveauaanduiding.NietIngeleverd;
+        public Niveauaanduiding Kleur
         {
             get => _kleur;
             private set { _kleur = value; Notify(); }
@@ -160,32 +159,27 @@ namespace StudentSysteem.Core.Models
                 c.PropertyChanged += (_, __) => UpdateStatus();
         }
 
-        private void UpdateColor()
+        private void UpdateStatus()
         {
-            Niveauaanduiding oudNiveau = _geselecteerdNiveau;
-
-            if (BovenNiveauVolledig)
-                _geselecteerdNiveau = Niveauaanduiding.BovenNiveau;
-            else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
-                _geselecteerdNiveau = Niveauaanduiding.OpNiveau;
-            else if (InOntwikkeling)
-                _geselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
-            else
-                _geselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
-    
-            if (oudNiveau != _geselecteerdNiveau)
+            if (InOntwikkeling)
             {
-                Notify(nameof(GeselecteerdNiveau));
+                GeselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
             }
-
-            Notify(nameof(IsOpNiveau));
-            Notify(nameof(IsBovenNiveau));
-            Notify(nameof(PrestatieNiveau));
+            else if (IsBovenNiveau)
+            {
+                GeselecteerdNiveau = Niveauaanduiding.BovenNiveau;
+            }
+            else if (IsOpNiveau)
+            {
+                GeselecteerdNiveau = Niveauaanduiding.OpNiveau;
+            }
+            else
+            {
+                GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
+            }
         }
-
 
         private void Notify([CallerMemberName] string prop = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
-

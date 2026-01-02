@@ -127,7 +127,7 @@ namespace StudentSysteem.App.ViewModels
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving,
                     AiAssessmentScale = d.AiAssessmentScale,
-                    Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
+                    Vaardigheid = gekoppeldeVaardgheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
                     LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
                     HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
                     Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
@@ -314,7 +314,5 @@ namespace StudentSysteem.App.ViewModels
 
             toelichting.GeselecteerdeOptie = keuze;
         }
-
-
     }
 }
