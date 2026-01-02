@@ -72,7 +72,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     Id = reader.GetInt32(0),
                     Niveau = reader.GetString(1),
                     Beschrijving = reader.GetString(2),
-                    AiAssessmentScale = reader.IsDBNull(3) ? string.Empty : reader.GetString(4)
+                    AiAssessmentScale = reader.IsDBNull(3) ? string.Empty : reader.GetString(3)
                 });
             }
 

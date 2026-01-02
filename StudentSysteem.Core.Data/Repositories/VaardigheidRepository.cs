@@ -57,7 +57,7 @@ namespace StudentSysteem.Core.Data.Repositories
         public List<Vaardigheid> HaalAlleVaardighedenOp()
         {
             vaardigheidLijst.Clear();
-            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id FROM Vaardigheid";
+            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id FROM Vaardigheid";
             OpenVerbinding();
 
             using (SqliteCommand command = new(selectQuery, Verbinding))
@@ -72,7 +72,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     string HboiActiviteit = reader.GetString(3);
                     string LeertakenUrl = reader.GetString(4);
                     int PrestatiedoelId = reader.GetInt32(5);
-                    vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl, PrestatiedoelId));
+                    int processtapId = reader.GetInt32(6);
+                    vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl, PrestatiedoelId, processtapId));
                 }
             }
             SluitVerbinding();
