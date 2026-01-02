@@ -27,6 +27,7 @@ namespace StudentSysteem.App.ViewModels
         private readonly IToelichtingService _toelichtingService;
         private readonly IMeldingService _meldingService;
         private readonly IZelfEvaluatieService _zelfEvaluatieService;
+        private readonly IVaardigheidService vaardigheidService;
 
         private readonly bool _isDocent;
 
