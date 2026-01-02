@@ -8,30 +8,30 @@ using System.Windows.Input;
 
 namespace StudentSysteem.Core.Models
 {
-    public enum PrestatieNiveauKleur
-    {
-        NietIngeleverd,
-        InOntwikkeling,
-        OpNiveau,
-        BovenNiveau
-    }
-
     public class BeoordelingItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // Algemene properties
+        private bool _isUpdating;
+        // Prestatiedoel
         public int PrestatiedoelId { get; set; }
-        public string Titel { get; set; } = "";
-        public string PrestatiedoelBeschrijving { get; set; } = "";
-        public string AiAssessmentScale { get; set; } = "";
-        public string Vaardigheid { get; set; } = "";
+        public string PrestatiedoelBeschrijving { get; set; }
+        public string AiAssessmentScale { get; set; }
+        
+        // Vaardigheid
+        public string Titel { get; set; }
+        public string Vaardigheid { get; set; }
+        public string Beschrijving { get; set; }
         public string LeertakenUrl { get; set; } = "";
         public string HboiActiviteit { get; set; } = "";
-        public string Beschrijving { get; set; } = "";
+
+        // Prestatiedoel-balk
         public string Proces { get; set; }
         public string Processtap { get; set; }
-
+        private bool _isExpanded;
+        public bool IsExpanded
+        
+        //public string Titel { get; set; } = "";
 
         // Criteria
         public ObservableCollection<Criterium> OpNiveauCriteria { get; set; } = new();
@@ -44,25 +44,33 @@ namespace StudentSysteem.Core.Models
             get => _geselecteerdCriterium;
             set { _geselecteerdCriterium = value; Notify(); }
         }
-
-        // Toelichtingen
-        public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
-
-        private string _geselecteerdeOptie = "Toelichting koppelen aan...";
-        public string GeselecteerdeOptie
+        
+        // Niveauaanduiding
+        public string PrestatiedoelNiveau { get; set; } = string.Empty;
+        
+        private Niveauaanduiding _geselecteerdNiveau;
+        public Niveauaanduiding GeselecteerdNiveau
         {
-            get => _geselecteerdeOptie;
-            set { _geselecteerdeOptie = value; Notify(); }
+            get => _geselecteerdNiveau;
+            set
+            {
+                if (_geselecteerdNiveau == value) return;
+                _geselecteerdNiveau = value;
+                Notify(nameof(GeselecteerdNiveau));
+            }
+            
+            // Toelichtingen
+            public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
+
+private bool _kanExtraToelichtingToevoegen;
+public bool KanExtraToelichtingToevoegen
+{
+    get => _kanExtraToelichtingToevoegen;
+    set { _kanExtraToelichtingToevoegen = value; Notify(); }
+}
         }
 
-        private bool _kanExtraToelichtingToevoegen;
-        public bool KanExtraToelichtingToevoegen
-        {
-            get => _kanExtraToelichtingToevoegen;
-            set { _kanExtraToelichtingToevoegen = value; Notify(); }
-        }
-
-
+// Prestatiedoel-balk
         public string ExpanderTitel =>
         $"{Proces} | {Processtap} | {Vaardigheid}";
 
@@ -148,31 +156,26 @@ namespace StudentSysteem.Core.Models
                 c.PropertyChanged += (_, __) => UpdateStatus();
         }
 
-        private void UpdateStatus()
+        private void UpdateColor()
         {
-            if (IsBovenNiveau)
-            {
-                Kleur = PrestatieNiveauKleur.BovenNiveau;
-                _inOntwikkeling = false;
-            }
-            else if (IsOpNiveau)
-            {
-                Kleur = PrestatieNiveauKleur.OpNiveau;
-                _inOntwikkeling = false;
-            }
+            Niveauaanduiding oudNiveau = _geselecteerdNiveau;
+
+            if (BovenNiveauVolledig)
+                _geselecteerdNiveau = Niveauaanduiding.BovenNiveau;
+            else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
+                _geselecteerdNiveau = Niveauaanduiding.OpNiveau;
             else if (InOntwikkeling)
-            {
-                Kleur = PrestatieNiveauKleur.InOntwikkeling;
-            }
+                _geselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
             else
+                _geselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
+    
+            if (oudNiveau != _geselecteerdNiveau)
             {
-                Kleur = PrestatieNiveauKleur.NietIngeleverd;
+                Notify(nameof(GeselecteerdNiveau));
             }
 
-            Notify(nameof(InOntwikkeling));
             Notify(nameof(IsOpNiveau));
             Notify(nameof(IsBovenNiveau));
-            Notify(nameof(Kleur));
             Notify(nameof(PrestatieNiveau));
         }
 

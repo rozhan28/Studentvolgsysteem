@@ -102,6 +102,10 @@ namespace StudentSysteem.App.ViewModels
 
         public void UpdateTitelGebaseerdOpStatus()
         {
+            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+    
+            List<BeoordelingItem> items = doelen.Select(d =>
             Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
         }
 
@@ -116,6 +120,28 @@ namespace StudentSysteem.App.ViewModels
             foreach (var proces in processen)
             {
                 var stappen = _processtapRepository.HaalProcesstappenOpVoorProces(proces.Id);
+
+                var item = new BeoordelingItem
+                {
+                    PrestatiedoelId = d.Id,
+                    Titel = $"Prestatiedoel {d.Id}",
+                    PrestatiedoelBeschrijving = d.Beschrijving,
+                    AiAssessmentScale = d.AiAssessmentScale,
+                    Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
+                    LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
+                    HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
+                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
+                    GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd
+                };
+                return item;
+            }).ToList();
+
+            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
+    
+            foreach (BeoordelingItem item in Beoordelingen)
+            {
+                if (item.Toelichtingen == null)
+                    item.Toelichtingen = new ObservableCollection<Toelichting>();
 
                 foreach (var stap in stappen)
                 {
@@ -228,7 +254,7 @@ namespace StudentSysteem.App.ViewModels
 
             return toelichtingen.All(t =>
                 !string.IsNullOrWhiteSpace(t.Tekst) &&
-                t.GeselecteerdeOptie != "Toelichting koppelen aan...");
+                t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
         }
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)

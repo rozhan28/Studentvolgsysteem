@@ -11,9 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
-            <converters:InOntwikkelingConverter x:Key="InOntwikkeling"/>
-            <converters:OpNiveauConverter x:Key="OpNiveau"/>
-            <converters:BovenNiveauConverter x:Key="BovenNiveau"/>
+            <converters:PrestatieniveauKleurConverter x:Key="PrestatieniveauKleurConverter" />
             <converters:AiConverter x:Key="AiIconConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
             <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
@@ -118,7 +116,9 @@
                                                     <!-- In ontwikkeling -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding InOntwikkeling, Converter={StaticResource InOntwikkeling}}"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=InOntwikkeling}"
                                                                              Padding="10">
                                                             <Label Text="In ontwikkeling" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
@@ -130,8 +130,11 @@
 
                                                     <!-- Op niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                        <VerticalStackLayout Padding="10" Spacing="10"
-                                                                             BackgroundColor="{Binding IsOpNiveau, Converter={StaticResource OpNiveau}}">
+                                                        <VerticalStackLayout Spacing="10"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=OpNiveau}"
+                                                                             Padding="10">
                                                             <Label Text="Op niveau" FontFamily="Bold"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
@@ -148,8 +151,11 @@
 
                                                     <!-- Boven niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                        <VerticalStackLayout Padding="10" Spacing="10"
-                                                                             BackgroundColor="{Binding IsBovenNiveau, Converter={StaticResource BovenNiveau}}">
+                                                        <VerticalStackLayout Spacing="10"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=BovenNiveau}"
+                                                                             Padding="10">
                                                             <Label Text="Boven niveau" FontFamily="Bold"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
@@ -204,7 +210,6 @@
                                                    IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource InvertBoolConverter}}"/>
                                         </VerticalStackLayout>
                                     </Border>
-
                                 </VerticalStackLayout>
                             </toolkit:Expander.Content>
                         </toolkit:Expander>
