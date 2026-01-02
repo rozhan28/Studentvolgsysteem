@@ -125,7 +125,6 @@ namespace StudentSysteem.Core.Models
 
         // Commands
         public ICommand VoegExtraToelichtingToeCommand { get; }
-        public ICommand OptiesCommand { get; }
 
         public BeoordelingItem()
         {
@@ -135,7 +134,6 @@ namespace StudentSysteem.Core.Models
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
             BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
 
-            OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
         }
 
         private void ResetCriteria()
@@ -178,21 +176,6 @@ namespace StudentSysteem.Core.Models
             Notify(nameof(PrestatieNiveau));
         }
 
-        private async Task ToonCriteriaKeuze()
-        {
-            var opties = BeschikbareCriteria.Select(c => c.DisplayNaam).ToArray();
-
-            string keuze = await Shell.Current.DisplayActionSheet(
-                "Koppel toelichting aan criterium",
-                "Annuleren",
-                null,
-                opties);
-
-            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze)) return;
-
-            GeselecteerdeOptie = keuze;
-            GeselecteerdCriterium = BeschikbareCriteria.FirstOrDefault(c => c.DisplayNaam == keuze);
-        }
 
         private void Notify([CallerMemberName] string prop = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

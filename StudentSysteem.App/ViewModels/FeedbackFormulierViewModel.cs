@@ -44,6 +44,10 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
+        public ICommand OptiesCommand { get; }
+
+
+
         [ObservableProperty]
         private bool isZelfEvaluatie;
 
@@ -78,6 +82,7 @@ namespace StudentSysteem.App.ViewModels
             OpslaanCommand = new Command(async () => await BewaarEvaluatieAsync());
             VoegExtraToelichtingToeCommand = new Command<BeoordelingItem>(VoegExtraToelichtingToe);
             LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
+            OptiesCommand = new Command<Toelichting>(async t => await ToonCriteriaKeuze(t));
 
             Task.Run(InitialiseerPaginaAsync);
         }
@@ -254,5 +259,36 @@ namespace StudentSysteem.App.ViewModels
                 await Browser.Default.OpenAsync(url);
             }
         }
+
+        private async Task ToonCriteriaKeuze(Toelichting toelichting)
+        {
+            if (toelichting == null) return;
+
+            var parent = Beoordelingen
+                .FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
+
+            if (parent == null) return;
+
+            var opties = parent.OpNiveauCriteria
+                .Concat(parent.BovenNiveauCriteria)
+                .Select(c => c.DisplayNaam)
+                .Distinct()
+                .ToList();
+
+            opties.Insert(0, "Algemeen");
+
+            string keuze = await Shell.Current.DisplayActionSheet(
+                "Koppel toelichting aan criterium",
+                "Annuleren",
+                null,
+                opties.ToArray());
+
+            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze))
+                return;
+
+            toelichting.GeselecteerdeOptie = keuze;
+        }
+
+
     }
 }
