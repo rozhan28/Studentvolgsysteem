@@ -70,7 +70,6 @@ namespace StudentSysteem.App
             builder.Services.AddSingleton<DbConnectieHelper>();
             builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
             builder.Services.AddSingleton<IDatapuntService, DatapuntService>();
-            builder.Services.AddSingleton<IFeedbackService, FeedbackService>();
             builder.Services.AddSingleton<ILeeruitkomstService, LeeruitkomstService>();
             
             

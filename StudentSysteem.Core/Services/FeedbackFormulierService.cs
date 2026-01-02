@@ -26,6 +26,11 @@ namespace StudentSysteem.Core.Services
 
             _feedbackRepository.VoegToelichtingenToe(toelichtingen, studentId);
         }
+        
+        public IEnumerable<Feedback> HaalFeedbackOp(Datapunt datapunt, int studentId)
+        {
+            return _feedbackRepository.HaalFeedbackOp(datapunt, studentId);
+        }
     }
 }
 
