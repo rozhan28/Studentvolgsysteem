@@ -22,50 +22,29 @@ namespace StudentSysteem.Core.Models
 
         // Algemene properties
         public int PrestatiedoelId { get; set; }
-        public string PrestatiedoelBeschrijving { get; set; }
-        public string AiAssessmentScale { get; set; }
-        public string Titel { get; set; }
-        public string Vaardigheid { get; set; }
-        public string Beschrijving { get; set; }
-        public string HboiActiviteit { get; set; }
-        public string LeertakenUrl { get; set; }
+        public string Titel { get; set; } = "";
+        public string PrestatiedoelBeschrijving { get; set; } = "";
+        public string AiAssessmentScale { get; set; } = "";
+        public string Vaardigheid { get; set; } = "";
+        public string LeertakenUrl { get; set; } = "";
+        public string HboiActiviteit { get; set; } = "";
+        public string Beschrijving { get; set; } = "";
 
         // Criteria
-        public Criterium AlgemeenCriterium { get; } = new Criterium
-        {
-            Id = -1,
-            Beschrijving = "Algemeen",
-            Niveau = "Algemeen"
-        };
-
-        public ObservableCollection<Criterium> OpNiveauCriteria { get; } = new ObservableCollection<Criterium>();
-        public ObservableCollection<Criterium> BovenNiveauCriteria { get; } = new ObservableCollection<Criterium>();
-        public ObservableCollection<Criterium> BeschikbareCriteria { get; } = new ObservableCollection<Criterium>();
+        public ObservableCollection<Criterium> OpNiveauCriteria { get; set; } = new();
+        public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; } = new();
+        public ObservableCollection<Criterium> BeschikbareCriteria { get; set; } = new();
 
         private Criterium _geselecteerdCriterium;
         public Criterium GeselecteerdCriterium
         {
             get => _geselecteerdCriterium;
-            set
-            {
-                if (_geselecteerdCriterium == value) return;
-                _geselecteerdCriterium = value;
-                Notify();
-            }
+            set { _geselecteerdCriterium = value; Notify(); }
         }
 
-        // Toelichting
-        private string _toelichting;
-        public string Toelichting
-        {
-            get => _toelichting;
-            set { _toelichting = value; Notify(); }
-        }
+        // Toelichtingen
+        public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
 
-        public ObservableCollection<ExtraToelichting> ExtraToelichtingVak { get; } = new ObservableCollection<ExtraToelichting>();
-        public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new ObservableCollection<Toelichting>();
-
-        // Dropdown selectie
         private string _geselecteerdeOptie = "Toelichting koppelen aan...";
         public string GeselecteerdeOptie
         {
@@ -73,18 +52,14 @@ namespace StudentSysteem.Core.Models
             set { _geselecteerdeOptie = value; Notify(); }
         }
 
-        // Commands
-        public ICommand VoegExtraToelichtingToeCommand { get; }
-        public ICommand OptiesCommand { get; }
-
-        // UI / state
-        private bool _isExpanded;
-        public bool IsExpanded
+        private bool _kanExtraToelichtingToevoegen;
+        public bool KanExtraToelichtingToevoegen
         {
-            get => _isExpanded;
-            set { _isExpanded = value; Notify(); }
+            get => _kanExtraToelichtingToevoegen;
+            set { _kanExtraToelichtingToevoegen = value; Notify(); }
         }
 
+        // Status
         private bool _inOntwikkeling;
         public bool InOntwikkeling
         {
@@ -99,8 +74,36 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        public bool IsOpNiveau => OpNiveauCriteria.Any() && OpNiveauCriteria.All(c => c.IsGeselecteerd) && !InOntwikkeling;
-        public bool IsBovenNiveau => BovenNiveauCriteria.Any() && BovenNiveauCriteria.All(c => c.IsGeselecteerd) && !InOntwikkeling;
+        public bool IsOpNiveau => !InOntwikkeling && OpNiveauCriteria.Any(c => c.IsGeselecteerd);
+        public bool IsBovenNiveau => !InOntwikkeling && BovenNiveauCriteria.Any(c => c.IsGeselecteerd);
+
+        private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
+        public PrestatieNiveauKleur Kleur
+        {
+            get => _kleur;
+            private set { _kleur = value; Notify(); }
+        }
+
+        private bool _isPrestatieNiveauInvalid;
+        public bool IsPrestatieNiveauInvalid
+        {
+            get => _isPrestatieNiveauInvalid;
+            set { _isPrestatieNiveauInvalid = value; Notify(); }
+        }
+
+        private bool _isCriteriumInvalid;
+        public bool IsCriteriumInvalid
+        {
+            get => _isCriteriumInvalid;
+            set { _isCriteriumInvalid = value; Notify(); }
+        }
+
+        private bool _isToelichtingInvalid;
+        public bool IsToelichtingInvalid
+        {
+            get => _isToelichtingInvalid;
+            set { _isToelichtingInvalid = value; Notify(); }
+        }
 
         public string PrestatieNiveau
         {
@@ -113,30 +116,19 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
-        public PrestatieNiveauKleur Kleur
-        {
-            get => _kleur;
-            private set
-            {
-                if (_kleur == value) return;
-                _kleur = value;
-                Notify();
-            }
-        }
+        // Commands
+        public ICommand VoegExtraToelichtingToeCommand { get; }
+        public ICommand OptiesCommand { get; }
 
-        private bool _isPrestatieNiveauInvalid;
-        public bool IsPrestatieNiveauInvalid
+        public BeoordelingItem()
         {
-            get => _isPrestatieNiveauInvalid;
-            set { _isPrestatieNiveauInvalid = value; Notify(); }
-        }
+            var algemeen = new Criterium { Id = -1, Beschrijving = "Algemeen", Niveau = "Algemeen" };
+            BeschikbareCriteria.Add(algemeen);
 
-        private bool _isToelichtingInvalid;
-        public bool IsToelichtingInvalid
-        {
-            get => _isToelichtingInvalid;
-            set { _isToelichtingInvalid = value; Notify(); }
+            OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
+            BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
+
+            OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
         }
 
         private void ResetCriteria()
@@ -148,21 +140,34 @@ namespace StudentSysteem.Core.Models
         private void HookCriteria(ObservableCollection<Criterium> criteria)
         {
             foreach (var c in criteria)
-            {
                 c.PropertyChanged += (_, __) => UpdateStatus();
-            }
         }
 
         private void UpdateStatus()
         {
-            if (IsBovenNiveau) Kleur = PrestatieNiveauKleur.BovenNiveau;
-            else if (IsOpNiveau) Kleur = PrestatieNiveauKleur.OpNiveau;
-            else if (InOntwikkeling) Kleur = PrestatieNiveauKleur.InOntwikkeling;
-            else Kleur = PrestatieNiveauKleur.NietIngeleverd;
+            if (IsBovenNiveau)
+            {
+                Kleur = PrestatieNiveauKleur.BovenNiveau;
+                _inOntwikkeling = false;
+            }
+            else if (IsOpNiveau)
+            {
+                Kleur = PrestatieNiveauKleur.OpNiveau;
+                _inOntwikkeling = false;
+            }
+            else if (InOntwikkeling)
+            {
+                Kleur = PrestatieNiveauKleur.InOntwikkeling;
+            }
+            else
+            {
+                Kleur = PrestatieNiveauKleur.NietIngeleverd;
+            }
 
             Notify(nameof(InOntwikkeling));
             Notify(nameof(IsOpNiveau));
             Notify(nameof(IsBovenNiveau));
+            Notify(nameof(Kleur));
             Notify(nameof(PrestatieNiveau));
         }
 
@@ -182,16 +187,8 @@ namespace StudentSysteem.Core.Models
             GeselecteerdCriterium = BeschikbareCriteria.FirstOrDefault(c => c.DisplayNaam == keuze);
         }
 
-        private void Notify([CallerMemberName] string prop = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-
-        public BeoordelingItem()
-        {
-            BeschikbareCriteria.Add(AlgemeenCriterium);
-
-            OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
-            BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
-
-            OptiesCommand = new Command(async () => await ToonCriteriaKeuze());
-        }
+        private void Notify([CallerMemberName] string prop = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+

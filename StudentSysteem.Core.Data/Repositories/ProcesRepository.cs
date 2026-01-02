@@ -20,9 +20,11 @@ namespace StudentSysteem.Core.Data.Repositories
             // Seed-data
             List<string> insertQueries = new()
             {
-                @"INSERT OR IGNORE INTO Proces (naam) VALUES ('Requirementsanalyseproces')",
-                @"INSERT OR IGNORE INTO Proces (naam) VALUES ('Ontwerpproces')"
+                @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (1, 'Requirementsanalyseproces')",
+                @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (2, 'Ontwerpproces')"
             };
+            VoegMeerdereInMetTransactie(insertQueries);
+
 
             VoegMeerdereInMetTransactie(insertQueries);
         }

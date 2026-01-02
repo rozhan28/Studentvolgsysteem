@@ -113,7 +113,7 @@ namespace StudentSysteem.App.ViewModels
 
             List<BeoordelingItem> items = doelen.Select(d =>
             {
-                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
+                Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.PrestatiedoelId == d.Id);
                 return new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
@@ -124,8 +124,12 @@ namespace StudentSysteem.App.ViewModels
                     LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
                     HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
                     Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
-                    OpNiveauCriteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Op niveau").ToList(),
-                    BovenNiveauCriteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Boven niveau").ToList()
+                    OpNiveauCriteria = new ObservableCollection<Criterium>(
+                        _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Op niveau")
+                    ),
+                                    BovenNiveauCriteria = new ObservableCollection<Criterium>(
+                        _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(d.Id, "Boven niveau")
+                    )
                 };
             }).ToList();
 
@@ -153,7 +157,7 @@ namespace StudentSysteem.App.ViewModels
 
             try
             {
-                int idVorigRecord = _zelfEvaluatieService.Add(new ZelfEvaluatie
+                int idVorigRecord = _zelfEvaluatieService.VoegToe(new ZelfEvaluatie
                 {
                     StudentId = 1,
                     PrestatieNiveau = "Ingevuld"
@@ -199,6 +203,21 @@ namespace StudentSysteem.App.ViewModels
             return allesGeldig;
         }
 
+        public bool IsCriteriumInvalid { get; set; } = false;
+
+        private bool _kanExtraToelichtingToevoegen;
+        public bool KanExtraToelichtingToevoegen
+        {
+            get => _kanExtraToelichtingToevoegen;
+            set
+            {
+                if (_kanExtraToelichtingToevoegen == value) return;
+                _kanExtraToelichtingToevoegen = value;
+                Notify();
+            }
+        }
+
+
         public bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
             if (_isDocent) return true;
@@ -233,14 +252,17 @@ namespace StudentSysteem.App.ViewModels
             var parent = Beoordelingen.FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
             if (parent == null) return;
 
-            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen);
-            if (Application.Current?.MainPage == null) return;
+            var opties = _toelichtingService.GetBeschikbareOpties(parent.Toelichtingen, parent.PrestatiedoelId);
+
+
+            // Converteer naar string array voor DisplayActionSheet
+            string[] optieStrings = opties.Select(o => o.ToString()).ToArray();
 
             string selected = await Application.Current.MainPage.DisplayActionSheet(
                 "Toelichting gekoppeld aan...",
                 "Annuleren",
                 null,
-                opties.ToArray());
+                optieStrings);
 
             if (!string.IsNullOrEmpty(selected) && selected != "Annuleren")
             {
@@ -272,8 +294,10 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
-        private void Notify(string prop) =>
+        private void Notify([System.Runtime.CompilerServices.CallerMemberName] string prop = "")
+        {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
     }
 }
 

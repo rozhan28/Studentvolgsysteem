@@ -29,31 +29,23 @@ namespace StudentSysteem.Core.Data.Repositories
                     );
                     ");
 
-            // Seed-data
             List<string> seed = new()
             {
-                // Op niveau
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (1, 'De syntax van het domeinmodel is correct volgens UML', 'Op niveau')",
-
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (2, 'Het domeinmodel weerspiegelt het probleemgebied', 'Op niveau')",
-
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd', 'Op niveau')",
-
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp', 'Op niveau')",
-
-                // Boven niveau
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (5, 'Het domeinmodel is volledig en logisch', 'Boven niveau')",
-
-                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau) 
+                @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
                   VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'Boven niveau')"
             };
-
             VoegMeerdereInMetTransactie(seed);
+
         }
 
         public List<Criterium> HaalCriteriaOpVoorNiveau(string niveau)

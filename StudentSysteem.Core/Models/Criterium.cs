@@ -8,8 +8,8 @@ namespace StudentSysteem.Core.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int Id { get; set; }
-        public string Beschrijving { get; set; }
-        public string Niveau { get; set; }
+        public string Beschrijving { get; set; } = "";
+        public string Niveau { get; set; } = "";
 
         public string DisplayNaam => $"{Beschrijving} ({Niveau})";
 

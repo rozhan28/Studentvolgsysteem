@@ -51,8 +51,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     'https://leertaken.nl/2.-Processen/3.-Ontwerpproces/2.-Uitleg-toepassen-modelleertechnieken',
                     2, 2, 2)"
             };
-
             VoegMeerdereInMetTransactie(insertQueries);
+
         }
 
         public List<Vaardigheid> HaalAlleVaardighedenOp()

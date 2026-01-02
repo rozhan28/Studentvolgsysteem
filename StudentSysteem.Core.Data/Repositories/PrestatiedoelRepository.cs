@@ -40,7 +40,6 @@ namespace StudentSysteem.Core.Data.Repositories
                           'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
                           1,
                           'Samenwerking')",
-
                 @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
                   VALUES ('Op niveau',
                           'Toepassen van modelleertechnieken door principes toe te passen volgens de ontwerprichtlijnen van HBO-ICT.',

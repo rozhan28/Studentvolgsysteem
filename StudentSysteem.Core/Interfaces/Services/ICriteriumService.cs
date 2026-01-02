@@ -9,5 +9,6 @@ namespace StudentSysteem.Core.Interfaces.Services
     {
         List<Criterium> HaalOpNiveauCriteriaOp();
         List<Criterium> HaalBovenNiveauCriteriaOp();
-    }//test
+    }
+
 }

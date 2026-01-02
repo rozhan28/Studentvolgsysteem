@@ -24,11 +24,13 @@ namespace StudentSysteem.Core.Data.Repositories
             // Seed-data
             List<string> insertQueries = new()
             {
-                @"INSERT OR IGNORE INTO Processtap (naam, proces_id) VALUES ('Definiëren probleemdomein', 1)",
-                @"INSERT OR IGNORE INTO Processtap (naam, proces_id) VALUES ('Opstellen ontwerp', 2)"
+                @"INSERT OR IGNORE INTO Processtap (naam, proces_id, criterium_id) 
+                  VALUES ('Definiëren probleemdomein', 1, 1)",
+                @"INSERT OR IGNORE INTO Processtap (naam, proces_id, criterium_id) 
+                  VALUES ('Opstellen ontwerp', 2, 4)"
             };
-
             VoegMeerdereInMetTransactie(insertQueries);
+
         }
     }
 }
