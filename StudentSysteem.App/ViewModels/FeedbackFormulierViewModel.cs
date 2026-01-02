@@ -109,28 +109,29 @@ namespace StudentSysteem.App.ViewModels
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-            
-            List<BeoordelingItem> items = doelen.Select(delegate(Prestatiedoel d)
+    
+            List<BeoordelingItem> items = doelen.Select(d =>
             {
                 Vaardigheid gekoppeldeVaardigheid = vaardigheden.FirstOrDefault(v => v.Prestatiedoel_id == d.Id);
 
-                return new BeoordelingItem
+                var item = new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
                     PrestatiedoelBeschrijving = d.Beschrijving,
                     AiAssessmentScale = d.AiAssessmentScale,
-
                     Vaardigheid = gekoppeldeVaardigheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
                     LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
                     HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
-                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving
+                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
+                    GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd
                 };
+                return item;
             }).ToList();
 
             Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
-            
-                        foreach (BeoordelingItem item in Beoordelingen)
+    
+            foreach (BeoordelingItem item in Beoordelingen)
             {
                 if (item.Toelichtingen == null)
                     item.Toelichtingen = new ObservableCollection<Toelichting>();
@@ -218,9 +219,7 @@ namespace StudentSysteem.App.ViewModels
         
         private static bool ValideerPrestatieNiveau(BeoordelingItem item)
         {
-            return item.InOntwikkeling
-                   || item.IsOpNiveau
-                   || item.IsBovenNiveau;
+            return item.GeselecteerdNiveau != Niveauaanduiding.NietIngeleverd;
         }
 
         private void VoegExtraToelichtingToe(BeoordelingItem item)

@@ -103,7 +103,9 @@
                                                     <!-- In ontwikkeling -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding Niveau, Converter={StaticResource PrestatieniveauKleurConverter}}"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=InOntwikkeling}"
                                                                              Padding="10">
                                                             <Label Text="In ontwikkeling" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
@@ -116,7 +118,9 @@
                                                     <!-- Op niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding Niveau, Converter={StaticResource PrestatieniveauKleurConverter}}"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=OpNiveau}"
                                                                              Padding="10">
                                                             <Label Text="Op niveau" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
@@ -137,7 +141,9 @@
                                                     <!-- Boven niveau -->
                                                     <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
                                                         <VerticalStackLayout Spacing="10"
-                                                                             BackgroundColor="{Binding Niveau, Converter={StaticResource PrestatieniveauKleurConverter}}"
+                                                                             BackgroundColor="{Binding GeselecteerdNiveau,
+                                                                             Converter={StaticResource PrestatieniveauKleurConverter},
+                                                                             ConverterParameter=BovenNiveau}"
                                                                              Padding="10">
                                                             <Label Text="Boven niveau" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">

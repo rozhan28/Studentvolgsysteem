@@ -4,14 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace StudentSysteem.Core.Models
 {
-    public enum PrestatieNiveauKleur
-    {
-        NietIngeleverd,
-        InOntwikkeling,
-        OpNiveau,
-        BovenNiveau
-    }
-
     public class BeoordelingItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -24,12 +16,10 @@ namespace StudentSysteem.Core.Models
         //}
 
         public int PrestatiedoelId { get; set; }
-
         public string PrestatiedoelBeschrijving { get; set; }
         public string AiAssessmentScale { get; set; }
 
         private bool _isUpdating;
-
         public string Titel { get; set; }
         public string Vaardigheid { get; set; }
         public string Beschrijving { get; set; }
@@ -46,19 +36,16 @@ namespace StudentSysteem.Core.Models
             }
         }
         public string PrestatiedoelNiveau { get; set; } = string.Empty;
-
-
-
-
-        private PrestatieNiveauKleur _kleur = PrestatieNiveauKleur.NietIngeleverd;
-        public PrestatieNiveauKleur Kleur
+        
+        private Niveauaanduiding _geselecteerdNiveau;
+        public Niveauaanduiding GeselecteerdNiveau
         {
-            get => _kleur;
-            private set
+            get => _geselecteerdNiveau;
+            set
             {
-                if (_kleur == value) return;
-                _kleur = value;
-                Notify(nameof(Kleur));
+                if (_geselecteerdNiveau == value) return;
+                _geselecteerdNiveau = value;
+                Notify(nameof(GeselecteerdNiveau)); // De converter luistert naar deze property!
             }
         }
 
@@ -268,21 +255,28 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-
         private void UpdateColor()
         {
-            if (_isUpdating) return;
+            Niveauaanduiding oudNiveau = _geselecteerdNiveau;
+
             if (BovenNiveauVolledig)
-                Kleur = PrestatieNiveauKleur.BovenNiveau;
+                _geselecteerdNiveau = Niveauaanduiding.BovenNiveau;
             else if (OpNiveauDomeinWeerspiegelt && OpNiveauSyntaxCorrect && OpNiveauVastgelegd)
-                Kleur = PrestatieNiveauKleur.OpNiveau;
+                _geselecteerdNiveau = Niveauaanduiding.OpNiveau;
             else if (InOntwikkeling)
-                Kleur = PrestatieNiveauKleur.InOntwikkeling;
+                _geselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
             else
-                Kleur = PrestatieNiveauKleur.NietIngeleverd;
+                _geselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
+    
+            if (oudNiveau != _geselecteerdNiveau)
+            {
+                Notify(nameof(GeselecteerdNiveau));
+            }
+
             Notify(nameof(IsOpNiveau));
             Notify(nameof(IsInOntwikkeling));
             Notify(nameof(IsBovenNiveau));
+            Notify(nameof(PrestatieNiveau));
         }
 
         private void Notify([CallerMemberName] string prop = "")
