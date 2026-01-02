@@ -31,6 +31,11 @@ namespace StudentSysteem.Core.Services
         {
             return _feedbackRepository.HaalFeedbackOp(datapunt, studentId);
         }
+
+        public Feedback DocentFeedback(IEnumerable<Feedback> feedback)
+        {
+            return feedback.FirstOrDefault(f => f.Docent_id != 0);;
+        }
     }
 }
 
