@@ -119,11 +119,11 @@ namespace StudentSysteem.App.ViewModels
 
                 foreach (Processtap stap in stappenVoorProces)
                 {
-                    IEnumerable<Vaardigheid> vaardighedenVoorStap = vaardigheden.Where(v => v.ProcesstapId == stap.Id);
+                    IEnumerable<Vaardigheid> vaardighedenVoorStap = vaardigheden.Where(v => v.Processtap_id == stap.Id);
 
                     foreach (Vaardigheid vaardigheid in vaardighedenVoorStap)
                     {
-                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
+                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.Prestatiedoel_id);
                         if (doel == null) continue;
 
                         // Maak het item aan
@@ -131,8 +131,8 @@ namespace StudentSysteem.App.ViewModels
                         {
                             Proces = proces.Naam,
                             Processtap = stap.Naam,
-                            Vaardigheid = vaardigheid.Naam,
-                            Beschrijving = vaardigheid.Beschrijving,
+                            Vaardigheid = vaardigheid.VaardigheidNaam,
+                            Beschrijving = vaardigheid.VaardigheidBeschrijving,
                             HboiActiviteit = vaardigheid.HboiActiviteit,
                             LeertakenUrl = vaardigheid.LeertakenUrl,
                             PrestatiedoelId = doel.Id,

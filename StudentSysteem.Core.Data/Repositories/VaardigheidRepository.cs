@@ -54,34 +54,25 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(insertQueries);
 
         }
-
         public List<Vaardigheid> HaalAlleVaardighedenOp()
         {
             vaardigheidLijst.Clear();
-
-            string selectQuery = @"
-            SELECT v.vaardigheid_id, v.naam, v.beschrijving, v.hboi_activiteit, 
-                   v.leertaken_url, v.prestatiedoel_id, v.processtap_id, v.leeruitkomst_id
-            FROM Vaardigheid v";
-
+            string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id FROM Vaardigheid";
             OpenVerbinding();
 
-            using (var command = new SqliteCommand(selectQuery, Verbinding))
-            using (var reader = command.ExecuteReader())
+            using (SqliteCommand command = new(selectQuery, Verbinding))
             {
+                SqliteDataReader reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
-                    vaardigheidLijst.Add(new Vaardigheid
-                    {
-                        Id = reader.GetInt32(0),
-                        Naam = reader.GetString(1),
-                        Beschrijving = reader.GetString(2),
-                        HboiActiviteit = reader.IsDBNull(3) ? null : reader.GetString(3),
-                        LeertakenUrl = reader.IsDBNull(4) ? null : reader.GetString(4),
-                        PrestatiedoelId = reader.GetInt32(5),
-                        ProcesstapId = reader.GetInt32(6),
-                        LeeruitkomstId = reader.GetInt32(7)
-                    });
+                    int Vaardigheid_id = reader.GetInt32(0);
+                    string VaardigheidNaam = reader.GetString(1);
+                    string VaardigheidBeschrijving = reader.GetString(2);
+                    string HboiActiviteit = reader.GetString(3);
+                    string LeertakenUrl = reader.GetString(4);
+                    int PrestatiedoelId = reader.GetInt32(5);
+                    vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl, PrestatiedoelId));
                 }
             }
             SluitVerbinding();
