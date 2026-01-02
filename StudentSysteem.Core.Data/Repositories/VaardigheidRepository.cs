@@ -84,7 +84,6 @@ namespace StudentSysteem.Core.Data.Repositories
                     });
                 }
             }
-
             SluitVerbinding();
             return vaardigheidLijst;
         }

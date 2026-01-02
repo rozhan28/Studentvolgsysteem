@@ -29,7 +29,11 @@ namespace StudentSysteem.Core.Models
         public string Proces { get; set; }
         public string Processtap { get; set; }
         private bool _isExpanded;
-        public bool IsExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set { _isExpanded = value; Notify(); }
+        }
         public string ExpanderTitel =>
             $"{Proces} | {Processtap} | {Vaardigheid}";
         
@@ -133,9 +137,6 @@ namespace StudentSysteem.Core.Models
                 return string.Empty;
             }
         }
-
-        // Commands
-        public ICommand VoegExtraToelichtingToeCommand { get; }
 
         public BeoordelingItem()
         {

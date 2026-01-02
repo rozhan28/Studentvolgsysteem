@@ -1,10 +1,9 @@
-﻿using StudentSysteem.Core.Models;   
-using System.Collections.Generic;
+﻿using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IProcesRepository
     {
-        IEnumerable<Proces> HaalAlleProcessenOp();
+        public Proces? HaalOp(int procesId);
     }
 }
