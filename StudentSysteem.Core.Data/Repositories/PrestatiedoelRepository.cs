@@ -10,7 +10,6 @@ namespace StudentSysteem.Core.Data.Repositories
         public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
             : base(dbConnectieHelper)
         {
-            // Prestatiedoel-tabel
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Prestatiedoel (
                     prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,8 +19,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     ai_assessment_scale TEXT
                 );
             ");
-
-            // Koppeltabel PrestatiedoelCriterium
+            
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS PrestatiedoelCriterium (
                     prestatiedoel_id INTEGER NOT NULL,
@@ -31,8 +29,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                 );
             ");
-
-            // Seed Prestatiedoelen
+            
             List<string> seedPrestatiedoelen = new()
             {
                 @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
@@ -46,8 +43,7 @@ namespace StudentSysteem.Core.Data.Repositories
                           4,
                           'Techniek')"
             };
-
-            // Seed koppeling met criteria (PrestatiedoelCriterium)
+            
             List<string> seedKoppeling = new()
             {
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 1)",

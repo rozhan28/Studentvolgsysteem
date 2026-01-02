@@ -108,10 +108,9 @@ namespace StudentSysteem.App.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Clear());
             
-            IEnumerable<Proces> processen = _procesService.HaalOp();
+            IEnumerable<Proces> processen = _procesService.HaalAlleProcessenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
             IEnumerable<Prestatiedoel> prestatiedoelen = _prestatiedoelService.HaalAllePrestatiedoelenOp();
-            IEnumerable<Processtap> alleStappen = _processtapService.HaalAlleProcesstappenOp(); // Of per proces ophalen
 
             // Stappen ophalen die bij het proces horen
             foreach (Proces proces in processen)
