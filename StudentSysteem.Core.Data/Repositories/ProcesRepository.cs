@@ -1,14 +1,13 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+﻿using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
-using StudentSysteem.Core.Models;  
-using System.Collections.Generic;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class ProcesRepository : DatabaseVerbinding, IProcesRepository
     {
-        public ProcesRepository(DbConnectieHelper dbConnectieHelper)
-            : base(dbConnectieHelper)
+        public ProcesRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Proces (
@@ -17,24 +16,36 @@ namespace StudentSysteem.Core.Data.Repositories
                 );
             ");
 
-            List<string> insertQueries = new()
-            {
+            List<string> insertQueries =
+            [
                 @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (1, 'Requirementsanalyseproces')",
                 @"INSERT OR IGNORE INTO Proces (proces_id, naam) VALUES (2, 'Ontwerpproces')"
-            };
-
+            ];
             VoegMeerdereInMetTransactie(insertQueries);
         }
-
-        public IEnumerable<Proces> HaalAlleProcessenOp()
+        
+        public Proces? HaalOp(int procesId)
         {
-            return VoerSelectUit(
-                "SELECT proces_id, naam FROM Proces",
-                r => new Proces
+            Proces? proces = null;
+            string selectQuery = "SELECT proces_id, naam FROM Proces WHERE proces_id = @id";
+
+            OpenVerbinding();
+            using (SqliteCommand command = new SqliteCommand(selectQuery, Verbinding))
+            {
+                command.Parameters.AddWithValue("@id", procesId);
+
+                using (SqliteDataReader reader = command.ExecuteReader())
                 {
-                    Id = r.GetInt32(0),
-                    Naam = r.GetString(1)
-                });
+                    if (reader.Read())
+                    {
+                        int id = reader.GetInt32(0);
+                        string naam = reader.GetString(1);
+                        proces = new Proces(id, naam);
+                    }
+                }
+            }
+            SluitVerbinding();
+            return proces;
         }
     }
 }

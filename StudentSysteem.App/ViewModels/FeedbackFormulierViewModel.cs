@@ -45,9 +45,7 @@ namespace StudentSysteem.App.ViewModels
         }
 
         public ICommand OptiesCommand { get; }
-
-
-
+        
         [ObservableProperty]
         private bool isZelfEvaluatie;
 
@@ -92,6 +90,7 @@ namespace StudentSysteem.App.ViewModels
             try
             {
                 LaadStructuur();
+                MainThread.BeginInvokeOnMainThread(() => UpdatePaginaTitel());
             }
             catch (Exception ex)
             {
@@ -100,60 +99,35 @@ namespace StudentSysteem.App.ViewModels
             }
         }
 
-        public void UpdateTitelGebaseerdOpStatus()
+        public void UpdatePaginaTitel()
         {
-            IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-            List<BeoordelingItem> items = doelen.Select(d =>
             Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
         }
 
         private void LaadStructuur()
         {
             MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Clear());
+            
+            IEnumerable<Proces> processen = _procesService.HaalOp();
+            IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+            IEnumerable<Prestatiedoel> prestatiedoelen = _prestatiedoelService.HaalAllePrestatiedoelenOp();
+            IEnumerable<Processtap> alleStappen = _processtapService.HaalAlleProcesstappenOp(); // Of per proces ophalen
 
-            Proces processen = _procesServiceHaalAlleProcessenOp();
-            Vaardigheid vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-            Prestatiedoel prestatiedoelen = _prestatiedoelService.HaalPrestatiedoelenOp();
-
+            // Stappen ophalen die bij het proces horen
             foreach (Proces proces in processen)
             {
-                Processtap stappen = _processtapService.HaalProcesstappenOpVoorProces(proces.Id);
+                IEnumerable<Processtap> stappenVoorProces = _processtapService.HaalProcesstappenOpVoorProces(proces.Id);
 
-                BeoordelingItem item = new BeoordelingItem
+                foreach (Processtap stap in stappenVoorProces)
                 {
-                    PrestatiedoelId = d.Id,
-                    Titel = $"Prestatiedoel {d.Id}",
-                    PrestatiedoelBeschrijving = d.Beschrijving,
-                    AiAssessmentScale = d.AiAssessmentScale,
-                    Vaardigheid = gekoppeldeVaardgheid?.VaardigheidNaam ?? "Geen vaardigheid gekoppeld",
-                    LeertakenUrl = gekoppeldeVaardigheid?.LeertakenUrl,
-                    HboiActiviteit = gekoppeldeVaardigheid?.HboiActiviteit,
-                    Beschrijving = gekoppeldeVaardigheid?.VaardigheidBeschrijving,
-                    GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd
-                };
-                return item;
-            }).ToList();
-
-            Beoordelingen = new ObservableCollection<BeoordelingItem>(items);
-    
-            foreach (BeoordelingItem item in Beoordelingen)
-            {
-                if (item.Toelichtingen == null)
-                    item.Toelichtingen = new ObservableCollection<Toelichting>();
-
-                foreach (Processtap stap in stappen)
-                {
-                    IEnumerable<Vaardigheid> vaardighedenVoorStap =
-                        vaardigheden.Where(v => v.ProcesstapId == stap.Id);
+                    IEnumerable<Vaardigheid> vaardighedenVoorStap = vaardigheden.Where(v => v.ProcesstapId == stap.Id);
 
                     foreach (Vaardigheid vaardigheid in vaardighedenVoorStap)
                     {
-                        Prestatiedoel doel = prestatiedoelen
-                            .FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
-
+                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
                         if (doel == null) continue;
 
+                        // Maak het item aan
                         BeoordelingItem item = new BeoordelingItem
                         {
                             Proces = proces.Naam,
@@ -165,22 +139,23 @@ namespace StudentSysteem.App.ViewModels
                             PrestatiedoelId = doel.Id,
                             PrestatiedoelBeschrijving = doel.Beschrijving,
                             AiAssessmentScale = doel.AiAssessmentScale,
-                            Toelichtingen = new ObservableCollection<Toelichting>
-                            {
-                                _toelichtingService.MaakNieuweToelichting()
-                            }
+                            GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd
                         };
 
+                        // Criteria vullen
                         item.OpNiveauCriteria = new ObservableCollection<Criterium>(
                             _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Op niveau"));
 
                         item.BovenNiveauCriteria = new ObservableCollection<Criterium>(
                             _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Boven niveau"));
 
+                        // Toelichtingen initialiseren
+                        item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
+
                         HookToelichtingen(item);
 
-                        MainThread.BeginInvokeOnMainThread(() =>
-                            Beoordelingen.Add(item));
+                        // Geef terug aan UI
+                        MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Add(item));
                     }
                 }
             }

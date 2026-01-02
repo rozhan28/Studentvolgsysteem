@@ -18,7 +18,7 @@ namespace StudentSysteem.App.Views
             if (BindingContext is FeedbackFormulierViewModel vm && Shell.Current is AppShell shell)
             {
                 // Vraag de FeedbackFormulierViewModel om de Titel property te vullen
-                vm.UpdateTitelGebaseerdOpStatus();
+                vm.UpdatePaginaTitel();
         
                 // Geef die waarde door aan de header
                 this.Title = vm.Titel;

@@ -13,7 +13,7 @@ namespace StudentSysteem.Core.Services
             _repository = repository;
         }
 
-        public IEnumerable<Prestatiedoel> HaalPrestatiedoelenOp()
+        public IEnumerable<Prestatiedoel> HaalAllePrestatiedoelenOp()
         {
             return _repository.HaalAllePrestatiedoelenOp();
         }
