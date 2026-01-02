@@ -20,10 +20,9 @@ namespace StudentSysteem.Core.Models
         
         // Vaardigheid
         public string Titel { get; set; }
-        public string Vaardigheid { get; set; }
+        public string HboiActiviteit { get; set; }
         public string Beschrijving { get; set; }
         public string LeertakenUrl { get; set; } = "";
-        public string HboiActiviteit { get; set; } = "";
 
         // Prestatiedoel-balk
         public string Proces { get; set; }
@@ -35,7 +34,7 @@ namespace StudentSysteem.Core.Models
             set { _isExpanded = value; Notify(); }
         }
         public string ExpanderTitel =>
-            $"{Proces} | {Processtap} | {Vaardigheid}";
+            $"{Proces} | {Processtap} | {HboiActiviteit}";
         
         //public string Titel { get; set; } = "";
 

@@ -124,7 +124,6 @@ namespace StudentSysteem.App.ViewModels
                         {
                             Proces = proces.Naam,
                             Processtap = stap.Naam,
-                            Vaardigheid = vaardigheid.VaardigheidNaam,
                             Beschrijving = vaardigheid.VaardigheidBeschrijving,
                             HboiActiviteit = vaardigheid.HboiActiviteit,
                             LeertakenUrl = vaardigheid.LeertakenUrl,
