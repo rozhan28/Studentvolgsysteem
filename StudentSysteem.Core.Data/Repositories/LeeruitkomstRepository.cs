@@ -14,13 +14,19 @@ namespace StudentSysteem.Core.Data.Repositories
                     naam VARCHAR(50),
                     hboi_activiteit VARCHAR(50))");
 
-            List<string> insertQueries = new()
-            {
+            List<string> insertQueries =
+            [
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
                   VALUES(1, 'Analyseren', 'Analyseren')",
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
-                  VALUES(2, 'Ontwerpen', 'Ontwerpen')"
-            };
+                  VALUES(2, 'Adviseren', 'Adviseren')",
+                @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
+                  VALUES(3, 'Ontwerpen', 'Ontwerpen')"
+                @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
+                  VALUES(4, 'Realiseren', 'Realiseren')"
+                @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
+                  VALUES(5, 'Manage & Control', 'Manage & Control')"
+            ];
             VoegMeerdereInMetTransactie(insertQueries);
 
         }
