@@ -18,16 +18,15 @@ namespace StudentSysteem.App.ViewModels
     [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
     public partial class FeedbackFormulierViewModel : BasisViewModel, INotifyPropertyChanged
     {
-        private readonly IProcesRepository _procesRepository;
-        private readonly IProcesstapRepository _processtapRepository;
-        private readonly IVaardigheidRepository _vaardigheidRepository;
+        private readonly IProcesService _procesService;
+        private readonly IProcesstapService _processtapService;
         private readonly IPrestatiedoelService _prestatiedoelService;
-        private readonly ICriteriumRepository _criteriumRepository;
+        private readonly ICriteriumService _criteriumService;
         private readonly IFeedbackFormulierService _feedbackService;
         private readonly IToelichtingService _toelichtingService;
         private readonly IMeldingService _meldingService;
         private readonly IZelfEvaluatieService _zelfEvaluatieService;
-        private readonly IVaardigheidService vaardigheidService;
+        private readonly IVaardigheidService _vaardigheidService;
 
         private readonly bool _isDocent;
 
