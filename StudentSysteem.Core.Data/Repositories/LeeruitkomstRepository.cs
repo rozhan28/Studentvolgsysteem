@@ -21,9 +21,9 @@ namespace StudentSysteem.Core.Data.Repositories
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
                   VALUES(2, 'Adviseren', 'Adviseren')",
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
-                  VALUES(3, 'Ontwerpen', 'Ontwerpen')"
+                  VALUES(3, 'Ontwerpen', 'Ontwerpen')",
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
-                  VALUES(4, 'Realiseren', 'Realiseren')"
+                  VALUES(4, 'Realiseren', 'Realiseren')",
                 @"INSERT OR IGNORE INTO Leeruitkomst(leeruitkomst_id, naam, hboi_activiteit) 
                   VALUES(5, 'Manage & Control', 'Manage & Control')"
             ];
