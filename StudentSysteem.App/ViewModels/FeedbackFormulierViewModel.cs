@@ -56,22 +56,22 @@ namespace StudentSysteem.App.ViewModels
         public ICommand LeertakenCommand { get; }
 
         public FeedbackFormulierViewModel(
-            IProcesRepository procesRepository,
-            IProcesstapRepository processtapRepository,
-            IVaardigheidRepository vaardigheidRepository,
+            IProcesService procesService,
+            IProcesstapService processtapService,
+            IVaardigheidService vaardigheidService,
             IPrestatiedoelService prestatiedoelService,
-            ICriteriumRepository criteriumRepository,
+            ICriteriumService criteriumService,
             IFeedbackFormulierService feedbackService,
             IToelichtingService toelichtingService,
             IMeldingService meldingService,
             IZelfEvaluatieService zelfEvaluatieService,
             GlobaleViewModel globaal)
         {
-            _procesRepository = procesRepository;
-            _processtapRepository = processtapRepository;
-            _vaardigheidRepository = vaardigheidRepository;
+            _procesService = procesService;
+            _processtapService = processtapService;
+            _vaardigheidService = vaardigheidService;
             _prestatiedoelService = prestatiedoelService;
-            _criteriumRepository = criteriumRepository;
+            _criteriumService = criteriumService;
             _feedbackService = feedbackService;
             _toelichtingService = toelichtingService;
             _meldingService = meldingService;
@@ -104,7 +104,6 @@ namespace StudentSysteem.App.ViewModels
         {
             IEnumerable<Prestatiedoel> doelen = _prestatiedoelService.HaalPrestatiedoelenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
-    
             List<BeoordelingItem> items = doelen.Select(d =>
             Titel = IsZelfEvaluatie ? "Zelfevaluatieformulier" : "Feedbackformulier";
         }
@@ -113,15 +112,15 @@ namespace StudentSysteem.App.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Clear());
 
-            var processen = _procesRepository.HaalAlleProcessenOp();
-            var vaardigheden = _vaardigheidRepository.HaalAlleVaardighedenOp();
-            var prestatiedoelen = _prestatiedoelService.HaalPrestatiedoelenOp();
+            Proces processen = _procesServiceHaalAlleProcessenOp();
+            Vaardigheid vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
+            Prestatiedoel prestatiedoelen = _prestatiedoelService.HaalPrestatiedoelenOp();
 
-            foreach (var proces in processen)
+            foreach (Proces proces in processen)
             {
-                var stappen = _processtapRepository.HaalProcesstappenOpVoorProces(proces.Id);
+                Processtap stappen = _processtapService.HaalProcesstappenOpVoorProces(proces.Id);
 
-                var item = new BeoordelingItem
+                BeoordelingItem item = new BeoordelingItem
                 {
                     PrestatiedoelId = d.Id,
                     Titel = $"Prestatiedoel {d.Id}",
@@ -143,19 +142,19 @@ namespace StudentSysteem.App.ViewModels
                 if (item.Toelichtingen == null)
                     item.Toelichtingen = new ObservableCollection<Toelichting>();
 
-                foreach (var stap in stappen)
+                foreach (Processtap stap in stappen)
                 {
-                    var vaardighedenVoorStap =
+                    IEnumerable<Vaardigheid> vaardighedenVoorStap =
                         vaardigheden.Where(v => v.ProcesstapId == stap.Id);
 
-                    foreach (var vaardigheid in vaardighedenVoorStap)
+                    foreach (Vaardigheid vaardigheid in vaardighedenVoorStap)
                     {
-                        var doel = prestatiedoelen
+                        Prestatiedoel doel = prestatiedoelen
                             .FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
 
                         if (doel == null) continue;
 
-                        var item = new BeoordelingItem
+                        BeoordelingItem item = new BeoordelingItem
                         {
                             Proces = proces.Naam,
                             Processtap = stap.Naam,
@@ -173,10 +172,10 @@ namespace StudentSysteem.App.ViewModels
                         };
 
                         item.OpNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Op niveau"));
+                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Op niveau"));
 
                         item.BovenNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Boven niveau"));
+                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Boven niveau"));
 
                         HookToelichtingen(item);
 
@@ -205,7 +204,7 @@ namespace StudentSysteem.App.ViewModels
                     PrestatieNiveau = "Ingevuld"
                 });
 
-                foreach (var item in Beoordelingen)
+                foreach (BeoordelingItem item in Beoordelingen)
                 {
                     if (item.Toelichtingen.Any())
                         _feedbackService.SlaToelichtingenOp(
@@ -228,7 +227,7 @@ namespace StudentSysteem.App.ViewModels
         {
             bool allesGeldig = true;
 
-            foreach (var item in Beoordelingen)
+            foreach (BeoordelingItem item in Beoordelingen)
             {
                 bool niveauOk =
                     item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
@@ -290,12 +289,12 @@ namespace StudentSysteem.App.ViewModels
         {
             if (toelichting == null) return;
 
-            var parent = Beoordelingen
+            BeoordelingItem parent = Beoordelingen
                 .FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
 
             if (parent == null) return;
 
-            var opties = parent.OpNiveauCriteria
+            List<string> opties = parent.OpNiveauCriteria
                 .Concat(parent.BovenNiveauCriteria)
                 .Select(c => c.DisplayNaam)
                 .Distinct()
