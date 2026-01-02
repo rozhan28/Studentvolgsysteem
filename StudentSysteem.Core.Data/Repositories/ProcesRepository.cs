@@ -38,14 +38,36 @@ namespace StudentSysteem.Core.Data.Repositories
                 {
                     if (reader.Read())
                     {
-                        int id = reader.GetInt32(0);
-                        string naam = reader.GetString(1);
-                        proces = new Proces(id, naam);
+                        int ProcesId = reader.GetInt32(0);
+                        string ProcesNaam = reader.GetString(1);
+                        proces = new Proces(ProcesId, ProcesNaam);
                     }
                 }
             }
             SluitVerbinding();
             return proces;
+        }
+        
+        public IEnumerable<Proces> HaalAlleProcessenOp()
+        {
+            List<Proces> processen = new();
+            processen.Clear();
+            string selectQuery = "SELECT proces_id, naam FROM Proces";
+            OpenVerbinding();
+
+            using (SqliteCommand command = new(selectQuery, Verbinding))
+            {
+                SqliteDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int ProcesId = reader.GetInt32(0);
+                    string ProcesNaam = reader.GetString(1);
+                    processen.Add(new(ProcesId, ProcesNaam));
+                }
+            }
+            SluitVerbinding();
+            return processen;
         }
     }
 }

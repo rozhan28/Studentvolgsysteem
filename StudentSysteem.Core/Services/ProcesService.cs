@@ -16,4 +16,9 @@ public class ProcesService
     {
         return _procesRepository.HaalOp(procesId);
     }
+    
+    public IEnumerable<Proces> HaalAlleProcessenOp()
+    {
+        return _procesRepository.HaalAlleProcessenOp();
+    }
 }
