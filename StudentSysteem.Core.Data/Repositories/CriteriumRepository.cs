@@ -1,15 +1,12 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
-using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
-using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class CriteriumRepository : DatabaseVerbinding, ICriteriumRepository
     {
-        public CriteriumRepository(DbConnectieHelper dbConnectieHelper)
-            : base(dbConnectieHelper)
+        public CriteriumRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
             MaakTabel(@"
             CREATE TABLE IF NOT EXISTS Criterium (
@@ -18,7 +15,7 @@ namespace StudentSysteem.Core.Data.Repositories
                 niveau TEXT NOT NULL
             );");
 
-            // Koppeltabel 
+            // Koppeltabel
             MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
                         feedback_id INTEGER NOT NULL,
                         criterium_id INTEGER NOT NULL,
@@ -29,26 +26,25 @@ namespace StudentSysteem.Core.Data.Repositories
                     );
                     ");
 
-            List<string> seed = new()
-            {
+            List<string> insertQueries =
+            [
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (1, 'De syntax van het domeinmodel is correct volgens UML', 'Op niveau')",
+                  VALUES (1, 'De syntax van het domeinmodel is correct volgens UML', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (2, 'Het domeinmodel weerspiegelt het probleemgebied', 'Op niveau')",
+                  VALUES (2, 'Het domeinmodel weerspiegelt het probleemgebied', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd', 'Op niveau')",
+                  VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp', 'Op niveau')",
+                  VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (5, 'Het domeinmodel is volledig en logisch', 'Boven niveau')",
+                  VALUES (5, 'Het domeinmodel is volledig en logisch', 'BovenNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'Boven niveau')"
-            };
-            VoegMeerdereInMetTransactie(seed);
-
+                  VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'BovenNiveau')"
+            ];
+            VoegMeerdereInMetTransactie(insertQueries);
         }
 
-        public List<Criterium> HaalCriteriaOpVoorNiveau(string niveau)
+        public List<Criterium> HaalCriteriaOpVoorNiveau(Niveauaanduiding niveau)
         {
             List<Criterium> lijst = new();
 
@@ -61,7 +57,7 @@ namespace StudentSysteem.Core.Data.Repositories
                 WHERE niveau = @niveau;
             ";
 
-            cmd.Parameters.AddWithValue("@niveau", niveau);
+            cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
 
             using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -73,14 +69,11 @@ namespace StudentSysteem.Core.Data.Repositories
                     Niveau = reader.GetString(2)
                 });
             }
-
             SluitVerbinding();
             return lijst;
         }
 
-        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(
-            int prestatiedoelId,
-            string niveau)
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveau)
         {
             List<Criterium> lijst = new List<Criterium>();
 
@@ -97,7 +90,7 @@ namespace StudentSysteem.Core.Data.Repositories
             ";
 
             cmd.Parameters.AddWithValue("@prestatiedoelId", prestatiedoelId);
-            cmd.Parameters.AddWithValue("@niveau", niveau);
+            cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
 
             using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -114,17 +107,14 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-        public void SlaGeselecteerdeCriteriaOp(
-            int feedbackId,
-            IEnumerable<Criterium> geselecteerdeCriteria,
-            string niveau)
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria, Niveauaanduiding niveau)
         {
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();
 
             try
             {
-                foreach (var criterium in geselecteerdeCriteria)
+                foreach (Criterium criterium in geselecteerdeCriteria)
                 {
                     using var cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
@@ -135,12 +125,11 @@ namespace StudentSysteem.Core.Data.Repositories
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
-                    cmd.Parameters.AddWithValue("@niveau", niveau);
+                    cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
                     
                     cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();
                 }
-
                 transactie.Commit();
             }
             catch

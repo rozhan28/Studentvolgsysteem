@@ -13,14 +13,19 @@ namespace StudentSysteem.Core.Services
             _criteriumRepository = criteriumRepository;
         }
 
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveau)
+        {
+            return _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, niveau);
+        }
+
         public List<Criterium> HaalOpNiveauCriteriaOp()
         {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Op niveau");
+            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau);
         }
 
         public List<Criterium> HaalBovenNiveauCriteriaOp()
         {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau("Boven niveau");
+            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau);
         }
     }
 }

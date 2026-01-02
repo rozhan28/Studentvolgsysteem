@@ -1,9 +1,10 @@
 using StudentSysteem.Core.Interfaces.Repository;
+using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Services;
 
-public class ProcesService
+public class ProcesService : IProcesService
 {
     private readonly IProcesRepository _procesRepository;
     

@@ -48,11 +48,10 @@ public static class MauiProgram
         // Helpers
         builder.Services.AddSingleton<DbConnectieHelper>();
 
-        // Repositories (belangrijk: volgorde van creatie)
+        // Repositories
         builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
         builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
         builder.Services.AddSingleton<IProcesRepository, ProcesRepository>();
-
         builder.Services.AddSingleton<IProcesstapRepository, ProcesstapRepository>();
         builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
         builder.Services.AddSingleton<ILeeruitkomstRepository, LeeruitkomstRepository>();
@@ -62,17 +61,19 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
 
         // Services
-        builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
-        builder.Services.AddSingleton<IMeldingService, MeldingService>();
         builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
+        builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
         builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
         builder.Services.AddSingleton<ICriteriumService, CriteriumService>();
+        builder.Services.AddSingleton<IProcesService, ProcesService>();
+        builder.Services.AddSingleton<IProcesstapService, ProcesstapService>();
         builder.Services.AddSingleton<ILeeruitkomstService, LeeruitkomstService>();
         builder.Services.AddSingleton<IVaardigheidService, VaardigheidService>();
-        builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
         builder.Services.AddSingleton<IClusterService, ClusterService>();
         builder.Services.AddSingleton<IStudentService, StudentService>();
         builder.Services.AddSingleton<IDocentService, DocentService>();
+        builder.Services.AddSingleton<IMeldingService, MeldingService>();
+        builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
 
         // ViewModels
         builder.Services.AddSingleton<GlobaleViewModel>();
@@ -87,7 +88,6 @@ public static class MauiProgram
             scope.ServiceProvider.GetRequiredService<IPrestatiedoelRepository>();
             scope.ServiceProvider.GetRequiredService<ICriteriumRepository>();
             scope.ServiceProvider.GetRequiredService<IProcesRepository>();
-
             scope.ServiceProvider.GetRequiredService<IProcesstapRepository>();
             scope.ServiceProvider.GetRequiredService<IFeedbackRepository>();
             scope.ServiceProvider.GetRequiredService<ILeeruitkomstRepository>();

@@ -143,10 +143,10 @@ namespace StudentSysteem.App.ViewModels
 
                         // Criteria vullen
                         item.OpNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Op niveau"));
+                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, Niveauaanduiding.OpNiveau));
 
                         item.BovenNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, "Boven niveau"));
+                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, Niveauaanduiding.BovenNiveau));
 
                         // Toelichtingen initialiseren
                         item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());

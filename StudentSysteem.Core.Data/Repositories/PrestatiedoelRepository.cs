@@ -1,7 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
-using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -15,7 +14,6 @@ namespace StudentSysteem.Core.Data.Repositories
                     prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     niveau TEXT NOT NULL,
                     beschrijving TEXT NOT NULL,
-                    criterium_id INTEGER,
                     ai_assessment_scale TEXT
                 );
             ");
@@ -29,33 +27,30 @@ namespace StudentSysteem.Core.Data.Repositories
                     FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                 );
             ");
-            
-            List<string> seedPrestatiedoelen = new()
-            {
-                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
-                  VALUES ('Op niveau',
+
+            List<string> insertQueries =
+            [
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, ai_assessment_scale)
+                  VALUES ('OpNiveau',
                           'Maak een domeinmodel volgens een UML klassendiagram en leg deze vast in je plan en/of ontwerpdocumenten.',
-                          1,
                           'Samenwerking')",
-                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, criterium_id, ai_assessment_scale)
-                  VALUES ('Op niveau',
+                @"INSERT OR IGNORE INTO Prestatiedoel (niveau, beschrijving, ai_assessment_scale)
+                  VALUES ('OpNiveau',
                           'Toepassen van modelleertechnieken door principes toe te passen volgens de ontwerprichtlijnen van HBO-ICT.',
-                          4,
-                          'Techniek')"
-            };
-            
-            List<string> seedKoppeling = new()
-            {
+                          'Samenwerking')"
+            ];
+
+            List<string> insertQueriesKoppeltabel =
+            [
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 1)",
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 2)",
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 3)",
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (1, 5)",
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 4)",
                 @"INSERT OR IGNORE INTO PrestatiedoelCriterium (prestatiedoel_id, criterium_id) VALUES (2, 6)"
-            };
-
-            VoegMeerdereInMetTransactie(seedPrestatiedoelen);
-            VoegMeerdereInMetTransactie(seedKoppeling);
+            ];
+            VoegMeerdereInMetTransactie(insertQueries);
+            VoegMeerdereInMetTransactie(insertQueriesKoppeltabel);
         }
 
         public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
@@ -65,7 +60,7 @@ namespace StudentSysteem.Core.Data.Repositories
             OpenVerbinding();
             using var cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
-                SELECT prestatiedoel_id, niveau, beschrijving, criterium_id, ai_assessment_scale
+                SELECT prestatiedoel_id, niveau, beschrijving, ai_assessment_scale
                 FROM Prestatiedoel;
             ";
 
@@ -77,8 +72,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     Id = reader.GetInt32(0),
                     Niveau = reader.GetString(1),
                     Beschrijving = reader.GetString(2),
-                    CriteriumId = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
-                    AiAssessmentScale = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
+                    AiAssessmentScale = reader.IsDBNull(3) ? string.Empty : reader.GetString(4)
                 });
             }
 

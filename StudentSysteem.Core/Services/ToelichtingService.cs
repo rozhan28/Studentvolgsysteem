@@ -26,8 +26,8 @@ namespace StudentSysteem.Core.Services
 
         public List<ToelichtingOptie> GetBeschikbareOpties(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId)
         {
-            var alleOpties = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, "Op niveau")
-                .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, "Boven niveau"))
+            var alleOpties = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau)
+                .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau))
                 .Select(c => new ToelichtingOptie
                 {
                     Beschrijving = c.Beschrijving,
@@ -65,8 +65,8 @@ namespace StudentSysteem.Core.Services
         {
             get
             {
-                return _criteriumRepository.HaalCriteriaOpVoorNiveau("Op niveau").Count +
-                       _criteriumRepository.HaalCriteriaOpVoorNiveau("Boven niveau").Count + 1;
+                return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau).Count +
+                       _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.BovenNiveau).Count + 1;
             }
         }
     }
