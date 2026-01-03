@@ -1,31 +1,16 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace StudentSysteem.Core.Models
+﻿namespace StudentSysteem.Core.Models
 {
-    public class Criterium : INotifyPropertyChanged
+    public class Criterium
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public int Id { get; set; }
         public string Beschrijving { get; set; } = "";
         public string Niveau { get; set; } = "";
 
-        public string DisplayNaam => $"{Beschrijving} ({Niveau})";
-
-        private bool _isGeselecteerd;
-        public bool IsGeselecteerd
+        public Criterium(int id, string beschrijving, string niveau)
         {
-            get => _isGeselecteerd;
-            set
-            {
-                if (_isGeselecteerd == value) return;
-                _isGeselecteerd = value;
-                Notify();
-            }
+            Id = id;
+            Beschrijving = beschrijving;
+            Niveau = niveau;
         }
-
-        private void Notify([CallerMemberName] string prop = "")
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
