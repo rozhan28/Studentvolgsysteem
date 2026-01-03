@@ -19,7 +19,6 @@ namespace StudentSysteem.App.ViewModels
         private void LaadLeeruitkomsten()
         {
             IEnumerable<Leeruitkomst> leeruitkomstService = _leeruitkomstService.HaalAlleLeeruitkomstenOp();
-
             // Beperk het dashboard om maximaal 5 HBO-i-activiteit te laten zien in de tabel
             foreach (Leeruitkomst leeruitkomst in leeruitkomstService.Take(5))
             {
