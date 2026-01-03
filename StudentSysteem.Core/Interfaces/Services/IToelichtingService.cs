@@ -7,8 +7,9 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IToelichtingService
     {
-        Toelichting MaakNieuweToelichting();
-        List<ToelichtingOptie> GetBeschikbareOpties(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId);
-        int TotaleOptiesCount { get; }
+        public Toelichting MaakNieuweToelichting();
+        public List<string> GetBeschikbareCriteria(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId);
+        public void KoppelGekozenOptie(Toelichting toelichting, string gekozenTitel, int prestatiedoelId);
+        public int BerekenMaxToelichtingen(int prestatiedoelId);
     }
 }

@@ -26,6 +26,7 @@ namespace StudentSysteem.App.ViewModels
         public ObservableCollection<BeoordelingItem> Beoordelingen { get; } = new();
 
         private string _statusMelding;
+
         public string StatusMelding
         {
             get => _statusMelding;
@@ -38,9 +39,8 @@ namespace StudentSysteem.App.ViewModels
         }
 
         public ICommand OptiesCommand { get; }
-        
-        [ObservableProperty]
-        private bool isZelfEvaluatie;
+
+        [ObservableProperty] private bool isZelfEvaluatie;
 
         public ICommand OpslaanCommand { get; }
         public ICommand VoegExtraToelichtingToeCommand { get; }
@@ -100,7 +100,7 @@ namespace StudentSysteem.App.ViewModels
         private void LaadStructuur()
         {
             MainThread.BeginInvokeOnMainThread(() => Beoordelingen.Clear());
-            
+
             IEnumerable<Proces> processen = _procesService.HaalAlleProcessenOp();
             IEnumerable<Vaardigheid> vaardigheden = _vaardigheidService.HaalAlleVaardighedenOp();
             IEnumerable<Prestatiedoel> prestatiedoelen = _prestatiedoelService.HaalAllePrestatiedoelenOp();
@@ -217,7 +217,18 @@ namespace StudentSysteem.App.ViewModels
 
             return allesGeldig;
         }
+        
+        // Leertaken Url
+        private async Task OpenLeertakenUrl(string url)
+        {
+            if (!string.IsNullOrWhiteSpace(url) &&
+                Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                await Browser.Default.OpenAsync(url);
+            }
+        }
 
+        // Toelichtingen
         private bool ZijnAlleToelichtingenOk(ObservableCollection<Toelichting> toelichtingen)
         {
             if (_isDocent) return true;
@@ -231,7 +242,7 @@ namespace StudentSysteem.App.ViewModels
         private void VoegExtraToelichtingToe(BeoordelingItem item)
         {
             if (item == null) return;
-            if (item.Toelichtingen.Count >= _toelichtingService.TotaleOptiesCount) return;
+            if (item.Toelichtingen.Count >= _toelichtingService.BerekenMaxToelichtingen(item.PrestatiedoelId)) return;
 
             item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
         }
@@ -239,51 +250,44 @@ namespace StudentSysteem.App.ViewModels
         private void HookToelichtingen(BeoordelingItem item)
         {
             item.KanExtraToelichtingToevoegen =
-                item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+                item.Toelichtingen.Count < _toelichtingService.BerekenMaxToelichtingen(item.PrestatiedoelId);
 
             item.Toelichtingen.CollectionChanged += (_, _) =>
             {
                 item.KanExtraToelichtingToevoegen =
-                    item.Toelichtingen.Count < _toelichtingService.TotaleOptiesCount;
+                    item.Toelichtingen.Count < _toelichtingService.BerekenMaxToelichtingen(item.PrestatiedoelId);
             };
-        }
-
-        private async Task OpenLeertakenUrl(string url)
-        {
-            if (!string.IsNullOrWhiteSpace(url) &&
-                Uri.IsWellFormedUriString(url, UriKind.Absolute))
-            {
-                await Browser.Default.OpenAsync(url);
-            }
         }
 
         private async Task ToonCriteriaKeuze(Toelichting toelichting)
         {
             if (toelichting == null) return;
 
-            BeoordelingItem parent = Beoordelingen
-                .FirstOrDefault(b => b.Toelichtingen.Contains(toelichting));
-
+            // Zoek eerst de parent (het BeoordelingItem) waar deze toelichting bij hoort
+            BeoordelingItem parent = Beoordelingen.FirstOrDefault(delegate(BeoordelingItem b)
+            {
+                return b.Toelichtingen.Contains(toelichting);
+            });
             if (parent == null) return;
 
-            List<string> opties = parent.OpNiveauCriteria
-                .Concat(parent.BovenNiveauCriteria)
-                .Select(c => c.DisplayNaam)
-                .Distinct()
-                .ToList();
+            // Titels ophalen via de service
+            List<string> beschikbareOpties =
+                _toelichtingService.GetBeschikbareCriteria(parent.Toelichtingen, parent.PrestatiedoelId);
+            string[] titels = beschikbareOpties.ToArray();
 
-            opties.Insert(0, "Algemeen");
+            string keuze = await Shell.Current.DisplayActionSheet("Koppel aan...", "Annuleren", null, titels);
 
-            string keuze = await Shell.Current.DisplayActionSheet(
-                "Koppel toelichting aan criterium",
-                "Annuleren",
-                null,
-                opties.ToArray());
+            if (keuze != "Annuleren" && !string.IsNullOrWhiteSpace(keuze))
+            {
+                _toelichtingService.KoppelGekozenOptie(toelichting, keuze, parent.PrestatiedoelId);
 
-            if (keuze == "Annuleren" || string.IsNullOrWhiteSpace(keuze))
-                return;
-
-            toelichting.GeselecteerdeOptie = keuze;
+                // UI-refresh trick
+                int index = parent.Toelichtingen.IndexOf(toelichting);
+                if (index != -1)
+                {
+                    parent.Toelichtingen[index] = toelichting;
+                }
+            }
         }
     }
 }

@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Services
 {
@@ -24,57 +21,73 @@ namespace StudentSysteem.Core.Services
             };
         }
 
-        public List<ToelichtingOptie> GetBeschikbareOpties(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId)
+        public List<string> GetBeschikbareCriteria(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId)
         {
-            var alleOpties = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau)
-                .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau))
-                .Select(c => new ToelichtingOptie
-                {
-                    Beschrijving = c.Beschrijving,
-                    Niveau = c.Niveau
-                })
+            // Criteria ophalen voor beide niveaus
+            List<Criterium> opNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau);
+            List<Criterium> bovenNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau);
+
+            // Lijst maken van alle mogelijke criteria
+            List<string> alleTitels = opNiveau
+                .Concat(bovenNiveau)
+                .Select(delegate (Criterium c) { return c.Beschrijving; })
                 .ToList();
 
-            alleOpties.Insert(0, new ToelichtingOptie
-            {
-                Beschrijving = "Algemeen",
-                Niveau = "" 
-            });
+            // 'Algemeen' toevoegen aan het begin
+            alleTitels.Insert(0, "Algemeen");
 
-            var gebruikte = new HashSet<string>();
-            foreach (var t in huidigeToelichtingen ?? Enumerable.Empty<Toelichting>())
+            // Gekozen criteria in een HashSet
+            HashSet<string> gekozenCriteria = new HashSet<string>();
+            foreach (Toelichting t in huidigeToelichtingen ?? Enumerable.Empty<Toelichting>())
             {
                 if (!string.IsNullOrEmpty(t.GeselecteerdeOptie) && t.GeselecteerdeOptie != "Toelichting gekoppeld aan...")
-                    gebruikte.Add(t.GeselecteerdeOptie);
+                {
+                    gekozenCriteria.Add(t.GeselecteerdeOptie);
+                }
             }
 
-            return alleOpties.Where(x => !gebruikte.Contains(x.Beschrijving)).ToList();
-        }
-
-
-        public void KiesOptieVoorToelichting(Toelichting toelichting, ToelichtingOptie optie)
-        {
-            if (toelichting != null && optie != null)
+            // Filter criteria die nog niet gekozen zijn
+            List<string> beschikbareTitels = new List<string>();
+            foreach (string titel in alleTitels)
             {
-                toelichting.GeselecteerdeOptie = optie.Beschrijving;
-                toelichting.Niveau = optie.Beschrijving == "Algemeen" ? "" : optie.Niveau;
+                if (!gekozenCriteria.Contains(titel))
+                {
+                    beschikbareTitels.Add(titel);
+                }
             }
+
+            return beschikbareTitels;
         }
 
-        public int TotaleOptiesCount
+        public void KoppelGekozenOptie(Toelichting toelichting, string gekozenTitel, int prestatiedoelId)
         {
-            get
+            if (toelichting == null || string.IsNullOrEmpty(gekozenTitel)) return;
+
+            toelichting.GeselecteerdeOptie = gekozenTitel;
+
+            if (gekozenTitel == "Algemeen")
             {
-                return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau).Count +
-                       _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.BovenNiveau).Count + 1;
+                toelichting.Niveau = "Algemeen";
+            }
+            else
+            {
+                // Criterium opzoeken om het niveau te achterhalen
+                List<Criterium> criteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau)
+                    .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau))
+                    .ToList();
+
+                Criterium gevondenCriterium = criteria.FirstOrDefault(delegate (Criterium c) { return c.Beschrijving == gekozenTitel; });
+                toelichting.Niveau = gevondenCriterium != null ? gevondenCriterium.Niveau : "";
             }
         }
-    }
 
-    public class ToelichtingOptie
-    {
-        public string Beschrijving { get; set; } = "";
-        public string Niveau { get; set; } = "";
-        public override string ToString() => string.IsNullOrEmpty(Niveau) ? Beschrijving : $"{Beschrijving} ({Niveau})";
+        public int BerekenMaxToelichtingen(int prestatiedoelId)
+        {
+            int aantalOpNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau).Count;
+            int aantalBovenNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau).Count;
+            
+            // De som van de criteria plus 1 voor 'Algemeen'
+            return aantalOpNiveau + aantalBovenNiveau + 1;
+        }
     }
 }
