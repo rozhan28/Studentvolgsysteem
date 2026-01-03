@@ -19,14 +19,14 @@ namespace StudentSysteem.Core.Models
         public string AiAssessmentScale { get; set; }
         
         // Vaardigheid
-        public string Titel { get; set; }
+        public string VaardigheidNaam { get; set; }
         public string HboiActiviteit { get; set; }
-        public string Beschrijving { get; set; }
+        public string VaardigheidBeschrijving { get; set; }
         public string LeertakenUrl { get; set; } = "";
 
         // Prestatiedoel-balk
-        public string Proces { get; set; }
-        public string Processtap { get; set; }
+        public string ProcesNaam { get; set; }
+        public string ProcesstapNaam { get; set; }
         private bool _isExpanded;
         public bool IsExpanded
         {
@@ -34,10 +34,8 @@ namespace StudentSysteem.Core.Models
             set { _isExpanded = value; Notify(); }
         }
         public string ExpanderTitel =>
-            $"{Proces} | {Processtap} | {HboiActiviteit}";
+            $"{ProcesNaam} | {ProcesstapNaam} | {VaardigheidNaam}";
         
-        //public string Titel { get; set; } = "";
-
         // Criteria
         public ObservableCollection<Criterium> OpNiveauCriteria { get; set; } = new();
         public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; } = new();

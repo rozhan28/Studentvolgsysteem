@@ -112,19 +112,20 @@ namespace StudentSysteem.App.ViewModels
 
                 foreach (Processtap stap in stappenVoorProces)
                 {
-                    IEnumerable<Vaardigheid> vaardighedenVoorStap = vaardigheden.Where(v => v.Processtap_id == stap.Id);
+                    IEnumerable<Vaardigheid> vaardighedenVoorStap = vaardigheden.Where(v => v.ProcesstapId == stap.Id);
 
                     foreach (Vaardigheid vaardigheid in vaardighedenVoorStap)
                     {
-                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.Prestatiedoel_id);
+                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
                         if (doel == null) continue;
 
                         // Maak het item aan
                         BeoordelingItem item = new BeoordelingItem
                         {
-                            Proces = proces.Naam,
-                            Processtap = stap.Naam,
-                            Beschrijving = vaardigheid.VaardigheidBeschrijving,
+                            ProcesNaam = proces.Naam,
+                            ProcesstapNaam = stap.Naam,
+                            VaardigheidNaam = vaardigheid.VaardigheidNaam,
+                            VaardigheidBeschrijving = vaardigheid.VaardigheidBeschrijving,
                             HboiActiviteit = vaardigheid.HboiActiviteit,
                             LeertakenUrl = vaardigheid.LeertakenUrl,
                             PrestatiedoelId = doel.Id,

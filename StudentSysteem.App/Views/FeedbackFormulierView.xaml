@@ -83,7 +83,7 @@
                                             <VerticalStackLayout Spacing="2">
                                                 <Label Text="Vaardigheid" FontFamily="Italic"/>
                                                 <Label Text="{Binding Vaardigheid}" FontFamily="Bold"/>
-                                                <Label Text="{Binding Beschrijving}"/>
+                                                <Label Text="{Binding VaardigheidBeschrijving}"/>
                                             </VerticalStackLayout>
                                             
                                             <VerticalStackLayout Spacing="2">

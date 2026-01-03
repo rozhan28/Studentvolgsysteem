@@ -1,9 +1,6 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
-using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -27,7 +24,7 @@ namespace StudentSysteem.Core.Data.Repositories
             ");
         }
 
-        // Maakt een nieuwe feedback aan en geeft de feedback_id terug
+        // Maakt een nieuw feedback-object aan en geeft de feedback_id terug
         public int MaakFeedbackAan(string niveau)
         {
             OpenVerbinding();
@@ -68,13 +65,13 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
         }
 
-        // Voeg meerdere feedbackrecords toe in een transactie
+        // Voeg meerdere feedbackrecords toe
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             base.VoegMeerdereInMetTransactie(regels);
         }
 
-        // Voeg meerdere toelichtingen toe voor een student in één transactie
+        // Voeg meerdere toelichtingen toe voor een student
         public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
         {
             OpenVerbinding();

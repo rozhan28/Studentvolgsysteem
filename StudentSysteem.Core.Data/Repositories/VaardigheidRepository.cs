@@ -2,22 +2,19 @@
 using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
-using System.Collections.Generic;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
     public class VaardigheidRepository : DatabaseVerbinding, IVaardigheidRepository
     {
-        private readonly List<Vaardigheid> vaardigheidLijst = new();
-
-        public VaardigheidRepository(DbConnectieHelper dbConnectieHelper)
-            : base(dbConnectieHelper)
+        public VaardigheidRepository(DbConnectieHelper dbConnectieHelper) : base(dbConnectieHelper)
         {
-            // Tabel Vaardigheid
+            // Let op: de naam is hier UNIQUE, anders ziet de applicatie de insert continu als 'nieuwe informatie'
+            // en zal er continu een nieuwe expander met dezelfde info verschijnen
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Vaardigheid (
                     vaardigheid_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    naam VARCHAR(255),
+                    naam VARCHAR(255) UNIQUE,
                     beschrijving TEXT,
                     hboi_activiteit VARCHAR(255),
                     leertaken_url VARCHAR(255),
@@ -29,33 +26,33 @@ namespace StudentSysteem.Core.Data.Repositories
                     FOREIGN KEY(leeruitkomst_id) REFERENCES Leeruitkomst(leeruitkomst_id)
                 );
             ");
-
-            // Seed-data
-            List<string> insertQueries = new()
-            {
+            
+            List<string> insertQueries =
+            [
                 @"INSERT OR IGNORE INTO Vaardigheid
                   (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id, leeruitkomst_id)
                   VALUES (
-                    'Analyseren',
-                    'Het maken van een domeinmodel volgens een UML klassendiagram',
                     'Maken domeinmodel',
+                    'Het maken van een domeinmodel volgens een UML klassendiagram',
+                    'Analyseren',
                     'https://leertaken.nl/2.-Processen/1.-Requirementsanalyseproces/1.-Uitleg-defini%C3%ABren-probleemdomein',
                     1, 1, 1)",
 
                 @"INSERT OR IGNORE INTO Vaardigheid
                   (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id, leeruitkomst_id)
                   VALUES (
-                    'Ontwerpen',
-                    'Modelleertechnieken toepassen conform richtlijnen',
                     'Toepassen modelleertechnieken',
+                    'Modelleertechnieken toepassen conform richtlijnen',
+                    'Ontwerpen',
                     'https://leertaken.nl/2.-Processen/3.-Ontwerpproces/2.-Uitleg-toepassen-modelleertechnieken',
                     2, 2, 2)"
-            };
+            ];
             VoegMeerdereInMetTransactie(insertQueries);
 
         }
         public List<Vaardigheid> HaalAlleVaardighedenOp()
         {
+            List<Vaardigheid> vaardigheidLijst = new();
             vaardigheidLijst.Clear();
             string selectQuery = "SELECT vaardigheid_id, naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id FROM Vaardigheid";
             OpenVerbinding();
@@ -79,6 +76,5 @@ namespace StudentSysteem.Core.Data.Repositories
             SluitVerbinding();
             return vaardigheidLijst;
         }
-
     }
 }

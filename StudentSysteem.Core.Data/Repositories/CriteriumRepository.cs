@@ -29,17 +29,17 @@ namespace StudentSysteem.Core.Data.Repositories
             List<string> insertQueries =
             [
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (1, 'De syntax van het domeinmodel is correct volgens UML', 'OpNiveau')",
+                  VALUES (1, 'De syntax van het domeinmodel is correct volgens UML.', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (2, 'Het domeinmodel weerspiegelt het probleemgebied', 'OpNiveau')",
+                  VALUES (2, 'Het domeinmodel weerspiegelt het probleemgebied.', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd', 'OpNiveau')",
+                  VALUES (3, 'Het domeinmodel is op een logische locatie vastgelegd.', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp', 'OpNiveau')",
+                  VALUES (4, 'Modelleertechnieken dragen bij het overbrengen van het ontwerp.', 'OpNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (5, 'Het domeinmodel is volledig en logisch', 'BovenNiveau')",
+                  VALUES (5, 'Het domeinmodel is volledig en logisch.', 'BovenNiveau')",
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)
-                  VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften', 'BovenNiveau')"
+                  VALUES (6, 'Diagrammen sluiten aan bij stakeholderbehoeften.', 'BovenNiveau')"
             ];
             VoegMeerdereInMetTransactie(insertQueries);
         }
