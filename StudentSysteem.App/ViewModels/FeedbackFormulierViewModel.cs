@@ -285,7 +285,12 @@ namespace StudentSysteem.App.ViewModels
                 int index = parent.Toelichtingen.IndexOf(toelichting);
                 if (index != -1)
                 {
-                    parent.Toelichtingen[index] = toelichting;
+                    parent.Toelichtingen[index] = new Toelichting
+                    {
+                        Tekst = toelichting.Tekst,
+                        GeselecteerdeOptie = keuze,
+                        Niveau = toelichting.Niveau
+                    };
                 }
             }
         }
