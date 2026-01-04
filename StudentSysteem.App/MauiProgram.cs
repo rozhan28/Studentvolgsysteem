@@ -61,8 +61,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
 
         // Services
-        builder.Services.AddSingleton<IFeedbackFormulierService, FeedbackFormulierService>();
-        builder.Services.AddSingleton<IZelfEvaluatieService, ZelfEvaluatieService>();
+        builder.Services.AddSingleton<IFormulierService, FormulierService>();
         builder.Services.AddSingleton<IPrestatiedoelService, PrestatiedoelService>();
         builder.Services.AddSingleton<ICriteriumService, CriteriumService>();
         builder.Services.AddSingleton<IProcesService, ProcesService>();
@@ -72,7 +71,6 @@ public static class MauiProgram
         builder.Services.AddSingleton<IClusterService, ClusterService>();
         builder.Services.AddSingleton<IStudentService, StudentService>();
         builder.Services.AddSingleton<IDocentService, DocentService>();
-        builder.Services.AddSingleton<IMeldingService, MeldingService>();
         builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
         builder.Services.AddSingleton<IBeoordelingStructuurService, BeoordelingStructuurService>();
 
