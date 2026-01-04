@@ -17,7 +17,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     
     // De sub-ViewModels
     public CriteriumViewModel Beoordeling { get; set; }
-    public ToelichtingViewModel Feedback { get; set; }
+    public ToelichtingViewModel Toelichting { get; set; }
     
     // Expander properties
     [ObservableProperty] private bool isExpanded;
@@ -59,7 +59,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         AiAssessmentScale = beoordelingStructuur.Prestatiedoel.AiAssessmentScale;
         
         Beoordeling = new CriteriumViewModel(beoordelingStructuur.Prestatiedoel, _criteriumService);
-        //Feedback = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
+        //Toelichting = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
         
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
@@ -70,7 +70,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
         
         bool beoordelingOk = Beoordeling.CheckValidatie();
-        //bool feedbackOk = Feedback.CheckValidatie(isDocent);
+        //bool toelichtingOk = Toelichting.CheckValidatie(isDocent);
     
         return beoordelingOk;
     }

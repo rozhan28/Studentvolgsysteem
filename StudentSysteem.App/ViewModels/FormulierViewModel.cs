@@ -114,7 +114,7 @@ public partial class FormulierViewModel : BasisViewModel
             foreach (PrestatiedoelViewModel prestatiedoelItems in FormulierItems)
             {
                 // Pak de toelichtingen uit de rij
-                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Feedback.Toelichtingen.ToList();
+                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Toelichting.Toelichtingen.ToList();
 
                 // Opslaan via service
                 _formulierService.SlaToelichtingenOp(

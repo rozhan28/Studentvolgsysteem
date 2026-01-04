@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -75,3 +76,4 @@ namespace StudentSysteem.Core.Models
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+*/

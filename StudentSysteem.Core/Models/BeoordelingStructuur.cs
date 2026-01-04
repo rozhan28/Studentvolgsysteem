@@ -1,6 +1,6 @@
 namespace StudentSysteem.Core.Models
 {
-    // 'Pakketje' voor de FeedbackformulierViewModel
+    // 'Pakketje' voor de FormulierViewModel
     public class BeoordelingStructuur
     {
         public Proces Proces { get; set; }

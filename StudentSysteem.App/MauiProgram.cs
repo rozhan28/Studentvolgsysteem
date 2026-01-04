@@ -78,10 +78,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<GlobaleViewModel>();
         builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
         builder.Services.AddTransient<StartView>().AddTransient<StartViewModel>();
-        builder.Services.AddSingleton<PrestatiedoelViewModel>();
         builder.Services.AddTransient<FormulierView>().AddTransient<FormulierViewModel>();
-        builder.Services.AddTransient<CriteriumViewModel>();
-        builder.Services.AddTransient<ToelichtingViewModel>();
         var app = builder.Build();
 
 
