@@ -1,7 +1,8 @@
-using StudentSysteem.Core.Interfaces.Services;
-using StudentSysteem.Core.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using StudentSysteem.Core.Interfaces.Services;
+using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.App.ViewModels;
 
@@ -11,50 +12,61 @@ public partial class ToelichtingViewModel : BasisViewModel
     private readonly IToelichtingService _toelichtingService;
     private readonly bool _isDocent;
 
-    public ObservableCollection<Toelichting> Toelichtingen { get; }
-    public int PrestatiedoelId { get; }
+    public BeoordelingItem Beoordeling { get; }
 
     public ICommand VoegExtraToelichtingToeCommand { get; }
 
-    public bool KanExtraToelichtingToevoegen
-    {
-        get => Toelichtingen.Count <
-               _toelichtingService.BerekenMaxToelichtingen(PrestatiedoelId);
-    }
-
     public ToelichtingViewModel(
-        ObservableCollection<Toelichting> toelichtingen,
-        int prestatiedoelId,
+        BeoordelingItem beoordeling,
         IToelichtingService toelichtingService,
         bool isDocent)
     {
-        Toelichtingen = toelichtingen;
-        PrestatiedoelId = prestatiedoelId;
+        Beoordeling = beoordeling;
         _toelichtingService = toelichtingService;
         _isDocent = isDocent;
 
         VoegExtraToelichtingToeCommand =
             new Command(VoegExtraToelichtingToe);
 
-        Toelichtingen.CollectionChanged += (_, _) =>
-            OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
+        HookToelichtingen();
     }
 
+    // Validatie van toelichtingen
     public bool ZijnAlleToelichtingenOk()
     {
         if (_isDocent) return true;
-        if (!Toelichtingen.Any()) return false;
+        if (Beoordeling.Toelichtingen == null || !Beoordeling.Toelichtingen.Any())
+            return false;
 
-        return Toelichtingen.All(t =>
+        return Beoordeling.Toelichtingen.All(t =>
             !string.IsNullOrWhiteSpace(t.Tekst) &&
             t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
     }
 
     private void VoegExtraToelichtingToe()
     {
-        if (!KanExtraToelichtingToevoegen) return;
+        if (Beoordeling.Toelichtingen.Count >=
+            _toelichtingService.BerekenMaxToelichtingen(Beoordeling.PrestatiedoelId))
+            return;
 
-        Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
-        OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
+        Beoordeling.Toelichtingen.Add(
+            _toelichtingService.MaakNieuweToelichting());
+    }
+
+    private void HookToelichtingen()
+    {
+        UpdateKanExtraToelichtingToevoegen();
+
+        Beoordeling.Toelichtingen.CollectionChanged += (_, _) =>
+        {
+            UpdateKanExtraToelichtingToevoegen();
+        };
+    }
+
+    private void UpdateKanExtraToelichtingToevoegen()
+    {
+        Beoordeling.KanExtraToelichtingToevoegen =
+            Beoordeling.Toelichtingen.Count <
+            _toelichtingService.BerekenMaxToelichtingen(Beoordeling.PrestatiedoelId);
     }
 }
