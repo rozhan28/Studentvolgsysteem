@@ -70,9 +70,9 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
         
         bool beoordelingOk = Beoordeling.CheckValidatie();
-        bool feedbackOk = Feedback.CheckValidatie(isDocent);
+        //bool feedbackOk = Feedback.CheckValidatie(isDocent);
     
-        return beoordelingOk && feedbackOk;
+        return beoordelingOk;
     }
     
     // Leertaken URL

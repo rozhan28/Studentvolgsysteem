@@ -1,4 +1,4 @@
-﻿using StudentSysteem.App.ViewModels;
+using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 
 namespace StudentSysteem.App;

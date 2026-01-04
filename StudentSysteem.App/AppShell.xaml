@@ -6,8 +6,8 @@
     xmlns:views="clr-namespace:StudentSysteem.App.Views"
     xmlns:views2="clr-namespace:StudentSysteem.App.ViewModels"
     xmlns:local="clr-namespace:StudentSysteem.App"
-    x:Name="Stepwise"
-    FlyoutBehavior="Disabled">
+    x:Name="Stepwise">
+    <!-- FlyoutBehavior="Disabled" -->
     
     <Shell.TitleView>
         <Grid ColumnDefinitions="Auto,*,Auto"

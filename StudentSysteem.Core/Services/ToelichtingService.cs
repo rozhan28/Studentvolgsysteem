@@ -25,8 +25,8 @@ namespace StudentSysteem.Core.Services
         public List<string> GetBeschikbareCriteria(IEnumerable<Toelichting> huidigeToelichtingen, int prestatiedoelId)
         {
             // Criteria ophalen voor beide niveaus
-            List<Criterium> opNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau);
-            List<Criterium> bovenNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau);
+            List<Criterium> opNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId);
+            List<Criterium> bovenNiveau = new();
 
             // Lijst maken van alle mogelijke criteria
             List<string> alleTitels = opNiveau
@@ -73,19 +73,19 @@ namespace StudentSysteem.Core.Services
             else
             {
                 // Criterium opzoeken om het niveau te achterhalen
-                List<Criterium> criteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau)
-                    .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau))
+                List<Criterium> criteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId)
+                    .Concat(_criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId))
                     .ToList();
 
                 Criterium gevondenCriterium = criteria.FirstOrDefault(delegate (Criterium c) { return c.Beschrijving == gekozenTitel; });
-                toelichting.Niveau = gevondenCriterium != null ? gevondenCriterium.Niveau : "";
+                toelichting.Niveau = gevondenCriterium != null ? gevondenCriterium.Niveau.ToString() : "";
             }
         }
 
         public int BerekenMaxToelichtingen(int prestatiedoelId)
         {
-            int aantalOpNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.OpNiveau).Count;
-            int aantalBovenNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, Niveauaanduiding.BovenNiveau).Count;
+            int aantalOpNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId).Count;
+            int aantalBovenNiveau = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId).Count;
             
             // De som van de criteria plus 1 voor 'Algemeen'
             return aantalOpNiveau + aantalBovenNiveau + 1;
