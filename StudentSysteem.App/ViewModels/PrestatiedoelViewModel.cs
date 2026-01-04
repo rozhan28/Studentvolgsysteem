@@ -10,24 +10,24 @@ public partial class PrestatiedoelViewModel : BasisViewModel
 {
     // Voor de student of docent check
     private readonly GlobaleViewModel _globaal;
-    
+
     // Services voor de sub-ViewModels
     private readonly ICriteriumService _criteriumService;
     private readonly IToelichtingService _toelichtingService;
-    
+
     // De sub-ViewModels
     public CriteriumViewModel Beoordeling { get; set; }
     public ToelichtingViewModel Toelichting { get; set; }
-    
+
     // Expander properties
     [ObservableProperty] private bool isExpanded;
     public string ExpanderTitel { get; }
     public string VaardigheidNaam { get; }
-    
+
     // Vaardigheid properties
     public string VaardigheidBeschrijving { get; }
     public string HboiActiviteit { get; set; }
-    
+
     // Prestatiedoel properties
     public int PrestatiedoelId { get; }
     public string LeertakenUrl { get; }
@@ -45,10 +45,12 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         _criteriumService = criteriumService;
         _toelichtingService = toelichtingService;
         _globaal = globaal;
-        
+
+        bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
+
         // ID toewijzen zodat ViewModel weet welk prestatiedoel hij opslaat
         PrestatiedoelId = beoordelingStructuur.Prestatiedoel.Id;
-        
+
         // Data toewijzen vanuit BeoordelingStructuur.cs
         ExpanderTitel = $"{beoordelingStructuur.Proces.Naam} | {beoordelingStructuur.Processtap.Naam} | {beoordelingStructuur.Vaardigheid.VaardigheidNaam}";
         HboiActiviteit = beoordelingStructuur.Vaardigheid.HboiActiviteit;
@@ -57,24 +59,25 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         PrestatiedoelBeschrijving = beoordelingStructuur.Prestatiedoel.Beschrijving;
         LeertakenUrl = beoordelingStructuur.Vaardigheid.LeertakenUrl;
         AiAssessmentScale = beoordelingStructuur.Prestatiedoel.AiAssessmentScale;
-        
+
         Beoordeling = new CriteriumViewModel(beoordelingStructuur.Prestatiedoel, _criteriumService);
-        //Toelichting = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
-        
+        Toelichting = new ToelichtingViewModel(
+            beoordelingStructuur.Prestatiedoel.Id,
+            _toelichtingService,
+            isDocent);
+
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
-    
+
     // Validatie vanuit de sub-ViewModels
     public bool Valideer()
     {
-        bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
-        
         bool beoordelingOk = Beoordeling.CheckValidatie();
-        //bool toelichtingOk = Toelichting.CheckValidatie(isDocent);
-    
-        return beoordelingOk;
+        bool toelichtingOk = Toelichting.CheckValidatie();
+
+        return beoordelingOk && toelichtingOk;
     }
-    
+
     // Leertaken URL
     private async Task OpenLeertakenUrl(string url)
     {
@@ -85,3 +88,4 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         }
     }
 }
+
