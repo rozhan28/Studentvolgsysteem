@@ -59,7 +59,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         AiAssessmentScale = beoordelingStructuur.Prestatiedoel.AiAssessmentScale;
         
         Beoordeling = new CriteriumViewModel(beoordelingStructuur.Prestatiedoel, _criteriumService);
-        Feedback = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
+        //Feedback = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
         
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
