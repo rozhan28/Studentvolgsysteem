@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 
 namespace StudentSysteem.App.ViewModels;
