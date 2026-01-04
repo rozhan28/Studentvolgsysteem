@@ -4,6 +4,7 @@ namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IFeedbackRepository
     {
-        void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId,  int prestatiedoelId, int feedbackgeverId);
+        void VoegFeedbackToe(List<Feedback> feedback);
     }
+
 }
