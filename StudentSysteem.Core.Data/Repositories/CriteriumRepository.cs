@@ -1,6 +1,7 @@
 ﻿using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Models;
 using Microsoft.Data.Sqlite;
+using StudentSysteem.Core.Interfaces.Repository;
 
 namespace StudentSysteem.Core.Data.Repositories
 {
@@ -44,7 +45,7 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(insertQueries);
         }
 
-        public List<Criterium> HaalCriteriaOpVoorNiveau(Niveauaanduiding niveau)
+        public List<Criterium> HaalCriteriaOpVoorNiveau(Niveauaanduiding niveauaanduiding)
         {
             List<Criterium> lijst = new();
 
@@ -57,23 +58,22 @@ namespace StudentSysteem.Core.Data.Repositories
                 WHERE niveau = @niveau;
             ";
 
-            cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
+            cmd.Parameters.AddWithValue("@niveau", niveauaanduiding.ToString());
 
             using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                lijst.Add(new Criterium
-                {
-                    Id = reader.GetInt32(0),
-                    Beschrijving = reader.GetString(1),
-                    Niveau = reader.GetString(2)
-                });
+                int id = reader.GetInt32(0);
+                string beschrijving = reader.GetString(1);
+                string niveau = reader.GetString(2);
+
+                lijst.Add(new Criterium(id, beschrijving, niveau));
             }
             SluitVerbinding();
             return lijst;
         }
 
-        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveau)
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveauaanduiding)
         {
             List<Criterium> lijst = new List<Criterium>();
 
@@ -90,17 +90,16 @@ namespace StudentSysteem.Core.Data.Repositories
             ";
 
             cmd.Parameters.AddWithValue("@prestatiedoelId", prestatiedoelId);
-            cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
+            cmd.Parameters.AddWithValue("@niveau", niveauaanduiding.ToString());
 
             using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                lijst.Add(new Criterium
-                {
-                    Id = reader.GetInt32(0),
-                    Beschrijving = reader.GetString(1),
-                    Niveau = reader.GetString(2)
-                });
+                int id = reader.GetInt32(0);
+                string beschrijving = reader.GetString(1);
+                string niveau = reader.GetString(2);
+
+                lijst.Add(new Criterium(id, beschrijving, niveau));
             }
 
             SluitVerbinding();

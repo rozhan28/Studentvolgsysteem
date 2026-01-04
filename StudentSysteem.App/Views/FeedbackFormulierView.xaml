@@ -123,7 +123,6 @@
                                                             <Label Text="In ontwikkeling" FontFamily="Bold"/>
                                                             <HorizontalStackLayout Spacing="10">
                                                                 <CheckBox IsChecked="{Binding InOntwikkeling}"/>
-                                                                <Label Text="Student laat nog onvoldoende beheersing zien." VerticalOptions="Center"/>
                                                             </HorizontalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>

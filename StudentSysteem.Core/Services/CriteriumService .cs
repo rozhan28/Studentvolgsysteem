@@ -25,7 +25,7 @@ namespace StudentSysteem.Core.Services
 
         public List<Criterium> HaalBovenNiveauCriteriaOp()
         {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau);
+            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.BovenNiveau);
         }
     }
 }
