@@ -70,3 +70,4 @@ public partial class ToelichtingViewModel : BasisViewModel
             _toelichtingService.BerekenMaxToelichtingen(Beoordeling.PrestatiedoelId);
     }
 }
+
