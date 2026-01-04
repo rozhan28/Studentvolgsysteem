@@ -1,9 +1,6 @@
-using StudentSysteem.Core.Interfaces.Repository;
+﻿using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace StudentSysteem.Core.Services
 {

@@ -1,6 +1,10 @@
-﻿using CommunityToolkit.Maui;
+﻿using System;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 using StudentSysteem.App.Views;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.Core.Services;
@@ -74,12 +78,16 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDocentService, DocentService>();
         builder.Services.AddSingleton<IMeldingService, MeldingService>();
         builder.Services.AddSingleton<IToelichtingService, ToelichtingService>();
+        builder.Services.AddSingleton<IBeoordelingStructuurService, BeoordelingStructuurService>();
 
         // ViewModels
         builder.Services.AddSingleton<GlobaleViewModel>();
         builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
         builder.Services.AddTransient<StartView>().AddTransient<StartViewModel>();
-        builder.Services.AddTransient<FeedbackFormulierView>().AddTransient<FeedbackFormulierViewModel>();
+        builder.Services.AddSingleton<PrestatiedoelViewModel>();
+        builder.Services.AddTransient<FeedbackFormulierView>().AddTransient<FormulierViewModel>();
+        builder.Services.AddTransient<CriteriumViewModel>();
+        builder.Services.AddTransient<ToelichtingViewModel>();
         var app = builder.Build();
 
 
