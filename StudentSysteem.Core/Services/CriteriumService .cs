@@ -1,4 +1,5 @@
-﻿using StudentSysteem.Core.Interfaces.Repository;
+﻿using System.Collections.ObjectModel;
+using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 
@@ -13,19 +14,9 @@ namespace StudentSysteem.Core.Services
             _criteriumRepository = criteriumRepository;
         }
 
-        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveau)
+        public IEnumerable<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId)
         {
-            return _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId, niveau);
-        }
-
-        public List<Criterium> HaalOpNiveauCriteriaOp()
-        {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.OpNiveau);
-        }
-
-        public List<Criterium> HaalBovenNiveauCriteriaOp()
-        {
-            return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.BovenNiveau);
+            return _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoelId);
         }
         
         public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria)

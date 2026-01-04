@@ -19,12 +19,12 @@ public partial class StartViewModel : BasisViewModel
     [RelayCommand]
     private async Task GaNaarZelfEvaluatie()
     {
-        await Shell.Current.GoToAsync($"{nameof(FeedbackFormulierView)}?isZelf=true");
+        await Shell.Current.GoToAsync($"{nameof(FormulierView)}?isZelf=true");
     }
 
     [RelayCommand]
     private async Task GaNaarFeedback()
     {
-        await Shell.Current.GoToAsync($"{nameof(FeedbackFormulierView)}?isZelf=false");
+        await Shell.Current.GoToAsync($"{nameof(FormulierView)}?isZelf=false");
     }
 }

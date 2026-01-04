@@ -35,34 +35,11 @@ namespace StudentSysteem.Core.Models
         }
         public string ExpanderTitel =>
             $"{ProcesNaam} | {ProcesstapNaam} | {VaardigheidNaam}";
-        
-        // Criteria
-        public ObservableCollection<Criterium> OpNiveauCriteria { get; set; } = new();
-        public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; } = new();
-        public ObservableCollection<Criterium> BeschikbareCriteria { get; set; } = new();
 
-        private Criterium _geselecteerdCriterium;
-        public Criterium GeselecteerdCriterium
-        {
-            get => _geselecteerdCriterium;
-            set { _geselecteerdCriterium = value; Notify(); }
-        }
-        
         // Niveauaanduiding
         private Niveauaanduiding _geselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
 
-        public Niveauaanduiding GeselecteerdNiveau
-        {
-            get => _geselecteerdNiveau;
-            set
-            {
-                if (_geselecteerdNiveau == value) return;
-                _geselecteerdNiveau = value;
-                Notify(nameof(GeselecteerdNiveau));
-                Notify(nameof(PrestatieNiveau));
-            }
-        }
-
+        
         // Toelichtingen
         public ObservableCollection<Toelichting> Toelichtingen { get; set; } = new();
 
@@ -78,45 +55,13 @@ namespace StudentSysteem.Core.Models
             }
         }
 
-        // Status
-        private bool _inOntwikkeling;
-        public bool InOntwikkeling
-        {
-            get => _inOntwikkeling;
-            set
-            {
-                if (_inOntwikkeling == value) return;
-                _inOntwikkeling = value;
-                if (value) ResetCriteria();
-                UpdateStatus();
-                Notify();
-            }
-        }
-
-        public bool IsOpNiveau => !InOntwikkeling && OpNiveauCriteria.Any(c => c.IsGeselecteerd);
-        public bool IsBovenNiveau => !InOntwikkeling && BovenNiveauCriteria.Any(c => c.IsGeselecteerd);
-
         private Niveauaanduiding _kleur = Niveauaanduiding.NietIngeleverd;
         public Niveauaanduiding Kleur
         {
             get => _kleur;
             private set { _kleur = value; Notify(); }
         }
-
-        private bool _isPrestatieNiveauInvalid;
-        public bool IsPrestatieNiveauInvalid
-        {
-            get => _isPrestatieNiveauInvalid;
-            set { _isPrestatieNiveauInvalid = value; Notify(); }
-        }
-
-        private bool _isCriteriumInvalid;
-        public bool IsCriteriumInvalid
-        {
-            get => _isCriteriumInvalid;
-            set { _isCriteriumInvalid = value; Notify(); }
-        }
-
+        
         private bool _isToelichtingInvalid;
         public bool IsToelichtingInvalid
         {
@@ -124,59 +69,8 @@ namespace StudentSysteem.Core.Models
             set { _isToelichtingInvalid = value; Notify(); }
         }
 
-        public string PrestatieNiveau
-        {
-            get
-            {
-                if (IsBovenNiveau) return "Boven niveau";
-                if (IsOpNiveau) return "Op niveau";
-                if (InOntwikkeling) return "In ontwikkeling";
-                return string.Empty;
-            }
-        }
-
-        public BeoordelingItem()
-        {
-            Criterium algemeen = new Criterium(-1, "Algemeen", "Algemeen");
-            BeschikbareCriteria.Add(algemeen);
-
-            OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
-            BovenNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(BovenNiveauCriteria);
-
-        }
-
-        private void ResetCriteria()
-        {
-            foreach (Criterium c in OpNiveauCriteria) c.IsGeselecteerd = false;
-            foreach (Criterium c in BovenNiveauCriteria) c.IsGeselecteerd = false;
-        }
-
-        private void HookCriteria(ObservableCollection<Criterium> criteria)
-        {
-            foreach (Criterium c in criteria)
-                c.PropertyChanged += (_, __) => UpdateStatus();
-        }
-
-        private void UpdateStatus()
-        {
-            if (InOntwikkeling)
-            {
-                GeselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
-            }
-            else if (IsBovenNiveau)
-            {
-                GeselecteerdNiveau = Niveauaanduiding.BovenNiveau;
-            }
-            else if (IsOpNiveau)
-            {
-                GeselecteerdNiveau = Niveauaanduiding.OpNiveau;
-            }
-            else
-            {
-                GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd;
-            }
-        }
-
+        public BeoordelingItem() { }
+        
         private void Notify([CallerMemberName] string prop = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }

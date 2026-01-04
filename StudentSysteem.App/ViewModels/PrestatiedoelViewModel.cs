@@ -54,8 +54,8 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         LeertakenUrl = structuur.Vaardigheid.LeertakenUrl;
         AiAssessmentScale = structuur.Doel.AiAssessmentScale;
         
-        Beoordeling = new CriteriumViewModel(structuur.Doel.Id, _criteriumService);
-        Feedback = new ToelichtingViewModel(structuur.Doel.Id, _toelichtingService);
+        Beoordeling = new CriteriumViewModel(criteriumService, structuur.Doel);
+        //Feedback = new ToelichtingViewModel(structuur.Doel.Id, _toelichtingService);
         
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
@@ -66,9 +66,9 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
         
         bool beoordelingOk = Beoordeling.CheckValidatie();
-        bool feedbackOk = Feedback.CheckValidatie(isDocent);
+        //bool feedbackOk = Feedback.CheckValidatie(isDocent);
     
-        return beoordelingOk && feedbackOk;
+        return beoordelingOk;
     }
     
     // Leertaken URL

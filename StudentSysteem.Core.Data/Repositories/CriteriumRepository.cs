@@ -52,36 +52,7 @@ namespace StudentSysteem.Core.Data.Repositories
             ];
             VoegMeerdereInMetTransactie(insertQueries);
         }
-
-        public List<Criterium> HaalCriteriaOpVoorNiveau(Niveauaanduiding niveauaanduiding)
-        {
-            List<Criterium> lijst = new();
-
-            OpenVerbinding();
-
-            using SqliteCommand cmd = Verbinding.CreateCommand();
-            cmd.CommandText = @"
-                SELECT criterium_id, beschrijving, niveau
-                FROM Criterium
-                WHERE niveau = @niveau;
-            ";
-
-            cmd.Parameters.AddWithValue("@niveau", niveauaanduiding.ToString());
-
-            using SqliteDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                int id = reader.GetInt32(0);
-                string beschrijving = reader.GetString(1);
-                string niveau = reader.GetString(2);
-
-                lijst.Add(new Criterium(id, beschrijving, niveau));
-            }
-            SluitVerbinding();
-            return lijst;
-        }
-
-        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveauaanduiding)
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId)
         {
             List<Criterium> lijst = new List<Criterium>();
 
@@ -94,18 +65,21 @@ namespace StudentSysteem.Core.Data.Repositories
                 JOIN PrestatiedoelCriterium pc
                     ON pc.criterium_id = c.criterium_id
                 WHERE pc.prestatiedoel_id = @prestatiedoelId
-                  AND c.niveau = @niveau;
             ";
 
             cmd.Parameters.AddWithValue("@prestatiedoelId", prestatiedoelId);
-            cmd.Parameters.AddWithValue("@niveau", niveauaanduiding.ToString());
 
             using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 int id = reader.GetInt32(0);
                 string beschrijving = reader.GetString(1);
-                string niveau = reader.GetString(2);
+                string niveauString = reader.GetString(2);
+                
+                if (!Enum.TryParse(niveauString, out Niveauaanduiding niveau))
+                {
+                    throw new Exception($"Onbekend niveau: {niveauString}");
+                }
 
                 lijst.Add(new Criterium(id, beschrijving, niveau));
             }

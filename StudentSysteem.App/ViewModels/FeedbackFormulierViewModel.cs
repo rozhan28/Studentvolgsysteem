@@ -116,8 +116,8 @@ namespace StudentSysteem.App.ViewModels
 
                     foreach (Vaardigheid vaardigheid in vaardighedenVoorStap)
                     {
-                        Prestatiedoel doel = prestatiedoelen.FirstOrDefault(d => d.Id == vaardigheid.PrestatiedoelId);
-                        if (doel == null) continue;
+                        Prestatiedoel prestatiedoel = prestatiedoelen.FirstOrDefault(p => p.Id == vaardigheid.PrestatiedoelId);
+                        if (prestatiedoel == null) continue;
 
                         // Maak het item aan
                         BeoordelingItem item = new BeoordelingItem
@@ -128,18 +128,10 @@ namespace StudentSysteem.App.ViewModels
                             VaardigheidBeschrijving = vaardigheid.VaardigheidBeschrijving,
                             HboiActiviteit = vaardigheid.HboiActiviteit,
                             LeertakenUrl = vaardigheid.LeertakenUrl,
-                            PrestatiedoelId = doel.Id,
-                            PrestatiedoelBeschrijving = doel.Beschrijving,
-                            AiAssessmentScale = doel.AiAssessmentScale,
-                            GeselecteerdNiveau = Niveauaanduiding.NietIngeleverd
+                            PrestatiedoelId = prestatiedoel.Id,
+                            PrestatiedoelBeschrijving = prestatiedoel.Beschrijving,
+                            AiAssessmentScale = prestatiedoel.AiAssessmentScale,
                         };
-
-                        // Criteria vullen
-                        item.OpNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, Niveauaanduiding.OpNiveau));
-
-                        item.BovenNiveauCriteria = new ObservableCollection<Criterium>(
-                            _criteriumService.HaalCriteriaOpVoorPrestatiedoel(doel.Id, Niveauaanduiding.BovenNiveau));
 
                         // Toelichtingen initialiseren
                         item.Toelichtingen.Add(_toelichtingService.MaakNieuweToelichting());
@@ -151,11 +143,6 @@ namespace StudentSysteem.App.ViewModels
                     }
                 }
             }
-        }
-
-        public void LaadVaardigheid()
-        {
-
         }
 
         private async Task BewaarEvaluatieAsync()
@@ -194,17 +181,17 @@ namespace StudentSysteem.App.ViewModels
                 StatusMelding = $"Opslaan mislukt: {ex.Message}";
             }
         }
-
+        
         private bool ValideerBeoordelingen()
         {
             bool allesGeldig = true;
 
             foreach (BeoordelingItem item in Beoordelingen)
             {
-                bool niveauOk =
-                    item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
+                bool niveauOk = true;
+                    //item.InOntwikkeling || item.IsOpNiveau || item.IsBovenNiveau;
 
-                item.IsPrestatieNiveauInvalid = !niveauOk;
+                //item.IsPrestatieNiveauInvalid = !niveauOk;
 
                 bool toelichtingOk =
                     _isDocent || ZijnAlleToelichtingenOk(item.Toelichtingen);
