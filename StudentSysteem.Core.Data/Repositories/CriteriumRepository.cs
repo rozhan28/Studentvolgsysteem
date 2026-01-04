@@ -16,16 +16,24 @@ namespace StudentSysteem.Core.Data.Repositories
                 niveau TEXT NOT NULL
             );");
 
-            // Koppeltabel
+            // Koppeltabel FeedbackCriterium
             MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
                         feedback_id INTEGER NOT NULL,
                         criterium_id INTEGER NOT NULL,
-                        niveau TEXT NOT NULL,
                         PRIMARY KEY (feedback_id, criterium_id),
                         FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
                         FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
                     );
                     ");
+            
+            // Koppeltabel PrestatiedoelCriterium
+            MaakTabel(@"CREATE TABLE IF NOT EXISTS PrestatiedoelCriterium (
+                prestatiedoel_id INTEGER NOT NULL,
+                criterium_id INTEGER NOT NULL,
+                PRIMARY KEY (prestatiedoel_id, criterium_id),
+                FOREIGN KEY (prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id),
+                FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+            );");
 
             List<string> insertQueries =
             [
@@ -106,7 +114,7 @@ namespace StudentSysteem.Core.Data.Repositories
             return lijst;
         }
 
-        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria, Niveauaanduiding niveau)
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria)
         {
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();
@@ -117,14 +125,12 @@ namespace StudentSysteem.Core.Data.Repositories
                 {
                     using var cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
-                        INSERT OR REPLACE INTO FeedbackCriterium
-                        (feedback_id, criterium_id, niveau)
-                        VALUES (@feedbackId, @criteriumId, @niveau);
+                        INSERT OR REPLACE INTO FeedbackCriterium(feedback_id, criterium_id)
+                        VALUES (@feedbackId, @criteriumId);
                         ";
 
                     cmd.Parameters.AddWithValue("@feedbackId", feedbackId);
                     cmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
-                    cmd.Parameters.AddWithValue("@niveau", niveau.ToString());
                     
                     cmd.Transaction = transactie;
                     cmd.ExecuteNonQuery();

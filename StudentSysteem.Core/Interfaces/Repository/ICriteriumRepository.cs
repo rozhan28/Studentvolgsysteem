@@ -6,7 +6,6 @@ namespace StudentSysteem.Core.Interfaces.Repository
     {
         public List<Criterium> HaalCriteriaOpVoorNiveau(Niveauaanduiding niveauaanduiding);
         public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId, Niveauaanduiding niveauaanduiding);
-
-        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria,Niveauaanduiding niveau);
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria);
     }
 }

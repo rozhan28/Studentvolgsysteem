@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -137,7 +137,7 @@ namespace StudentSysteem.Core.Models
 
         public BeoordelingItem()
         {
-            var algemeen = new Criterium { Id = -1, Beschrijving = "Algemeen", Niveau = "Algemeen" };
+            Criterium algemeen = new Criterium(-1, "Algemeen", "Algemeen");
             BeschikbareCriteria.Add(algemeen);
 
             OpNiveauCriteria.CollectionChanged += (_, __) => HookCriteria(OpNiveauCriteria);
@@ -147,13 +147,13 @@ namespace StudentSysteem.Core.Models
 
         private void ResetCriteria()
         {
-            foreach (var c in OpNiveauCriteria) c.IsGeselecteerd = false;
-            foreach (var c in BovenNiveauCriteria) c.IsGeselecteerd = false;
+            foreach (Criterium c in OpNiveauCriteria) c.IsGeselecteerd = false;
+            foreach (Criterium c in BovenNiveauCriteria) c.IsGeselecteerd = false;
         }
 
         private void HookCriteria(ObservableCollection<Criterium> criteria)
         {
-            foreach (var c in criteria)
+            foreach (Criterium c in criteria)
                 c.PropertyChanged += (_, __) => UpdateStatus();
         }
 
