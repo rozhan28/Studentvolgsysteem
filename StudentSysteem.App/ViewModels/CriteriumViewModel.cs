@@ -42,7 +42,7 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
         BovenNiveauCriteria = CriteriaBijNiveau(Niveauaanduiding.BovenNiveau);
     }
 
-    public CriteriumViewModel(ICriteriumService criteriumService, Prestatiedoel prestatiedoel)
+    public CriteriumViewModel(Prestatiedoel prestatiedoel, ICriteriumService criteriumService)
     {
         _criteriumService = criteriumService;
         _prestatiedoel = prestatiedoel;
