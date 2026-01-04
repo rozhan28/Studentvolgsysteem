@@ -36,9 +36,12 @@ namespace StudentSysteem.Core.Data.Repositories
             OpenVerbinding();
 
             using var cmd = Verbinding.CreateCommand();
+            using var transactie = Verbinding.BeginTransaction();
             var now = DateTime.Now;
 
-            foreach (Feedback feedback in feedbackLijst)
+            try
+            {
+                foreach (Feedback feedback in feedbackLijst)
             {
                 cmd.CommandText = @"
                 INSERT INTO Feedback 
@@ -54,10 +57,7 @@ namespace StudentSysteem.Core.Data.Repositories
                 cmd.Parameters.AddWithValue("@vaardigheidId", feedback.VaardigheidId);
 
                 int feedbackId = Convert.ToInt32(cmd.ExecuteScalar());
-                
-                using var transactie = Verbinding.BeginTransaction();
-                
-                try
+
                 {
                     foreach (Toelichting toelichting in feedback.Toelichtingen)
                     {
@@ -71,18 +71,20 @@ namespace StudentSysteem.Core.Data.Repositories
 
                         toelichtingCmd.Parameters.AddWithValue("@tekst", toelichting.Tekst);
                         toelichtingCmd.Parameters.AddWithValue("@feedbackId", feedbackId);
-                        toelichtingCmd.Parameters.AddWithValue("@criteriumId", 0); //Hier moet nog de criterium op worden aangesloten
+                        toelichtingCmd.Parameters.AddWithValue("@criteriumId",
+                            0); //Hier moet nog de criterium op worden aangesloten
 
                         toelichtingCmd.ExecuteNonQuery();
                     }
 
                     transactie.Commit();
                 }
-                catch
-                {
-                    transactie.Rollback();
-                    throw;
-                }
+            }
+            }
+            catch
+            {
+                transactie.Rollback();
+                throw;
             }
             
 
