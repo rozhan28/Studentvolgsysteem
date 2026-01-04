@@ -27,5 +27,10 @@ namespace StudentSysteem.Core.Services
         {
             return _criteriumRepository.HaalCriteriaOpVoorNiveau(Niveauaanduiding.BovenNiveau);
         }
+        
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria)
+        {
+            _criteriumRepository.SlaGeselecteerdeCriteriaOp(feedbackId, geselecteerdeCriteria);
+        }
     }
 }
