@@ -4,20 +4,22 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
-using StudentSysteem.Core.Services;
 
 namespace StudentSysteem.App.ViewModels;
 
 // Toont een lijst van prestatiedoelen
 [QueryProperty(nameof(IsZelfEvaluatie), "isZelf")]
+[QueryProperty(nameof(OntvangerId), "ontvangerId")]
 public partial class FormulierViewModel : BasisViewModel
 {
-    // Voor de student of docent check
+    // Voor de gebruiker-check
     private readonly GlobaleViewModel _globaal;
+    [ObservableProperty] private int ontvangerId;
     
     // Services voor de sub-ViewModels
     private readonly ICriteriumService _criteriumService;
     private readonly IToelichtingService _toelichtingService;
+    private readonly IFormulierService _formulierService;
     
     // 'Pakketje'
     private readonly IBeoordelingStructuurService _beoordelingStructuurService;
@@ -35,12 +37,14 @@ public partial class FormulierViewModel : BasisViewModel
     public FormulierViewModel(
         ICriteriumService criteriumService,
         IToelichtingService toelichtingService,
-        BeoordelingStructuurService beoordelingStructuurService,
+        IBeoordelingStructuurService beoordelingStructuurService,
+        IFormulierService formulierService,
         GlobaleViewModel globaal)
     {
         _criteriumService = criteriumService;
         _toelichtingService = toelichtingService;
         _beoordelingStructuurService = beoordelingStructuurService;
+        _formulierService = formulierService;
         _globaal = globaal;
         
         OpslaanCommand = new AsyncRelayCommand(async () => await BewaarIngevuldFormulierAsync());
@@ -69,6 +73,7 @@ public partial class FormulierViewModel : BasisViewModel
         }
     }
     
+    // Laad methode voor BeoordelingStructuur.cs
     private void LaadStructuur()
     {
         MainThread.BeginInvokeOnMainThread(() => FormulierItems.Clear());
@@ -87,24 +92,45 @@ public partial class FormulierViewModel : BasisViewModel
         }
     }
     
-    // Opslaan
+    // Opslaan methode
     private async Task BewaarIngevuldFormulierAsync()
     {
-        foreach (PrestatiedoelViewModel prestatiedoelItem in FormulierItems)
+        // Alles valideren
+        foreach (PrestatiedoelViewModel item in FormulierItems)
         {
-            if (!prestatiedoelItem.Valideer()) 
+            if (!item.Valideer()) 
             {
                 StatusMelding = "Controleer alle velden a.u.b.";
                 return;
             }
-            try 
+        }
+
+        // Service vragen om op te slaan
+        try 
+        {
+            int feedbackgeverId = _globaal.IngelogdeGebruiker.Id;
+            int ontvangerId = 1;
+
+            foreach (PrestatiedoelViewModel prestatiedoelItems in FormulierItems)
             {
-                StatusMelding = "Succesvol opgeslagen!";
+                // Pak de toelichtingen uit de rij
+                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Feedback.Tekstvakken.ToList();
+                
+                // Opslaan via service
+                _formulierService.SlaToelichtingenOp(
+                    toelichtingenVanPrestatiedoelItems, 
+                    ontvangerId, 
+                    prestatiedoelItems.PrestatiedoelId,
+                    feedbackgeverId);
             }
-            catch (Exception ex)
-            {
-                StatusMelding = $"Fout bij opslaan: {ex.Message}";
-            }
+
+            StatusMelding = "Succesvol opgeslagen!";
+            await Shell.Current.DisplayAlert("Succes", "De feedback is succesvol opgeslagen.", "OK");
+        }
+        catch (Exception ex)
+        {
+            StatusMelding = $"Fout bij opslaan: {ex.Message}";
+            Debug.WriteLine(ex);
         }
     }
 }

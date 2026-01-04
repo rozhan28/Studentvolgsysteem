@@ -72,7 +72,7 @@ namespace StudentSysteem.Core.Data.Repositories
         }
 
         // Voeg meerdere toelichtingen toe voor een student
-        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId)
+        public void VoegToelichtingenToe(List<Toelichting> toelichtingen, int studentId,  int prestatieId, int feedbackgeverId)
         {
             OpenVerbinding();
             using var transactie = Verbinding.BeginTransaction();

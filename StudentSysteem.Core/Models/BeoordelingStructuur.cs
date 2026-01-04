@@ -4,16 +4,16 @@ namespace StudentSysteem.Core.Models
     public class BeoordelingStructuur
     {
         public Proces Proces { get; set; }
-        public Processtap Stap { get; set; }
+        public Processtap Processtap { get; set; }
         public Vaardigheid Vaardigheid { get; set; }
-        public Prestatiedoel Doel { get; set; }
+        public Prestatiedoel Prestatiedoel { get; set; }
 
-        public BeoordelingStructuur(Proces proces, Processtap stap, Vaardigheid vaardigheid, Prestatiedoel doel)
+        public BeoordelingStructuur(Proces proces, Processtap processtap, Vaardigheid vaardigheid, Prestatiedoel prestatiedoel)
         {
             Proces = proces;
-            Stap = stap;
+            Processtap = processtap;
             Vaardigheid = vaardigheid;
-            Doel = doel;
+            Prestatiedoel = prestatiedoel;
         }
     }
 }

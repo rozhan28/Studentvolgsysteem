@@ -29,6 +29,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     public string HboiActiviteit { get; set; }
     
     // Prestatiedoel properties
+    public int PrestatiedoelId { get; }
     public string LeertakenUrl { get; }
     public string PrestatiedoelBeschrijving { get; set; }
     public string AiAssessmentScale { get; }
@@ -36,7 +37,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
 
     // Constructor
     public PrestatiedoelViewModel(
-        BeoordelingStructuur structuur,
+        BeoordelingStructuur beoordelingStructuur,
         ICriteriumService criteriumService,
         IToelichtingService toelichtingService,
         GlobaleViewModel globaal)
@@ -45,17 +46,20 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         _toelichtingService = toelichtingService;
         _globaal = globaal;
         
-        // Data toewijzen vanuit BeoordelingStructuur.cs
-        ExpanderTitel = $"{structuur.Proces.Naam} - {structuur.Stap.Naam}";
-        HboiActiviteit = structuur.Vaardigheid.HboiActiviteit;
-        VaardigheidNaam = structuur.Vaardigheid.VaardigheidNaam;
-        VaardigheidBeschrijving = structuur.Vaardigheid.VaardigheidBeschrijving;
-        PrestatiedoelBeschrijving = structuur.Doel.Beschrijving;
-        LeertakenUrl = structuur.Vaardigheid.LeertakenUrl;
-        AiAssessmentScale = structuur.Doel.AiAssessmentScale;
+        // ID toewijzen zodat ViewModel weet welk prestatiedoel hij opslaat
+        PrestatiedoelId = beoordelingStructuur.Prestatiedoel.Id;
         
-        Beoordeling = new CriteriumViewModel(structuur.Doel.Id, _criteriumService);
-        Feedback = new ToelichtingViewModel(structuur.Doel.Id, _toelichtingService);
+        // Data toewijzen vanuit BeoordelingStructuur.cs
+        ExpanderTitel = $"{beoordelingStructuur.Proces.Naam} | {beoordelingStructuur.Processtap.Naam} | {beoordelingStructuur.Vaardigheid.VaardigheidNaam}";
+        HboiActiviteit = beoordelingStructuur.Vaardigheid.HboiActiviteit;
+        VaardigheidNaam = beoordelingStructuur.Vaardigheid.VaardigheidNaam;
+        VaardigheidBeschrijving = beoordelingStructuur.Vaardigheid.VaardigheidBeschrijving;
+        PrestatiedoelBeschrijving = beoordelingStructuur.Prestatiedoel.Beschrijving;
+        LeertakenUrl = beoordelingStructuur.Vaardigheid.LeertakenUrl;
+        AiAssessmentScale = beoordelingStructuur.Prestatiedoel.AiAssessmentScale;
+        
+        Beoordeling = new CriteriumViewModel(beoordelingStructuur.Prestatiedoel, _criteriumService);
+        Feedback = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel.Id, _toelichtingService);
         
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
