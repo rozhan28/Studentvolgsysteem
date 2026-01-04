@@ -3,6 +3,8 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+
 
 namespace StudentSysteem.App.ViewModels;
 
@@ -11,17 +13,23 @@ public partial class ToelichtingViewModel : BasisViewModel
 {
     private readonly IToelichtingService _toelichtingService;
     private readonly bool _isDocent;
+    private readonly int _prestatiedoelId;
 
-    public BeoordelingItem Beoordeling { get; }
+    public ObservableCollection<Toelichting> Toelichtingen { get; }
+
+    [ObservableProperty]
+    private bool kanExtraToelichtingToevoegen;
 
     public ICommand VoegExtraToelichtingToeCommand { get; }
 
     public ToelichtingViewModel(
-        BeoordelingItem beoordeling,
+        ObservableCollection<Toelichting> toelichtingen,
+        int prestatiedoelId,
         IToelichtingService toelichtingService,
         bool isDocent)
     {
-        Beoordeling = beoordeling;
+        Toelichtingen = toelichtingen;
+        _prestatiedoelId = prestatiedoelId;
         _toelichtingService = toelichtingService;
         _isDocent = isDocent;
 
@@ -35,21 +43,21 @@ public partial class ToelichtingViewModel : BasisViewModel
     public bool ZijnAlleToelichtingenOk()
     {
         if (_isDocent) return true;
-        if (Beoordeling.Toelichtingen == null || !Beoordeling.Toelichtingen.Any())
+        if (Toelichtingen == null || !Toelichtingen.Any())
             return false;
 
-        return Beoordeling.Toelichtingen.All(t =>
+        return Toelichtingen.All(t =>
             !string.IsNullOrWhiteSpace(t.Tekst) &&
             t.GeselecteerdeOptie != "Toelichting gekoppeld aan...");
     }
 
     private void VoegExtraToelichtingToe()
     {
-        if (Beoordeling.Toelichtingen.Count >=
-            _toelichtingService.BerekenMaxToelichtingen(Beoordeling.PrestatiedoelId))
+        if (Toelichtingen.Count >=
+            _toelichtingService.BerekenMaxToelichtingen(_prestatiedoelId))
             return;
 
-        Beoordeling.Toelichtingen.Add(
+        Toelichtingen.Add(
             _toelichtingService.MaakNieuweToelichting());
     }
 
@@ -57,7 +65,7 @@ public partial class ToelichtingViewModel : BasisViewModel
     {
         UpdateKanExtraToelichtingToevoegen();
 
-        Beoordeling.Toelichtingen.CollectionChanged += (_, _) =>
+        Toelichtingen.CollectionChanged += (_, _) =>
         {
             UpdateKanExtraToelichtingToevoegen();
         };
@@ -65,8 +73,8 @@ public partial class ToelichtingViewModel : BasisViewModel
 
     private void UpdateKanExtraToelichtingToevoegen()
     {
-        Beoordeling.KanExtraToelichtingToevoegen =
-            Beoordeling.Toelichtingen.Count <
-            _toelichtingService.BerekenMaxToelichtingen(Beoordeling.PrestatiedoelId);
+        KanExtraToelichtingToevoegen =
+            Toelichtingen.Count <
+            _toelichtingService.BerekenMaxToelichtingen(_prestatiedoelId);
     }
 }
