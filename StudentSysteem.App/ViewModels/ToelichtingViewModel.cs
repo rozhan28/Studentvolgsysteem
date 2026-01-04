@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 
-
 namespace StudentSysteem.App.ViewModels;
 
 // Handelt alle toelichtingen af (toevoegen + validatie)
@@ -21,16 +20,20 @@ public partial class ToelichtingViewModel : BasisViewModel
 
     public ICommand VoegExtraToelichtingToeCommand { get; }
 
+    // Constructor 
     public ToelichtingViewModel(
-        ObservableCollection<Toelichting> toelichtingen,
         int prestatiedoelId,
         IToelichtingService toelichtingService,
         bool isDocent)
     {
-        Toelichtingen = toelichtingen;
         _prestatiedoelId = prestatiedoelId;
         _toelichtingService = toelichtingService;
         _isDocent = isDocent;
+
+        Toelichtingen = new ObservableCollection<Toelichting>
+        {
+            _toelichtingService.MaakNieuweToelichting()
+        };
 
         VoegExtraToelichtingToeCommand =
             new Command(VoegExtraToelichtingToe);
@@ -38,12 +41,11 @@ public partial class ToelichtingViewModel : BasisViewModel
         HookToelichtingen();
     }
 
-    // Validatie van toelichtingen
-    public bool ZijnAlleToelichtingenOk()
+    // Validatie
+    public bool CheckValidatie()
     {
         if (_isDocent) return true;
-        if (Toelichtingen == null || !Toelichtingen.Any())
-            return false;
+        if (!Toelichtingen.Any()) return false;
 
         return Toelichtingen.All(t =>
             !string.IsNullOrWhiteSpace(t.Tekst) &&
