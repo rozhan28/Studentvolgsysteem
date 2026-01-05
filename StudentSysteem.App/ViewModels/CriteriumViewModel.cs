@@ -13,7 +13,7 @@ using StudentSysteem.Core.Models;
 namespace StudentSysteem.App.ViewModels;
 
 // Handelt de niveaus en de criteria af
-public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
+public partial class CriteriumViewModel : BasisViewModel
 {
     private readonly ICriteriumService _criteriumService;
     private Prestatiedoel _prestatiedoel;
@@ -23,13 +23,13 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
     
     public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
     public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
-    public event PropertyChangedEventHandler PropertyChanged;
+    //public event PropertyChangedEventHandler PropertyChanged;
     
     private bool _isPrestatieNiveauInvalid;
     public bool IsPrestatieNiveauInvalid //Rode box om het criterium menu
     {
         get => _isPrestatieNiveauInvalid;
-        set { _isPrestatieNiveauInvalid = value; Notify(); }
+        set { _isPrestatieNiveauInvalid = value; OnPropertyChanged(); }
     }
     private async Task InitialiseerPaginaAsync()
     {
@@ -49,8 +49,8 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
         OpNiveauCriteria = new ObservableCollection<Criterium>(CriteriaBijNiveau(Niveauaanduiding.OpNiveau));
         BovenNiveauCriteria = new ObservableCollection<Criterium>(CriteriaBijNiveau(Niveauaanduiding.BovenNiveau));
 
-        Notify(nameof(OpNiveauCriteria));
-        Notify(nameof(BovenNiveauCriteria));
+        OnPropertyChanged(nameof(OpNiveauCriteria));
+        OnPropertyChanged(nameof(BovenNiveauCriteria));
     }
 
     public CriteriumViewModel(Prestatiedoel prestatiedoel, ICriteriumService criteriumService)
@@ -85,7 +85,7 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
             if (_inOntwikkeling == value) return;
             _inOntwikkeling = value;
             UpdateStatus();
-            Notify();
+            OnPropertyChanged();
         }
     }
     
@@ -122,8 +122,8 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
         {
             if (_geselecteerdNiveau == value) return;
             _geselecteerdNiveau = value;
-            Notify(nameof(GeselecteerdNiveau));
-            Notify(nameof(PrestatieNiveau));
+            OnPropertyChanged(nameof(GeselecteerdNiveau));
+            OnPropertyChanged(nameof(PrestatieNiveau));
         }
     }
     
@@ -138,10 +138,7 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
     private void OnSelecteerCriteriumCommand(Criterium criterium)
     {
         UpdateStatus();
-        Notify(nameof(GeselecteerdNiveau));
-        Notify(nameof(PrestatieNiveau));
+        OnPropertyChanged(nameof(GeselecteerdNiveau));
+        OnPropertyChanged(nameof(PrestatieNiveau));
     }
-    
-    private void Notify([CallerMemberName] string prop = "")
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 }
