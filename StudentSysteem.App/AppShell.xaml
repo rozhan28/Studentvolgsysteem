@@ -4,10 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:StudentSysteem.App.Views"
-    x:Name="StepWise">
+    xmlns:views2="clr-namespace:StudentSysteem.App.ViewModels"
+    xmlns:local="clr-namespace:StudentSysteem.App"
+    x:Name="Stepwise"
+    FlyoutBehavior="Disabled">
     
     <Shell.TitleView>
-        <Grid ColumnDefinitions="Auto,*,Auto" 
+        <Grid ColumnDefinitions="Auto,*,Auto"
               BackgroundColor="{StaticResource Primary}">
             
             <Border StrokeThickness="0"
@@ -15,33 +18,36 @@
                 <Button Text="Dashboard"
                         BackgroundColor="{StaticResource White}"
                         TextColor="{StaticResource Primary}"
-                        Clicked="OnDashboardClicked"/>
+                        Clicked="OpDashboardGeklikt"/>
             </Border>
 
-            <Label BindingContext="{x:Reference StepWise}"
-                   Text="{Binding Path=Title}"
+            <Label x:Name="ShellTitelLabel" 
+                   Text="Start"
                    Grid.Column="1"
                    FontSize="22"
-                   TextColor="{StaticResource White}"
+                   TextColor="White"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"/>
 
-            <HorizontalStackLayout Grid.Column="2" 
-                                   Spacing="5" 
+            <HorizontalStackLayout Grid.Column="2"
+                                   Spacing="5"
                                    VerticalOptions="Center">
-                <Label Text="{Binding gebruikersNaam}"
+                <Label Text="{Binding IngelogdeGebruiker.Naam}"
                        FontSize="16"
                        TextColor="{StaticResource White}"
                        VerticalOptions="Center"/>
-                <Image Source="person_icon.png"
+                <Image Source="gebruiker.png"
                        HeightRequest="35"
                        VerticalOptions="Center"/>
             </HorizontalStackLayout>
         </Grid>
     </Shell.TitleView>
-    
+
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:FeedbackFormulierView}"
-        Route="Dashboard"/>
+        Title="Start"
+        ContentTemplate="{DataTemplate views:StartView}"/>
+    <ShellContent
+        Title="Inloggen"
+        ContentTemplate="{DataTemplate views:LoginView}"
+        Route="Login" />
 </Shell>

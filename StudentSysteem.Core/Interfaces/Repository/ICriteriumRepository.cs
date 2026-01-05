@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface ICriteriumRepository
     {
-        public void MaakTabel(string sqlOpdracht);
-        public void VoegMeerdereInMetTransactie(List<string> regels);
+        public List<Criterium> HaalCriteriaOpVoorPrestatiedoel(int prestatiedoelId);
+        public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria);
     }
 }

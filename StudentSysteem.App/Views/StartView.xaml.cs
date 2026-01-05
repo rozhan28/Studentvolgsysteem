@@ -1,40 +1,23 @@
-using StudentVolgSysteem.Core.Services;
-using Microsoft.Extensions.DependencyInjection;
+using StudentSysteem.App.ViewModels;
 
 namespace StudentSysteem.App.Views;
 
 public partial class StartView : ContentPage
 {
-    public StartView()
+    public StartView(StartViewModel viewModel)
     {
         InitializeComponent();
-        PasKnoppenAanOpRol();
+        BindingContext = viewModel;
     }
-
-    private void PasKnoppenAanOpRol()
+    
+    protected override void OnAppearing()
     {
-        if (GebruikerSessie.HuidigeRol == "Student")
+        base.OnAppearing();
+    
+        if (BindingContext is StartViewModel vm && Shell.Current is AppShell shell)
         {
-            BtnZelfreview.IsVisible = true;
-            BtnFeedback.IsVisible = true;
+            shell.UpdateTitel(vm.Titel);
         }
-        else if (GebruikerSessie.HuidigeRol == "Docent")
-        {
-            BtnZelfreview.IsVisible = false;
-            BtnFeedback.IsVisible = true;
-        }
-    }
-
-    private async void OnSelfReviewClicked(object sender, EventArgs e)
-    {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
-        await Navigation.PushAsync(page);
-    }
-
-    private async void OnFeedbackClicked(object sender, EventArgs e)
-    {
-        var page = App.Current.Handler.MauiContext.Services.GetRequiredService<FeedbackFormulierView>();
-        await Navigation.PushAsync(page);
     }
 }
 

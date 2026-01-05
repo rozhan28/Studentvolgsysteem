@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface IDocentRepository
     {
-        public void MaakTabel(string sqlOpdracht);
-        public void VoegMeerdereInMetTransactie(List<string> regels);
+        public Docent? HaalOp();
+        public List<Docent> HaalAlleDocentenOp();
     }
 }

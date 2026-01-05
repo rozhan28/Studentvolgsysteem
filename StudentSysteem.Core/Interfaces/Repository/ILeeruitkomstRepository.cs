@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using StudentSysteem.Core.Models;
 
 namespace StudentSysteem.Core.Interfaces.Repository
 {
     public interface ILeeruitkomstRepository
     {
-        public void MaakTabel(string sqlOpdracht);
-        public void VoegMeerdereInMetTransactie(List<string> regels);
+        public Leeruitkomst? HaalOp();
+        public List<Leeruitkomst> HaalAlleLeeruitkomstenOp();
     }
 }

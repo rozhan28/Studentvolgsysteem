@@ -1,23 +1,12 @@
-using StudentVolgSysteem.Core.Services;
+using StudentSysteem.App.ViewModels;
 
 namespace StudentSysteem.App.Views;
 
 public partial class LoginView : ContentPage
 {
-    public LoginView()
+    public LoginView(LoginViewModel viewModel)
     {
         InitializeComponent();
-    }
-
-    private async void OnStudentClicked(object sender, EventArgs e)
-    {
-        GebruikerSessie.LoginAls("Student");
-        await Navigation.PushAsync(new StartView());
-    }
-
-    private async void OnDocentClicked(object sender, EventArgs e)
-    {
-        GebruikerSessie.LoginAls("Docent");
-        await Navigation.PushAsync(new StartView());
+        BindingContext = viewModel;
     }
 }
