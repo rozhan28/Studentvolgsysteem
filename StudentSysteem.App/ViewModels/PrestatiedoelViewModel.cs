@@ -70,6 +70,15 @@ public partial class PrestatiedoelViewModel : BasisViewModel
             _toelichtingService,
             isDocent);
 
+        // wijziging van prestatieniveau voor de expander header
+        Beoordeling.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(CriteriumViewModel.PrestatieNiveau))
+            {
+                OnPropertyChanged(nameof(Beoordeling));
+            }
+        };
+
         LeertakenCommand = new Command<string>(async url => await OpenLeertakenUrl(url));
     }
 

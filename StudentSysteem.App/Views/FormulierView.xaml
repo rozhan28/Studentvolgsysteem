@@ -45,8 +45,9 @@
                                          Spacing="5"
                                          VerticalOptions="Center">
 
-                                            <Label Text="{Binding PrestatieNiveau}"
+                                            <Label Text="{Binding Beoordeling.PrestatieNiveau}"
                                              VerticalOptions="Center"/>
+
 
                                             <Image Source="chevron.png"
                                                HeightRequest="16"
