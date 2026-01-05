@@ -19,10 +19,10 @@ namespace StudentSysteem.Core.Data.Repositories
                 docent_id INTEGER,
                 vaardigheid_id INTEGER,
                 feedbackgever_id INTEGER,
-                FOREIGN KEY (student_id) REFERENCES Student(vaardigheid_id),
+                FOREIGN KEY (student_id) REFERENCES Student(student_id),
                 FOREIGN KEY (docent_id) REFERENCES Docent(docent_id),
                 FOREIGN KEY (vaardigheid_id) REFERENCES Vaardigheid(vaardigheid_id),
-                FOREIGN KEY (feedbackgever_id) REFERENCES Student(feedbackgever_id),
+                FOREIGN KEY (feedbackgever_id) REFERENCES Student(student_id)
             )");
 
             MaakTabel(@"

@@ -53,12 +53,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
         builder.Services.AddSingleton<IProcesRepository, ProcesRepository>();
         builder.Services.AddSingleton<IProcesstapRepository, ProcesstapRepository>();
-        builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
         builder.Services.AddSingleton<ILeeruitkomstRepository, LeeruitkomstRepository>();
         builder.Services.AddSingleton<IVaardigheidRepository, VaardigheidRepository>();
         builder.Services.AddSingleton<IClusterRepository, ClusterRepository>();
         builder.Services.AddSingleton<IStudentRepository, StudentRepository>();
         builder.Services.AddSingleton<IDocentRepository, DocentRepository>();
+        builder.Services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
 
         // Services
         builder.Services.AddSingleton<IFormulierService, FormulierService>();
