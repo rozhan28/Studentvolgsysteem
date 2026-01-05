@@ -13,23 +13,38 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public void SlaToelichtingenOp(List<Toelichting> toelichtingen, int studentId, int prestatiedoelId, int feedbackgeverId)
+        public bool ValideerFeedback(List<Feedback> feedbackLijst)
         {
-            if (studentId <= 0)
-                throw new ArgumentException("StudentId moet groter zijn dan 0.");
-            
-            if (prestatiedoelId <= 0)
-                throw new ArgumentException("PrestatiedoelId is vereist.");
-            
-            if (feedbackgeverId <= 0)
-                throw new ArgumentException("FeedbackgeverId is vereist.");
+            try
+            {
+                foreach (Feedback feedback in feedbackLijst)
+                {
+                    if (feedback.StudentId <= 0)
+                        throw new ArgumentException("StudentId moet groter zijn dan 0.");
 
-            List<Toelichting> gevuldeToelichtingen = toelichtingen
-                .Where(t => !string.IsNullOrWhiteSpace(t.Tekst))
-                .ToList();
+                    if (feedback.VaardigheidId <= 0)
+                        throw new ArgumentException("PrestatiedoelId is vereist.");
 
-            if (gevuldeToelichtingen.Any())
-                _feedbackRepository.VoegToelichtingenToe(gevuldeToelichtingen, studentId, prestatiedoelId, feedbackgeverId);
+                    if (feedback.FeedbackGeverId <= 0 && feedback.DocentId <= 0)
+                        throw new ArgumentException("FeedbackgeverId or DocentId is vereist.");
+                    
+                    feedback.Toelichtingen.RemoveAll(t => string.IsNullOrWhiteSpace(t.Tekst));
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public void SlaFeedbackOp(List<Feedback> feedback)
+        {
+            if (ValideerFeedback(feedback))
+            {
+                _feedbackRepository.VoegFeedbackToe(feedback); 
+            }
         }
     }
 }

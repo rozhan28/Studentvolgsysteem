@@ -37,7 +37,7 @@ public partial class FormulierViewModel : BasisViewModel
     [ObservableProperty] private bool isZelfEvaluatie;
     
     // Opslaan
-    public IAsyncRelayCommand OpslaanCommand { get; }
+    public IAsyncRelayCommand OpslaanCommand;
     
     // Constructor
     public FormulierViewModel(
@@ -117,18 +117,20 @@ public partial class FormulierViewModel : BasisViewModel
             int feedbackgeverId = _globaal.IngelogdeGebruiker.Id;
             int ontvangerId = 1;
 
+            List<Feedback> feedbackLijst = new();
             foreach (PrestatiedoelViewModel prestatiedoelItems in FormulierItems)
             {
                 // Pak de toelichtingen uit de rij
                 List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Toelichting.Toelichtingen.ToList();
-
-                // Opslaan via service
-                _formulierService.SlaToelichtingenOp(
-                    toelichtingenVanPrestatiedoelItems, 
-                    ontvangerId, 
-                    prestatiedoelItems.PrestatiedoelId,
-                    feedbackgeverId);
+                
+                // Maak feedback model
+                Feedback feedback = new(prestatiedoelItems.VaardigheidId);
+                feedback.Toelichtingen = toelichtingenVanPrestatiedoelItems;
+                feedback.StudentId = ontvangerId;
+                feedback.FeedbackGeverId = feedbackgeverId;
             }
+            // Sla de feedback op via de service
+            _formulierService.SlaFeedbackOp(feedbackLijst);
 
             StatusMelding = "Succesvol opgeslagen!";
             await Shell.Current.DisplayAlert("Succes", "De feedback is succesvol opgeslagen.", "OK");

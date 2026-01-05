@@ -33,7 +33,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     public string HboiActiviteit { get; set; }
 
     // Prestatiedoel properties
-    public int PrestatiedoelId { get; }
+    public int VaardigheidId { get; }
     public string LeertakenUrl { get; }
     public string PrestatiedoelBeschrijving { get; set; }
     public string AiAssessmentScale { get; }
@@ -53,7 +53,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         bool isDocent = _globaal.IngelogdeGebruiker?.Rol == Role.Docent;
 
         // ID toewijzen zodat ViewModel weet welk prestatiedoel hij opslaat
-        PrestatiedoelId = beoordelingStructuur.Prestatiedoel.Id;
+        VaardigheidId = beoordelingStructuur.Vaardigheid.VaardigheidId;
 
         // Data toewijzen vanuit BeoordelingStructuur.cs
         ExpanderTitel = $"{beoordelingStructuur.Proces.Naam} | {beoordelingStructuur.Processtap.Naam} | {beoordelingStructuur.Vaardigheid.VaardigheidNaam}";
