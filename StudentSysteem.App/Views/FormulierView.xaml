@@ -96,7 +96,7 @@
                                             <VerticalStackLayout HorizontalOptions="Start">
                                                 <Button Text="Leertaken.nl" 
                                                         VerticalOptions="Center"
-                                                        Command="{Binding BindingContext.LeertakenCommand, Source={x:Reference Formulier}}"
+                                                        Command="{Binding LeertakenCommand}"
                                                         CommandParameter="{Binding LeertakenUrl}"
                                                         IsVisible="{Binding LeertakenUrl, Converter={StaticResource LeertakenLeegConverter}}" />
                                             </VerticalStackLayout>
