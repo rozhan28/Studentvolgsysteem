@@ -65,10 +65,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
         AiAssessmentScale = beoordelingStructuur.Prestatiedoel.AiAssessmentScale;
 
         Beoordeling = new CriteriumViewModel(beoordelingStructuur.Prestatiedoel, _criteriumService);
-        Toelichting = new ToelichtingViewModel(
-            beoordelingStructuur.Prestatiedoel.Id,
-            _toelichtingService,
-            isDocent);
+        Toelichting = new ToelichtingViewModel(beoordelingStructuur.Prestatiedoel, _toelichtingService, isDocent);
 
         // wijziging van prestatieniveau voor de expander header
         Beoordeling.PropertyChanged += (_, e) =>

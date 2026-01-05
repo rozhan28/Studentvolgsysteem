@@ -186,15 +186,15 @@
                                     <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
                                             BackgroundColor="White"
                                             Padding="10">
-                                        <VerticalStackLayout Spacing="5">
+                                        <VerticalStackLayout BindingContext="{Binding Toelichting}" x:DataType="viewmodel:ToelichtingViewModel" Spacing="5" x:Name="ToelichtingContext">
                                             <Label Text="Toelichting" FontFamily="Bold" />
 
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
                                                 <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="models:Toelichting">
                                                         <VerticalStackLayout Spacing="10">
-                                                            <Button Text="{Binding GeselecteerdeOptie}"
-                                                                    Command="{Binding Source={x:Reference Formulier}, Path=BindingContext.OptiesCommand}"
+                                                            <Button Text="{Binding GeselecteerdeOptie.Beschrijving}"
+                                                                    Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
                                                                     CommandParameter="{Binding .}"
                                                                     HorizontalOptions="Start"/>
                                                             <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Toelichting..."/>
@@ -206,7 +206,7 @@
                                             <Button Text="+ Voeg extra feedback toe"
                                                     HorizontalOptions="Center"
                                                     MaximumWidthRequest="250"
-                                                    Command="{Binding Source={x:Reference Formulier}, Path=BindingContext.VoegExtraToelichtingToeCommand}"
+                                                    Command="{Binding VoegExtraToelichtingToeCommand}"
                                                     CommandParameter="{Binding .}"
                                                     IsVisible="{Binding KanExtraToelichtingToevoegen}"/>
 
