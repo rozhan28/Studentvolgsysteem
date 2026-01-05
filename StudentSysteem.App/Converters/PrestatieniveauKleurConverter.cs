@@ -7,18 +7,17 @@ namespace StudentSysteem.App.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Niveauaanduiding niveau)
-            {
-                return niveau switch
-                {
-                    Niveauaanduiding.InOntwikkeling => GetColorResource("InOntwikkeling"),
-                    Niveauaanduiding.OpNiveau => GetColorResource("OpNiveau"),
-                    Niveauaanduiding.BovenNiveau => GetColorResource("BovenNiveau"),
-                    _ => GetColorResource("NietIngeleverd")
-                };
-            }
-            return GetColorResource("NietIngeleverd");
+            if (value is not Niveauaanduiding geselecteerd || parameter == null)
+                return Colors.Transparent;
+
+            if (!Enum.TryParse(parameter.ToString(), out Niveauaanduiding blokNiveau))
+                return Colors.Transparent;
+
+            return geselecteerd == blokNiveau
+                ? GetColorResource(blokNiveau.ToString())
+                : Colors.Transparent;
         }
+
 
         private static Color GetColorResource(string resourceKey)
         {
