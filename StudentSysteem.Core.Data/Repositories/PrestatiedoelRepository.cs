@@ -1,4 +1,5 @@
-﻿using StudentSysteem.Core.Data.Helpers;
+﻿using System.Diagnostics;
+using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
 
@@ -6,9 +7,12 @@ namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper)
-            : base(dbConnectieHelper)
+        private readonly ICriteriumRepository _criteriumRepository;
+        
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository) : base(dbConnectieHelper)
         {
+            _criteriumRepository = criteriumRepository;
+            
             MaakTabel(@"
                 CREATE TABLE IF NOT EXISTS Prestatiedoel (
                     prestatiedoel_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,6 +57,17 @@ namespace StudentSysteem.Core.Data.Repositories
             VoegMeerdereInMetTransactie(insertQueriesKoppeltabel);
         }
 
+        public List<Prestatiedoel> HaalAllePrestatiedoelenOpMetCriteria()
+        {
+            List<Prestatiedoel> prestatiedoelen = HaalAllePrestatiedoelenOp();
+            
+            foreach (Prestatiedoel prestatiedoel in prestatiedoelen)
+            {
+                prestatiedoel.Criteria = _criteriumRepository.HaalCriteriaOpVoorPrestatiedoel(prestatiedoel.Id);
+            }
+            return prestatiedoelen;
+        }
+        
         public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
         {
             var lijst = new List<Prestatiedoel>();

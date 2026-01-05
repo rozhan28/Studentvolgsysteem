@@ -29,7 +29,7 @@ public class BeoordelingStructuurService : IBeoordelingStructuurService
         
         IEnumerable<Proces> processen = _procesRepository.HaalAlleProcessenOp();
         IEnumerable<Vaardigheid> vaardigheden = _vaardigheidRepository.HaalAlleVaardighedenOp();
-        IEnumerable<Prestatiedoel> prestatiedoelen = _prestatiedoelRepository.HaalAllePrestatiedoelenOp();
+        IEnumerable<Prestatiedoel> prestatiedoelen = _prestatiedoelRepository.HaalAllePrestatiedoelenOpMetCriteria();
 
         foreach (Proces proces in processen)
         {

@@ -15,7 +15,7 @@ namespace StudentSysteem.Core.Services
 
         public IEnumerable<Prestatiedoel> HaalAllePrestatiedoelenOp()
         {
-            return _repository.HaalAllePrestatiedoelenOp();
+            return _repository.HaalAllePrestatiedoelenOpMetCriteria();
         }
     }
 }

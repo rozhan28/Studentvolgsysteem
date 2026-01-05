@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -16,8 +17,8 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
     private readonly ICriteriumService _criteriumService;
     private Prestatiedoel _prestatiedoel;
     
-    public List<Criterium> OpNiveauCriteria { get; set; }
-    public List<Criterium> BovenNiveauCriteria { get; set; }
+    public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
+    public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
     public event PropertyChangedEventHandler PropertyChanged;
     
     private bool _isPrestatieNiveauInvalid;
@@ -41,8 +42,11 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
 
     private void LaadCriteria()
     {
-        OpNiveauCriteria = CriteriaBijNiveau(Niveauaanduiding.OpNiveau);
-        BovenNiveauCriteria = CriteriaBijNiveau(Niveauaanduiding.BovenNiveau);
+        OpNiveauCriteria = new ObservableCollection<Criterium>(CriteriaBijNiveau(Niveauaanduiding.OpNiveau));
+        BovenNiveauCriteria = new ObservableCollection<Criterium>(CriteriaBijNiveau(Niveauaanduiding.BovenNiveau));
+
+        Notify(nameof(OpNiveauCriteria));
+        Notify(nameof(BovenNiveauCriteria));
     }
 
     public CriteriumViewModel(Prestatiedoel prestatiedoel, ICriteriumService criteriumService)
