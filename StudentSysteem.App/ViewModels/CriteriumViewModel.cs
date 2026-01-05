@@ -17,13 +17,9 @@ public partial class CriteriumViewModel : BasisViewModel
 {
     private readonly ICriteriumService _criteriumService;
     private Prestatiedoel _prestatiedoel;
-
     public ICommand SelecteerCriteriumCommand { get; }
-
-    
     public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
     public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
-    //public event PropertyChangedEventHandler PropertyChanged;
     
     private bool _isPrestatieNiveauInvalid;
     public bool IsPrestatieNiveauInvalid //Rode box om het criterium menu
@@ -31,6 +27,7 @@ public partial class CriteriumViewModel : BasisViewModel
         get => _isPrestatieNiveauInvalid;
         set { _isPrestatieNiveauInvalid = value; OnPropertyChanged(); }
     }
+    
     private async Task InitialiseerPaginaAsync()
     {
         try
