@@ -13,7 +13,7 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public bool ValideerFeedback(List<Feedback> feedbackLijst)
+        private bool ValideerFeedback(List<Feedback> feedbackLijst)
         {
             try
             {
