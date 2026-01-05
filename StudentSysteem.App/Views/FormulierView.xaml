@@ -139,7 +139,11 @@
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
                                                                         <HorizontalStackLayout Spacing="10">
-                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" 
+                                                                                VerticalOptions="Center"
+                                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
+                                                                                Path=SelecteerCriteriumCommand}"
+                                                                                CommandParameter="{Binding .}" />
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>
@@ -160,7 +164,11 @@
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
                                                                         <HorizontalStackLayout Spacing="10">
-                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" 
+                                                                                VerticalOptions="Center"
+                                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
+                                                                                Path=SelecteerCriteriumCommand}"
+                                                                                CommandParameter="{Binding .}" />
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>

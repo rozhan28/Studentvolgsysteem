@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using StudentSysteem.Core.Interfaces.Services;
 using StudentSysteem.Core.Models;
 
@@ -16,6 +17,9 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
 {
     private readonly ICriteriumService _criteriumService;
     private Prestatiedoel _prestatiedoel;
+
+    public ICommand SelecteerCriteriumCommand { get; }
+
     
     public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
     public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
@@ -53,6 +57,7 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
     {
         _criteriumService = criteriumService;
         _prestatiedoel = prestatiedoel;
+        SelecteerCriteriumCommand = new Command<Criterium>(OnSelecteerCriteriumCommand);
         InitialiseerPaginaAsync();
     }
 
@@ -84,11 +89,12 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
         }
     }
     
-    public bool IsOpNiveau => !InOntwikkeling && CriteriaBijNiveau(Niveauaanduiding.OpNiveau).Any(c => c.IsGeselecteerd);
-    public bool IsBovenNiveau => !InOntwikkeling && CriteriaBijNiveau(Niveauaanduiding.BovenNiveau).Any(c => c.IsGeselecteerd);
+    public bool IsOpNiveau => !InOntwikkeling && CriteriaBijNiveau(Niveauaanduiding.OpNiveau).All(c => c.IsGeselecteerd);
+    public bool IsBovenNiveau => !InOntwikkeling && CriteriaBijNiveau(Niveauaanduiding.BovenNiveau).All(c => c.IsGeselecteerd);
     
     public void UpdateStatus()
     {
+        Debug.WriteLine("UpdateStatus");
         if (InOntwikkeling)
         {
             GeselecteerdNiveau = Niveauaanduiding.InOntwikkeling;
@@ -127,6 +133,13 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
         IsPrestatieNiveauInvalid = !niveauOk;
 
         return niveauOk;
+    }
+
+    private void OnSelecteerCriteriumCommand(Criterium criterium)
+    {
+        UpdateStatus();
+        Notify(nameof(GeselecteerdNiveau));
+        Notify(nameof(PrestatieNiveau));
     }
     
     private void Notify([CallerMemberName] string prop = "")
