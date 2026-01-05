@@ -49,6 +49,7 @@ public partial class CriteriumViewModel : BasisViewModel, INotifyPropertyChanged
     {
         _criteriumService = criteriumService;
         _prestatiedoel = prestatiedoel;
+        InitialiseerPaginaAsync();
     }
 
     private List<Criterium> CriteriaBijNiveau(Niveauaanduiding niveauaanduiding)

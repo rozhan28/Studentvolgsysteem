@@ -6,7 +6,7 @@ namespace StudentSysteem.Core.Data.Repositories
 {
     public class PrestatiedoelRepository : DatabaseVerbinding, IPrestatiedoelRepository
     {
-        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper, ICriteriumRepository criteriumRepository)
+        public PrestatiedoelRepository(DbConnectieHelper dbConnectieHelper)
             : base(dbConnectieHelper)
         {
             MaakTabel(@"

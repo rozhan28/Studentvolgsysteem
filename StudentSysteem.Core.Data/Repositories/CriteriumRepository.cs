@@ -26,15 +26,6 @@ namespace StudentSysteem.Core.Data.Repositories
                     );
                     ");
             
-            // Koppeltabel PrestatiedoelCriterium
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS PrestatiedoelCriterium (
-                prestatiedoel_id INTEGER NOT NULL,
-                criterium_id INTEGER NOT NULL,
-                PRIMARY KEY (prestatiedoel_id, criterium_id),
-                FOREIGN KEY (prestatiedoel_id) REFERENCES Prestatiedoel(prestatiedoel_id),
-                FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-            );");
-
             List<string> insertQueries =
             [
                 @"INSERT OR IGNORE INTO Criterium (criterium_id, beschrijving, niveau)

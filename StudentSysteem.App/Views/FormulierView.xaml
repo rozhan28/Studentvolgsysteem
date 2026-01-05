@@ -2,9 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:converters="clr-namespace:StudentSysteem.App.Converters"
+             xmlns:converters="clr-namespace:StudentSysteem.App.Converters;assembly=StudentSysteem.App"
              xmlns:models="clr-namespace:StudentSysteem.Core.Models;assembly=StudentSysteem.Core"
-             xmlns:viewmodel="clr-namespace:StudentSysteem.App.ViewModels"
+             xmlns:viewmodel="clr-namespace:StudentSysteem.App.ViewModels;assembly=StudentSysteem.App"
              x:Class="StudentSysteem.App.Views.FormulierView"
              x:Name="Formulier"
              Title="{Binding Titel}">
@@ -108,7 +108,7 @@
                                         </VerticalStackLayout>
 
                                         <!-- Rechterkolom -->
-                                        <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}">>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}">
                                             <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
