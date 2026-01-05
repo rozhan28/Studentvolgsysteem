@@ -37,7 +37,7 @@ public partial class FormulierViewModel : BasisViewModel
     [ObservableProperty] private bool isZelfEvaluatie;
     
     // Opslaan
-    public IAsyncRelayCommand OpslaanCommand;
+    public IAsyncRelayCommand OpslaanCommand { get; }
     
     // Constructor
     public FormulierViewModel(
@@ -53,7 +53,7 @@ public partial class FormulierViewModel : BasisViewModel
         _formulierService = formulierService;
         _globaal = globaal;
         
-        OpslaanCommand = new AsyncRelayCommand(async () => await BewaarIngevuldFormulierAsync());
+        OpslaanCommand = new AsyncRelayCommand(BewaarIngevuldFormulierAsync);
     }
     
     // Header paginatitel
