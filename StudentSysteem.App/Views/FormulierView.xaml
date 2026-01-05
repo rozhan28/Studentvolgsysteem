@@ -11,11 +11,11 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:ValidatieRandkleurConverter x:Key="ValidatieRandkleurConverter"/>
             <converters:PrestatieniveauKleurConverter x:Key="PrestatieniveauKleurConverter" />
             <converters:AiConverter x:Key="AiIconConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
-            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <converters:BoolOmkeerConverter x:Key="BoolOmkeerConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -109,7 +109,7 @@
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}" x:DataType="viewmodel:CriteriumViewModel">
-                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
+                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
                                                 <VerticalStackLayout Spacing="15">
@@ -182,7 +182,7 @@
                                     </Grid>
 
                                     <!-- Toelichting -->
-                                    <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource BoolToColorConverter}}"
+                                    <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
                                             BackgroundColor="White"
                                             Padding="10">
                                         <VerticalStackLayout Spacing="5">
@@ -213,7 +213,7 @@
                                                    TextColor="Gray"
                                                    HorizontalOptions="Center"
                                                    FontAttributes="Italic"
-                                                   IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource InvertBoolConverter}}"/>
+                                                   IsVisible="{Binding KanExtraToelichtingToevoegen, Converter={StaticResource BoolOmkeerConverter}}"/>
                                         </VerticalStackLayout>
                                     </Border>
                                 </VerticalStackLayout>
