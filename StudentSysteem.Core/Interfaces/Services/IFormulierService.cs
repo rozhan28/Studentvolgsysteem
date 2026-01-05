@@ -4,6 +4,6 @@ namespace StudentSysteem.Core.Interfaces.Services
 {
     public interface IFormulierService
     {
-        void SlaFeedbackOp(List<Feedback> feedback);
+        void SlaFeedbackOp(List<Feedback> feedbackLijst);
     }
 }

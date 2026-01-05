@@ -39,11 +39,11 @@ namespace StudentSysteem.Core.Services
             }
         }
 
-        public void SlaFeedbackOp(List<Feedback> feedback)
+        public void SlaFeedbackOp(List<Feedback> feedbackLijst)
         {
-            if (ValideerFeedback(feedback))
+            if (ValideerFeedback(feedbackLijst))
             {
-                _feedbackRepository.VoegFeedbackToe(feedback); 
+                _feedbackRepository.VoegFeedbackToe(feedbackLijst); 
             }
         }
     }
