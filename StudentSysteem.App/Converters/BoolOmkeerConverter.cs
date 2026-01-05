@@ -4,7 +4,7 @@ using Microsoft.Maui.Controls;
 
 namespace StudentSysteem.App.Converters
 {
-    public class InvertBoolConverter : IValueConverter
+    public class BoolOmkeerConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => !(bool)value;

@@ -2,7 +2,7 @@
 
 namespace StudentSysteem.App.Converters
 {
-    public class BoolToColorConverter : IValueConverter
+    public class ValidatieRandkleurConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
