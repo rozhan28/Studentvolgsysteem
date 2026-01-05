@@ -34,27 +34,27 @@
                             <toolkit:Expander.Header>
                                 <Border Stroke="#ccc"
                                     BackgroundColor="White"
-                                    Padding="10">   
+                                    Padding="10">
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
 
                                         <Label Text="{Binding ExpanderTitel}"
                                            FontSize="16"
                                            FontFamily="Bold"
-                                           VerticalOptions="Center"/>       
+                                           VerticalOptions="Center"/>
                                         <HorizontalStackLayout Grid.Column="1"
                                          Spacing="5"
-                                         VerticalOptions="Center">    
+                                         VerticalOptions="Center">
 
                                             <Label Text="{Binding PrestatieNiveau}"
                                              VerticalOptions="Center"/>
 
                                             <Image Source="chevron.png"
                                                HeightRequest="16"
-                                               WidthRequest="16">   
+                                               WidthRequest="16">
                                                 <Image.Triggers>
                                                     <DataTrigger TargetType="Image"
                                                      Binding="{Binding IsExpanded}"
-                                                     Value="True">  
+                                                     Value="True">
                                                         <Setter Property="Rotation"
                                                         Value="180"/>
                                                     </DataTrigger>
@@ -86,12 +86,12 @@
                                                 <Label Text="{Binding Vaardigheid}" FontFamily="Bold"/>
                                                 <Label Text="{Binding VaardigheidBeschrijving}"/>
                                             </VerticalStackLayout>
-                                            
+
                                             <VerticalStackLayout Spacing="2">
                                                 <Label Text="Prestatiedoel" FontFamily="Italic" />
                                                 <Label Text="{Binding PrestatiedoelBeschrijving}"/>
                                             </VerticalStackLayout>
-                                            
+
                                             <VerticalStackLayout HorizontalOptions="Start">
                                                 <Button Text="Leertaken.nl" 
                                                         VerticalOptions="Center"
@@ -106,68 +106,68 @@
                                                        WidthRequest="150"/>
                                             </VerticalStackLayout>
                                         </VerticalStackLayout>
-                                        
+
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}">>
                                             <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource BoolToColorConverter}}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
                                                 <VerticalStackLayout Spacing="15">
-                                                        <!-- In ontwikkeling -->
-                                                        <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                            <VerticalStackLayout Spacing="10"
+                                                    <!-- In ontwikkeling -->
+                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                        <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=InOntwikkeling}"
                                                                                  Padding="10">
-                                                                <Label Text="In ontwikkeling" FontFamily="Bold"/>
-                                                                <HorizontalStackLayout Spacing="10">
-                                                                    <CheckBox IsChecked="{Binding InOntwikkeling}"/>
-                                                                </HorizontalStackLayout>
-                                                            </VerticalStackLayout>
-                                                        </Border>
-                                
-                                                        <!-- Op niveau -->
-                                                        <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                            <VerticalStackLayout Spacing="10"
+                                                            <Label Text="In ontwikkeling" FontFamily="Bold"/>
+                                                            <HorizontalStackLayout Spacing="10">
+                                                                <CheckBox IsChecked="{Binding InOntwikkeling}"/>
+                                                            </HorizontalStackLayout>
+                                                        </VerticalStackLayout>
+                                                    </Border>
+
+                                                    <!-- Op niveau -->
+                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                        <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=OpNiveau}"
                                                                                  Padding="10">
-                                                                <Label Text="Op niveau" FontFamily="Bold"/>
-                                                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
-                                                                    <BindableLayout.ItemTemplate>
-                                                                        <DataTemplate x:DataType="models:Criterium">
-                                                                            <HorizontalStackLayout Spacing="10">
-                                                                                <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
-                                                                                <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
-                                                                            </HorizontalStackLayout>
-                                                                        </DataTemplate>
-                                                                    </BindableLayout.ItemTemplate>
-                                                                </VerticalStackLayout>
+                                                            <Label Text="Op niveau" FontFamily="Bold"/>
+                                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
+                                                                <BindableLayout.ItemTemplate>
+                                                                    <DataTemplate x:DataType="models:Criterium">
+                                                                        <HorizontalStackLayout Spacing="10">
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
+                                                                        </HorizontalStackLayout>
+                                                                    </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
                                                             </VerticalStackLayout>
-                                                        </Border>
+                                                        </VerticalStackLayout>
+                                                    </Border>
 
-                                                        <!-- Boven niveau -->
-                                                        <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
-                                                            <VerticalStackLayout Spacing="10"
+                                                    <!-- Boven niveau -->
+                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                        <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=BovenNiveau}"
                                                                                  Padding="10">
-                                                                <Label Text="Boven niveau" FontFamily="Bold"/>
-                                                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
-                                                                    <BindableLayout.ItemTemplate>
-                                                                        <DataTemplate x:DataType="models:Criterium">
-                                                                            <HorizontalStackLayout Spacing="10">
-                                                                                <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
-                                                                                <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
-                                                                            </HorizontalStackLayout>
-                                                                        </DataTemplate>
-                                                                    </BindableLayout.ItemTemplate>
-                                                                </VerticalStackLayout>
+                                                            <Label Text="Boven niveau" FontFamily="Bold"/>
+                                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
+                                                                <BindableLayout.ItemTemplate>
+                                                                    <DataTemplate x:DataType="models:Criterium">
+                                                                        <HorizontalStackLayout Spacing="10">
+                                                                            <CheckBox IsChecked="{Binding IsGeselecteerd}" VerticalOptions="Center"/>
+                                                                            <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
+                                                                        </HorizontalStackLayout>
+                                                                    </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
                                                             </VerticalStackLayout>
-                                                        </Border>
+                                                        </VerticalStackLayout>
+                                                    </Border>
                                                 </VerticalStackLayout>
                                             </Border>
                                         </VerticalStackLayout>
@@ -179,7 +179,7 @@
                                             Padding="10">
                                         <VerticalStackLayout Spacing="5">
                                             <Label Text="Toelichting" FontFamily="Bold" />
-                                    
+
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
                                                 <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="models:Toelichting">
@@ -193,14 +193,14 @@
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>
                                             </VerticalStackLayout>
-                                    
+
                                             <Button Text="+ Voeg extra feedback toe"
                                                     HorizontalOptions="Center"
                                                     MaximumWidthRequest="250"
                                                     Command="{Binding Source={x:Reference Formulier}, Path=BindingContext.VoegExtraToelichtingToeCommand}"
                                                     CommandParameter="{Binding .}"
                                                     IsVisible="{Binding KanExtraToelichtingToevoegen}"/>
-                                    
+
                                             <Label Text="Maximale feedback bereikt."
                                                    TextColor="Gray"
                                                    HorizontalOptions="Center"
@@ -227,3 +227,4 @@
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
+
