@@ -28,13 +28,13 @@ namespace StudentSysteem.Tests
             // Arrange (Preconditie)
             var criterium = new Criterium(
                 id: 1,
-                beschrijving: "Samenwerken",
+                beschrijving: "Domeinmodel",
                 niveau: Niveauaanduiding.OpNiveau
             );
 
             var toelichting = new Toelichting
             {
-                Tekst = "Goede samenwerking en duidelijke communicatie",
+                Tekst = "Domeinmodel is goed gemaakt",
                 GeselecteerdeOptie = criterium
             };
 
