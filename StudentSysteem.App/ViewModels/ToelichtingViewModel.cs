@@ -101,19 +101,22 @@ public partial class ToelichtingViewModel : BasisViewModel
     {
         if (_isDocent)
         {
-            isToelichtingInvalid = true;
+            // Docent hoeft geen toelichting in te vullen, dus hier moet hij false zijn.
+            IsToelichtingInvalid = false;
             return true;
         }
 
+        // Als er geen toelichtingen zijn, dan is het invalid.
         if (Toelichtingen == null || !Toelichtingen.Any())
         {
-            isToelichtingInvalid = false;
+            IsToelichtingInvalid = true;
             return false;
         }
-            
-        bool result = Toelichtingen.All(t => IsToelichtingCorrect(t));
-        isToelichtingInvalid = result;
-        return result;
+        
+        // Check of alle toelichtingen correct zijn
+        bool allesCorrect = Toelichtingen.All(t => IsToelichtingCorrect(t));
+        IsToelichtingInvalid = !allesCorrect;
+        return allesCorrect;
     }
     
     private bool IsToelichtingCorrect(Toelichting toelichting)

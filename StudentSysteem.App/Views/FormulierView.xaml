@@ -183,10 +183,12 @@
                                     </Grid>
 
                                     <!-- Toelichting -->
-                                    <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                    <Border BindingContext="{Binding Toelichting}"
+                                            x:DataType="viewmodel:ToelichtingViewModel"
+                                            Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
                                             BackgroundColor="White"
                                             Padding="10">
-                                        <VerticalStackLayout BindingContext="{Binding Toelichting}" x:DataType="viewmodel:ToelichtingViewModel" Spacing="5" x:Name="ToelichtingContext">
+                                        <VerticalStackLayout Spacing="5" x:Name="ToelichtingContext">
                                             <Label Text="Toelichting" FontFamily="Bold" />
 
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
