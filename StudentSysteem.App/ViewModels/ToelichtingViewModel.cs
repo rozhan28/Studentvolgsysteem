@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using StudentSysteem.Core.Interfaces.Services;
@@ -9,7 +7,7 @@ using StudentSysteem.Core.Models;
 namespace StudentSysteem.App.ViewModels;
 
 // Handelt alle toelichtingen af (toevoegen + validatie)
-public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChanged
+public partial class ToelichtingViewModel : BasisViewModel
 {
     private readonly IToelichtingService _toelichtingService;
     private readonly bool _isDocent;
@@ -24,9 +22,6 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
     
     [ObservableProperty]
     private bool isToelichtingInvalid;
-
-    
-    public event PropertyChangedEventHandler PropertyChanged;
     
     public ObservableCollection<Toelichting> Toelichtingen { get; }
 
@@ -49,26 +44,26 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
         if (Toelichtingen.Count >= _beschikbareCriteria.Count)
         {
             KanExtraToelichtingToevoegen = false;
-            Notify(nameof(KanExtraToelichtingToevoegen));
+            OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
             return;
         }
         
         Toelichtingen.Add(new Toelichting());
         KanExtraToelichtingToevoegen = Toelichtingen.Count < _beschikbareCriteria.Count;
-        Notify(nameof(Toelichtingen));
-        Notify(nameof(KanExtraToelichtingToevoegen));
+        OnPropertyChanged(nameof(Toelichtingen));
+        OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
     }
     
     private async Task ShowOptiesPicker(Toelichting toelichting)
     {
         Criterium huidigCriterium = toelichting.GeselecteerdeOptie;
         
-        var alGeselecteerdeIds = Toelichtingen
+        List<int> alGeselecteerdeIds = Toelichtingen
             .Where(t => t != toelichting && t.GeselecteerdeOptie is Criterium)
             .Select(t => t.GeselecteerdeOptie.Id)
             .ToList();
     
-        var beschikbareCriteriaVoorSelectie = _beschikbareCriteria
+        List<Criterium> beschikbareCriteriaVoorSelectie = _beschikbareCriteria
             .Where(c => !alGeselecteerdeIds.Contains(c.Id))
             .ToList();
     
@@ -98,7 +93,7 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
             }
             
             KanExtraToelichtingToevoegen = Toelichtingen.Count < _beschikbareCriteria.Count;
-            Notify(nameof(KanExtraToelichtingToevoegen));
+            OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
         }
     }
 
@@ -126,7 +121,4 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
         return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
                toelichting.GeselecteerdeOptie is Criterium;
     }
-    
-    private void Notify([CallerMemberName] string prop = "")
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 }
