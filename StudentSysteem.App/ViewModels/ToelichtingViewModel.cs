@@ -10,21 +10,27 @@ namespace StudentSysteem.App.ViewModels;
 public partial class ToelichtingViewModel : BasisViewModel
 {
     private readonly IToelichtingService _toelichtingService;
-    private readonly bool _isDocent;
     private readonly Prestatiedoel _prestatiedoel;
+    
+    // Criteria
     private List<Criterium> _beschikbareCriteria;
-
-    public ICommand VoegExtraToelichtingToeCommand { get; }
     public ICommand OptiesCommand { get; }
     
+    // Extra toelichting
+    public ICommand VoegExtraToelichtingToeCommand { get; }
     [ObservableProperty]
     private bool kanExtraToelichtingToevoegen = true;
+    public ObservableCollection<Toelichting> Toelichtingen { get; }
     
+    // Validatie
+    private readonly bool _isDocent;
     [ObservableProperty]
     private bool isToelichtingInvalid;
+    [ObservableProperty]
+    private HashSet<Toelichting> ongeldigeTekstVelden = new();
+    [ObservableProperty]
+    private HashSet<Toelichting> ongeldigeOptieVelden = new();
     
-    public ObservableCollection<Toelichting> Toelichtingen { get; }
-
     public ToelichtingViewModel(Prestatiedoel prestatiedoel, IToelichtingService service, bool isDocent)
     {
         _prestatiedoel = prestatiedoel;
@@ -99,6 +105,8 @@ public partial class ToelichtingViewModel : BasisViewModel
 
     public bool CheckValidatie()
     {
+        HashSet<Toelichting> nieuweTekstFouten = new HashSet<Toelichting>();
+        HashSet<Toelichting> nieuweOptieFouten = new HashSet<Toelichting>();
         if (_isDocent)
         {
             // Docent hoeft geen toelichting in te vullen, dus hier moet hij false zijn.
@@ -110,11 +118,30 @@ public partial class ToelichtingViewModel : BasisViewModel
         if (Toelichtingen == null || !Toelichtingen.Any())
         {
             IsToelichtingInvalid = true;
+            OngeldigeTekstVelden = nieuweTekstFouten;
+            OngeldigeOptieVelden = nieuweOptieFouten;
             return false;
         }
         
+        foreach (Toelichting t in Toelichtingen)
+        {
+            if (string.IsNullOrWhiteSpace(t.Tekst))
+            {
+                nieuweTekstFouten.Add(t);
+            }
+
+            // We checken of de optie null is
+            if (t.GeselecteerdeOptie == null)
+            {
+                nieuweOptieFouten.Add(t);
+            }
+        }
+        
+        OngeldigeTekstVelden = nieuweTekstFouten;
+        OngeldigeOptieVelden = nieuweOptieFouten;
+        
         // Check of alle toelichtingen correct zijn
-        bool allesCorrect = Toelichtingen.All(t => IsToelichtingCorrect(t));
+        bool allesCorrect = OngeldigeTekstVelden.Count == 0 && OngeldigeOptieVelden.Count == 0;
         IsToelichtingInvalid = !allesCorrect;
         return allesCorrect;
     }
