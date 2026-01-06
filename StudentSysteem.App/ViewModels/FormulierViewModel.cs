@@ -131,6 +131,8 @@ public partial class FormulierViewModel : BasisViewModel
                 feedback.Toelichtingen = toelichtingenVanPrestatiedoelItems;
                 feedback.StudentId = ontvangerId;
                 feedback.FeedbackGeverId = feedbackgeverId;
+                
+                feedbackLijst.Add(feedback);
             }
             // Sla de feedback op via de service
             _formulierService.SlaFeedbackOp(feedbackLijst);
