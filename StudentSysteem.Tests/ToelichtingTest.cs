@@ -21,7 +21,7 @@ namespace StudentSysteem.Tests
         }
 
 
-        // UC1 / TC1-01.2 – Docent kan toelichting invoeren en opslaan (Happy Path)
+        // UC1 / TC1-01.1.1 – Docent kan toelichting invoeren en opslaan (Happy Path)
         [Test]
         public void UC1_HappyPath_ToelichtingWordtOpgeslagen()
         {
