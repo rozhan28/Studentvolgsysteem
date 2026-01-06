@@ -102,14 +102,17 @@ public partial class FormulierViewModel : BasisViewModel
     private async Task BewaarIngevuldFormulierAsync()
     {
         // Alles valideren
+        bool validatieSucces = true;
         foreach (PrestatiedoelViewModel item in FormulierItems)
         {
             if (!item.Valideer()) 
             {
                 StatusMelding = "Controleer alle velden a.u.b.";
-                return;
+                validatieSucces = false;
             }
         }
+
+        if (!validatieSucces) { return; }
 
         // Service vragen om op te slaan
         try 
