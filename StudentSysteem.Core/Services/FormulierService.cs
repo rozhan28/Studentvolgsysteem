@@ -28,7 +28,7 @@ namespace StudentSysteem.Core.Services
                     if (feedback.FeedbackGeverId <= 0 && feedback.DocentId <= 0)
                         throw new ArgumentException("FeedbackgeverId of DocentId is vereist.");
                     
-                    foreach (var toelichting in feedback.Toelichtingen)
+                    foreach (Toelichting toelichting in feedback.Toelichtingen)
                     {
                         if (string.IsNullOrWhiteSpace(toelichting.Tekst))
                             throw new ArgumentException("Toelichting moet tekst bevatten.");
