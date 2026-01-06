@@ -18,6 +18,9 @@ public partial class CriteriumViewModel : BasisViewModel
     private readonly ICriteriumService _criteriumService;
     private Prestatiedoel _prestatiedoel;
     public ICommand SelecteerCriteriumCommand { get; }
+
+    public Niveauaanduiding Niveau;
+    
     public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
     public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
     
