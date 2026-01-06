@@ -1,4 +1,4 @@
-﻿using StudentSysteem.App.ViewModels;
+using StudentSysteem.App.ViewModels;
 using StudentSysteem.App.Views;
 
 namespace StudentSysteem.App;
@@ -12,7 +12,7 @@ public partial class AppShell : Shell
         
         this.Navigated += (s, e) =>
         {
-            if (CurrentPage != null && CurrentPage is not Views.FeedbackFormulierView)
+            if (CurrentPage != null && CurrentPage is not FormulierView)
             {
                 UpdateTitel(CurrentPage.Title);
             }
@@ -20,7 +20,7 @@ public partial class AppShell : Shell
         
         Routing.RegisterRoute("Login", typeof(LoginView));
         Routing.RegisterRoute(nameof(StartView), typeof(StartView));
-        Routing.RegisterRoute(nameof(FeedbackFormulierView), typeof(FeedbackFormulierView));
+        Routing.RegisterRoute(nameof(FormulierView), typeof(FormulierView));
     }
     
     private void OpDashboardGeklikt(object sender, EventArgs e)

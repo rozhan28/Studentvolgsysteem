@@ -23,7 +23,6 @@ namespace StudentSysteem.Core.Data
             string dbConnection = $"Data Source={dbPath}; Foreign Keys=True";
             Verbinding = new SqliteConnection(dbConnection);
 
-            //Vindt locatie van .sqlite path. C:\\Users\\rozha\\AppData\\Local\\StepwiseDbs.sqlite
 
             Debug.WriteLine("DB PATH: " + dbPath);
         }
@@ -95,6 +94,43 @@ namespace StudentSysteem.Core.Data
                 SluitVerbinding();
             }
         }
+
+        protected IEnumerable<T> VoerSelectUit<T>(
+    string sql,
+    Func<IDataReader, T> mapFunc,
+    Dictionary<string, object>? parameters = null)
+        {
+            OpenVerbinding();
+
+            try
+            {
+                using var command = Verbinding.CreateCommand();
+                command.CommandText = sql;
+
+                if (parameters != null)
+                {
+                    foreach (var param in parameters)
+                    {
+                        command.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+                }
+
+                using var reader = command.ExecuteReader();
+                var resultaten = new List<T>();
+
+                while (reader.Read())
+                {
+                    resultaten.Add(mapFunc(reader));
+                }
+
+                return resultaten;
+            }
+            finally
+            {
+                SluitVerbinding();
+            }
+        }
+
 
         public void Dispose()
         {

@@ -12,7 +12,7 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
-            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:ValidatieRandkleurConverter x:Key="ValidatieRandkleurConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

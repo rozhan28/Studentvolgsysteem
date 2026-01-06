@@ -1,8 +1,8 @@
 ﻿using StudentSysteem.Core.Models;
 
-namespace StudentSysteem.Core.Interfaces.Repository
+namespace StudentSysteem.Core.Interfaces.Services
 {
-    public interface IProcesstapRepository
+    public interface IProcesstapService
     {
         public IEnumerable<Processtap> HaalProcesstappenOpVoorProces(int procesId);
     }

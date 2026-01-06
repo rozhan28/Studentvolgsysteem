@@ -57,7 +57,7 @@
     <MauiXaml Update="Views\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\FeedbackFormulierView.xaml">
+    <MauiXaml Update="Views\FormulierView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
