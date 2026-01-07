@@ -85,6 +85,48 @@ namespace StudentSysteem.Tests
                 "Feedback moet worden opgeslagen wanneer de invoer geldig is"
             );            
         }
+
+        [Test]
+        public void UC1_HappyPath_MeerdereToelichtingenWordenOpgeslagen()
+        {
+            int aantalToelichtingen = 5;
+            List<Toelichting> toelichtingen = new();
+            for (int i = 0; i < aantalToelichtingen; i++)
+            {
+                Criterium criterium = new Criterium(i, "", Niveauaanduiding.OpNiveau);
+                Toelichting toelichting = new Toelichting()
+                    { Tekst = $"Meerdere toelichting test {i}: Alles is fout :)", GeselecteerdeOptie = criterium };
+
+                toelichtingen.Add(toelichting);
+            }
+
+
+            Feedback feedback = new(vaardigheidId: 1)
+            {
+                StudentId = 10,
+                DocentId = 5,
+                FeedbackGeverId = 5,
+                Toelichtingen = toelichtingen
+            };
+
+            List<Feedback> feedbackLijst = new();
+            feedbackLijst.Add(feedback);
+
+            // Act
+            _formulierService.SlaFeedbackOp(feedbackLijst);
+
+            // Assert
+            _feedbackRepositoryMock.Verify(repo =>
+                    repo.VoegFeedbackToe(It.Is<List<Feedback>>(lijst =>
+                        lijst.Single().Toelichtingen.Count == aantalToelichtingen
+                        &&
+                        lijst.Single().Toelichtingen
+                            .Select((t, i) => t.Tekst.StartsWith($"Meerdere toelichting test {i}"))
+                            .All(x => x)
+                    )),
+                Times.Once
+            );
+        }
     }
 }
 
