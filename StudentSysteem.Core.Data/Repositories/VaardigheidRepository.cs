@@ -30,7 +30,7 @@ namespace StudentSysteem.Core.Data.Repositories
             List<string> insertQueries =
             [
                 @"INSERT OR IGNORE INTO Vaardigheid
-                  (naam, beschrijving, hboi_activiteit, leertaken_url, prestatiedoel_id, processtap_id, leeruitkomst_id)
+                  (naam, beschrijving, hboi_activiteit, prestatiedoel_id, processtap_id, leeruitkomst_id)
                   VALUES (
                     'Maken domeinmodel',
                     'Het maken van een domeinmodel volgens een UML klassendiagram',
@@ -67,7 +67,7 @@ namespace StudentSysteem.Core.Data.Repositories
                     string VaardigheidNaam = reader.GetString(1);
                     string VaardigheidBeschrijving = reader.GetString(2);
                     string HboiActiviteit = reader.GetString(3);
-                    string LeertakenUrl = reader.GetString(4);
+                    string LeertakenUrl = reader.IsDBNull(4) ? string.Empty : reader.GetString(4);
                     int PrestatiedoelId = reader.GetInt32(5);
                     int processtapId = reader.GetInt32(6);
                     vaardigheidLijst.Add(new(Vaardigheid_id, VaardigheidNaam, VaardigheidBeschrijving, HboiActiviteit, LeertakenUrl, PrestatiedoelId, processtapId));
