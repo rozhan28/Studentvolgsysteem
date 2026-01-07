@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Data.Sqlite;
 using StudentSysteem.Core.Data.Helpers;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Models;
@@ -70,10 +70,10 @@ namespace StudentSysteem.Core.Data.Repositories
         
         public List<Prestatiedoel> HaalAllePrestatiedoelenOp()
         {
-            var lijst = new List<Prestatiedoel>();
+            List<Prestatiedoel> lijst = new List<Prestatiedoel>();
 
             OpenVerbinding();
-            using var cmd = Verbinding.CreateCommand();
+            using SqliteCommand cmd = Verbinding.CreateCommand();
             cmd.CommandText = @"
                 SELECT prestatiedoel_id, niveau, beschrijving, ai_assessment_scale
                 FROM Prestatiedoel;
