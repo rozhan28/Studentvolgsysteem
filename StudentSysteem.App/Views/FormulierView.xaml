@@ -187,10 +187,11 @@
                                     <Border BindingContext="{Binding Toelichting}"
                                             x:DataType="viewmodel:ToelichtingViewModel"
                                             Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
-                                            BackgroundColor="White"
-                                            Padding="10">
+                                            BackgroundColor="{StaticResource Secondary}"
+                                            Padding="10"
+                                            StrokeShape="RoundRectangle 20">
                                         <VerticalStackLayout Spacing="5" x:Name="ToelichtingContext">
-                                            <Label Text="Toelichting" FontFamily="Bold" />
+                                            <Label Text="Toelichting" FontFamily="Bold" Margin="10,0,0,0"/>
 
                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="15">
                                                 <BindableLayout.ItemTemplate>
@@ -213,13 +214,15 @@
                                                                 <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppel aan...'}"
                                                                         Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
                                                                         CommandParameter="{Binding .}"
-                                                                        Margin="0" />
+                                                                        Margin="0"
+                                                                        BackgroundColor="{StaticResource White}"
+                                                                        TextColor="{StaticResource Black}"/>
                                                             </Border>
 
                                                             <!-- Tekstveld -->
                                                             <Border>
                                                                 <Border.StrokeShape>
-                                                                    <RoundRectangle CornerRadius="8" />
+                                                                    <RoundRectangle CornerRadius="20" />
                                                                 </Border.StrokeShape>
                                                                 <Border.Stroke>
                                                                     <MultiBinding Converter="{StaticResource FoutItemInLijstConverter}">
@@ -230,7 +233,8 @@
                                                                 <Editor Text="{Binding Tekst}" 
                                                                         HeightRequest="100" 
                                                                         Placeholder="Toelichting..." 
-                                                                        Margin="0"/>
+                                                                        Margin="0"
+                                                                        BackgroundColor="{StaticResource White}"/>
                                                             </Border>
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
