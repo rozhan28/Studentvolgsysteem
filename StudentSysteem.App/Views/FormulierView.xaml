@@ -13,7 +13,7 @@
         <ResourceDictionary>
             <converters:ValidatieRandkleurConverter x:Key="ValidatieRandkleurConverter"/>
             <converters:PrestatieniveauKleurConverter x:Key="PrestatieniveauKleurConverter" />
-            <converters:AiConverter x:Key="AiIconConverter" />
+            <converters:AiConverter x:Key="AiConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
             <converters:BoolOmkeerConverter x:Key="BoolOmkeerConverter" />
             <converters:FoutItemInLijstConverter x:Key="FoutItemInLijstConverter" />
@@ -103,7 +103,7 @@
                                             </VerticalStackLayout>
 
                                             <VerticalStackLayout Spacing="10" HorizontalOptions="Start">
-                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" 
+                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiConverter}}" 
                                                        HeightRequest="150" 
                                                        WidthRequest="150"/>
                                             </VerticalStackLayout>

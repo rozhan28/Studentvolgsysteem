@@ -79,7 +79,7 @@ namespace StudentSysteem.Core.Data.Repositories
                 FROM Prestatiedoel;
             ";
 
-            using var reader = cmd.ExecuteReader();
+            using SqliteDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 lijst.Add(new Prestatiedoel
