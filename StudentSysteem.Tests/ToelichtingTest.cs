@@ -3,8 +3,7 @@ using Moq;
 using StudentSysteem.Core.Interfaces.Repository;
 using StudentSysteem.Core.Services;
 using StudentSysteem.Core.Models;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
+
 
 namespace StudentSysteem.Tests
 {
