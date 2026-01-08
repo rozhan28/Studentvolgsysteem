@@ -121,16 +121,19 @@ public partial class FormulierViewModel : BasisViewModel
             int ontvangerId = 1;
 
             List<Feedback> feedbackLijst = new();
-            foreach (PrestatiedoelViewModel prestatiedoelItems in FormulierItems)
+            foreach (PrestatiedoelViewModel prestatiedoelItem in FormulierItems)
             {
                 // Pak de toelichtingen uit de rij
-                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Toelichting.Toelichtingen.ToList();
+                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItem.Toelichting.Toelichtingen.ToList();
                 
                 // Maak feedback model
-                Feedback feedback = new(prestatiedoelItems.VaardigheidId);
+                Feedback feedback = new(prestatiedoelItem.VaardigheidId);
                 feedback.Toelichtingen = toelichtingenVanPrestatiedoelItems;
                 feedback.StudentId = ontvangerId;
                 feedback.FeedbackGeverId = feedbackgeverId;
+                feedback.Niveauaanduiding = prestatiedoelItem.Beoordeling.GeselecteerdNiveau;
+                
+                feedbackLijst.Add(feedback);
             }
             // Sla de feedback op via de service
             _formulierService.SlaFeedbackOp(feedbackLijst);
