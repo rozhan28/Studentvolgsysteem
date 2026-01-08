@@ -72,13 +72,13 @@ namespace StudentSysteem.Core.Data.Repositories
         public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria)
         {
             OpenVerbinding();
-            using var transactie = Verbinding.BeginTransaction();
+            using SqliteTransaction transactie = Verbinding.BeginTransaction();
 
             try
             {
                 foreach (Criterium criterium in geselecteerdeCriteria)
                 {
-                    using var cmd = Verbinding.CreateCommand();
+                    using SqliteCommand cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
                         INSERT OR REPLACE INTO FeedbackCriterium(feedback_id, criterium_id)
                         VALUES (@feedbackId, @criteriumId);

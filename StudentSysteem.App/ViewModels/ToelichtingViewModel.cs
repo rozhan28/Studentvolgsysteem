@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using StudentSysteem.Core.Interfaces.Services;
@@ -9,27 +7,30 @@ using StudentSysteem.Core.Models;
 namespace StudentSysteem.App.ViewModels;
 
 // Handelt alle toelichtingen af (toevoegen + validatie)
-public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChanged
+public partial class ToelichtingViewModel : BasisViewModel
 {
     private readonly IToelichtingService _toelichtingService;
-    private readonly bool _isDocent;
     private readonly Prestatiedoel _prestatiedoel;
+    
+    // Criteria
     private List<Criterium> _beschikbareCriteria;
-
-    public ICommand VoegExtraToelichtingToeCommand { get; }
     public ICommand OptiesCommand { get; }
     
+    // Extra toelichting
+    public ICommand VoegExtraToelichtingToeCommand { get; }
     [ObservableProperty]
     private bool kanExtraToelichtingToevoegen = true;
+    public ObservableCollection<Toelichting> Toelichtingen { get; }
     
+    // Validatie
+    private readonly bool _isDocent;
     [ObservableProperty]
     private bool isToelichtingInvalid;
-
+    [ObservableProperty]
+    private HashSet<Toelichting> ongeldigeTekstVelden = new();
+    [ObservableProperty]
+    private HashSet<Toelichting> ongeldigeOptieVelden = new();
     
-    public event PropertyChangedEventHandler PropertyChanged;
-    
-    public ObservableCollection<Toelichting> Toelichtingen { get; }
-
     public ToelichtingViewModel(Prestatiedoel prestatiedoel, IToelichtingService service, bool isDocent)
     {
         _prestatiedoel = prestatiedoel;
@@ -49,26 +50,26 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
         if (Toelichtingen.Count >= _beschikbareCriteria.Count)
         {
             KanExtraToelichtingToevoegen = false;
-            Notify(nameof(KanExtraToelichtingToevoegen));
+            OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
             return;
         }
         
         Toelichtingen.Add(new Toelichting());
         KanExtraToelichtingToevoegen = Toelichtingen.Count < _beschikbareCriteria.Count;
-        Notify(nameof(Toelichtingen));
-        Notify(nameof(KanExtraToelichtingToevoegen));
+        OnPropertyChanged(nameof(Toelichtingen));
+        OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
     }
     
     private async Task ShowOptiesPicker(Toelichting toelichting)
     {
         Criterium huidigCriterium = toelichting.GeselecteerdeOptie;
         
-        var alGeselecteerdeIds = Toelichtingen
+        List<int> alGeselecteerdeIds = Toelichtingen
             .Where(t => t != toelichting && t.GeselecteerdeOptie is Criterium)
             .Select(t => t.GeselecteerdeOptie.Id)
             .ToList();
     
-        var beschikbareCriteriaVoorSelectie = _beschikbareCriteria
+        List<Criterium> beschikbareCriteriaVoorSelectie = _beschikbareCriteria
             .Where(c => !alGeselecteerdeIds.Contains(c.Id))
             .ToList();
     
@@ -98,35 +99,42 @@ public partial class ToelichtingViewModel : BasisViewModel, INotifyPropertyChang
             }
             
             KanExtraToelichtingToevoegen = Toelichtingen.Count < _beschikbareCriteria.Count;
-            Notify(nameof(KanExtraToelichtingToevoegen));
+            OnPropertyChanged(nameof(KanExtraToelichtingToevoegen));
         }
     }
 
     public bool CheckValidatie()
     {
-        if (_isDocent)
+        HashSet<Toelichting> nieuweTekstFouten = new HashSet<Toelichting>();
+        HashSet<Toelichting> nieuweOptieFouten = new HashSet<Toelichting>();
+        
+        // Een ingevulde tekst moet een geselecteerde optie hebben en een geselecteerde optie moet een tekst hebben
+        foreach (Toelichting t in Toelichtingen)
         {
-            isToelichtingInvalid = true;
-            return true;
+            if (!string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null) // Wel tekst geen geselecteerde optie
+            { nieuweOptieFouten.Add(t); }
+            else if (string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null) // Geen tekst wel geselecteerde optie
+            { nieuweTekstFouten.Add(t); }
         }
-
-        if (Toelichtingen == null || !Toelichtingen.Any())
+        
+        // Een student moet minimaal 1 toelichting hebben
+        if (!_isDocent && Toelichtingen.All(t => string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null))
         {
-            isToelichtingInvalid = false;
-            return false;
+            // De eerste toelichting ongeldig als niks is ingevult
+            Toelichting eersteToelichting = Toelichtingen.FirstOrDefault();
+            if (eersteToelichting != null)
+            {
+                nieuweTekstFouten.Add(eersteToelichting);
+                nieuweOptieFouten.Add(eersteToelichting);
+            } else return false; // Als er geen toelichtingen bestaan
         }
-            
-        bool result = Toelichtingen.All(t => IsToelichtingCorrect(t));
-        isToelichtingInvalid = result;
-        return result;
+        
+        OngeldigeTekstVelden = nieuweTekstFouten;
+        OngeldigeOptieVelden = nieuweOptieFouten;
+        
+        // Check of alle toelichtingen correct zijn
+        bool allesCorrect = OngeldigeTekstVelden.Count == 0 && OngeldigeOptieVelden.Count == 0;
+        IsToelichtingInvalid = !allesCorrect;
+        return allesCorrect;
     }
-    
-    private bool IsToelichtingCorrect(Toelichting toelichting)
-    {
-        return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
-               toelichting.GeselecteerdeOptie is Criterium;
-    }
-    
-    private void Notify([CallerMemberName] string prop = "")
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 }

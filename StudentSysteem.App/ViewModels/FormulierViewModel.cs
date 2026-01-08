@@ -117,8 +117,14 @@ public partial class FormulierViewModel : BasisViewModel
         // Service vragen om op te slaan
         try 
         {
-            int feedbackgeverId = _globaal.IngelogdeGebruiker.Id;
+            int feedbackgeverId = 0;
+            int docentId = 0;
             int ontvangerId = 1;
+
+            if (_globaal.IngelogdeGebruiker.Rol == Role.Docent)
+            { docentId = _globaal.IngelogdeGebruiker.Id; }
+            else
+            { feedbackgeverId = _globaal.IngelogdeGebruiker.Id; }
 
             List<Feedback> feedbackLijst = new();
             foreach (PrestatiedoelViewModel prestatiedoelItem in FormulierItems)
@@ -133,6 +139,7 @@ public partial class FormulierViewModel : BasisViewModel
                 feedback.FeedbackGeverId = feedbackgeverId;
                 feedback.Niveauaanduiding = prestatiedoelItem.Beoordeling.GeselecteerdNiveau;
                 feedback.Criteria = prestatiedoelItem.Beoordeling.GeselecteerdeCriteria;
+                feedback.DocentId = docentId;
                 
                 feedbackLijst.Add(feedback);
             }

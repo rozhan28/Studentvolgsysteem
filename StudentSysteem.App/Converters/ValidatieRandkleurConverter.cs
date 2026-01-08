@@ -12,7 +12,7 @@ namespace StudentSysteem.App.Converters
             // Bepaal welke Key gezocht moet worden in de Resources
             string colorKey = isInvalid ? "Validatie" : standardColor;
 
-            if (Application.Current.Resources.TryGetValue(colorKey, out var color))
+            if (Application.Current.Resources.TryGetValue(colorKey, out Object? color))
             {
                 return (Color)color;
             }
