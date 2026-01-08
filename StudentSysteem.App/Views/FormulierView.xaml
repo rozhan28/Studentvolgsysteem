@@ -111,32 +111,32 @@
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}" x:DataType="viewmodel:CriteriumViewModel">
-                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter},  ConverterParameter=Transparant}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
                                                 <VerticalStackLayout Spacing="15">
                                                     <!-- In ontwikkeling -->
-                                                    <Border Stroke="{StaticResource Secondary}" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=InOntwikkeling}"
                                                                                  Padding="10">
-                                                            <Label Text="In ontwikkeling" FontFamily="Bold"/>
+                                                            <Label Text="In ontwikkeling" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding InOntwikkeling}"/>
+                                                                <CheckBox IsChecked="{Binding InOntwikkeling}" Margin="25,0,0,0"/>
                                                             </HorizontalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>
 
                                                     <!-- Op niveau -->
-                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=OpNiveau}"
                                                                                  Padding="10">
-                                                            <Label Text="Op niveau" FontFamily="Bold"/>
+                                                            <Label Text="Op niveau" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
@@ -145,7 +145,8 @@
                                                                                 VerticalOptions="Center"
                                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
                                                                                 Path=SelecteerCriteriumCommand}"
-                                                                                CommandParameter="{Binding .}" />
+                                                                                CommandParameter="{Binding .}"
+                                                                                Margin="25,0,0,0"/>
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>
@@ -155,13 +156,13 @@
                                                     </Border>
 
                                                     <!-- Boven niveau -->
-                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=BovenNiveau}"
                                                                                  Padding="10">
-                                                            <Label Text="Boven niveau" FontFamily="Bold"/>
+                                                            <Label Text="Boven niveau" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
@@ -170,7 +171,8 @@
                                                                                 VerticalOptions="Center"
                                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
                                                                                 Path=SelecteerCriteriumCommand}"
-                                                                                CommandParameter="{Binding .}" />
+                                                                                CommandParameter="{Binding .}" 
+                                                                                Margin="25,0,0,0"/>
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>
