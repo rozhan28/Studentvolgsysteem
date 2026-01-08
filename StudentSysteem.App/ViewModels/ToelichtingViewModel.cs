@@ -107,51 +107,26 @@ public partial class ToelichtingViewModel : BasisViewModel
     {
         HashSet<Toelichting> nieuweTekstFouten = new HashSet<Toelichting>();
         HashSet<Toelichting> nieuweOptieFouten = new HashSet<Toelichting>();
-        if (_isDocent)
-        { 
-            //Als er tekst is ingevult maar geen criterium of algemeen, komt een rode box om de criterium selectie
-            foreach (Toelichting t in Toelichtingen)
-            {
-                if (!string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null)
-                {
-                    nieuweOptieFouten.Add(t);
-                }
-                else if (string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null)
-                {
-                    nieuweTekstFouten.Add(t);
-                }
-            }
-            
-            OngeldigeTekstVelden = nieuweTekstFouten;
-            OngeldigeOptieVelden = nieuweOptieFouten;
-            
-            // Check of alle toelichtingen correct zijn
-            bool allesCorrectDocent = OngeldigeTekstVelden.Count == 0 && OngeldigeOptieVelden.Count == 0;
-            IsToelichtingInvalid = !allesCorrectDocent;
-            return allesCorrectDocent;
-        }
-
-        // Als er geen toelichtingen zijn, dan is het invalid.
-        if (Toelichtingen == null || !Toelichtingen.Any())
-        {
-            IsToelichtingInvalid = true;
-            OngeldigeTekstVelden = nieuweTekstFouten;
-            OngeldigeOptieVelden = nieuweOptieFouten;
-            return false;
-        }
         
+        // Een ingevulde tekst moet een geselecteerde optie hebben en een geselecteerde optie moet een tekst hebben
         foreach (Toelichting t in Toelichtingen)
         {
-            if (string.IsNullOrWhiteSpace(t.Tekst))
+            if (!string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null) // Wel tekst geen geselecteerde optie
+            { nieuweOptieFouten.Add(t); }
+            else if (string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null) // Geen tekst wel geselecteerde optie
+            { nieuweTekstFouten.Add(t); }
+        }
+        
+        // Een student moet minimaal 1 toelichting hebben
+        if (!_isDocent && !Toelichtingen.Any(t => !string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null))
+        {
+            // De eerste toelichting ongeldig als niks is ingevult
+            Toelichting eersteToelichting = Toelichtingen.FirstOrDefault();
+            if (eersteToelichting != null)
             {
-                nieuweTekstFouten.Add(t);
-            }
-
-            // We checken of de optie null is
-            if (t.GeselecteerdeOptie == null)
-            {
-                nieuweOptieFouten.Add(t);
-            }
+                nieuweTekstFouten.Add(eersteToelichting);
+                nieuweOptieFouten.Add(eersteToelichting);
+            } else return false; // Als er geen toelichtingen bestaan
         }
         
         OngeldigeTekstVelden = nieuweTekstFouten;
@@ -161,11 +136,5 @@ public partial class ToelichtingViewModel : BasisViewModel
         bool allesCorrect = OngeldigeTekstVelden.Count == 0 && OngeldigeOptieVelden.Count == 0;
         IsToelichtingInvalid = !allesCorrect;
         return allesCorrect;
-    }
-    
-    private bool IsToelichtingCorrect(Toelichting toelichting)
-    {
-        return !string.IsNullOrWhiteSpace(toelichting.Tekst) &&
-               toelichting.GeselecteerdeOptie is Criterium;
     }
 }
