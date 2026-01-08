@@ -211,7 +211,7 @@
                                                                     </MultiBinding>
                                                                 </Border.Stroke>
 
-                                                                <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppel aan...'}"
+                                                                <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppelt aan...'}"
                                                                         Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
                                                                         CommandParameter="{Binding .}"
                                                                         Margin="0"
