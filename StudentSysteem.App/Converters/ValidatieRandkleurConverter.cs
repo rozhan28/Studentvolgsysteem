@@ -8,6 +8,15 @@ namespace StudentSysteem.App.Converters
         {
             bool isInvalid = (bool)value;
 
+            // Bepaal welke Key gezocht moet worden in de Resources
+            string colorKey = isInvalid ? "Validatie" : "Grey";
+
+            if (Application.Current.Resources.TryGetValue(colorKey, out Object? color))
+            {
+                return (Color)color;
+            }
+
+            // Fallback voor het geval de keys niet gevonden worden in Colors.xaml
             return isInvalid ? Colors.Red : Colors.LightGray;
         }
 

@@ -18,6 +18,8 @@
     <Color x:Key="BovenNiveau">#45B97C</Color>
     <Color x:Key="NietIngeleverd">#F5F5F5</Color>
     <Color x:Key="NietBeoordeelbaar">#F5F5F5</Color>
+    
+    <Color x:Key="Validatie">Red</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>

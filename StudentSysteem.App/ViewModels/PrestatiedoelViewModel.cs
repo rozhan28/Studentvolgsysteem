@@ -22,6 +22,10 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     // De sub-ViewModels
     public CriteriumViewModel Beoordeling { get; set; }
     public ToelichtingViewModel Toelichting { get; set; }
+    
+    // Rode border als prestatiedoel validatie faalt
+    [ObservableProperty]
+    private bool isPrestatiedoelInvalid;
 
     // Expander properties
     [ObservableProperty] private bool isExpanded;
@@ -82,10 +86,10 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     // Validatie vanuit de sub-ViewModels
     public bool Valideer()
     {
-        bool beoordelingOk = Beoordeling.CheckValidatie();
-        bool toelichtingOk = Toelichting.CheckValidatie();
-
-        return beoordelingOk && toelichtingOk;
+        bool validatieSucces = Beoordeling.CheckValidatie() & Toelichting.CheckValidatie();
+        
+        IsPrestatiedoelInvalid = !validatieSucces;
+        return validatieSucces;
     }
 
     // Leertaken URL
