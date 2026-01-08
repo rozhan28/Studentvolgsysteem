@@ -26,7 +26,7 @@ namespace StudentSysteem.Core.Services
                 if (feedback.FeedbackGeverId <= 0 && feedback.DocentId <= 0)
                     throw new ArgumentException("FeedbackgeverId of DocentId is vereist.");
 
-                if (feedback.DocentId != 0)
+                if (feedback.DocentId == 0)
                 {
                     foreach (Toelichting toelichting in feedback.Toelichtingen)
                     {
