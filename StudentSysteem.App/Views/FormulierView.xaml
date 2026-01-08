@@ -110,7 +110,7 @@
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}" x:DataType="viewmodel:CriteriumViewModel">
-                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter},  ConverterParameter=Transparant}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
                                                 <VerticalStackLayout Spacing="15">
