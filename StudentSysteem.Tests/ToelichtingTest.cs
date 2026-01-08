@@ -13,13 +13,14 @@ namespace StudentSysteem.Tests
         private Mock<IFeedbackRepository> _feedbackRepositoryMock;
         private FormulierService _formulierService;
 
+        //Bij deze unittesten wordt niet alleen de toelichting getest, maar ook de gehele Feedback.
         [SetUp]
         public void SetUp()
         {
             _feedbackRepositoryMock = new Mock<IFeedbackRepository>();
             _formulierService = new FormulierService(_feedbackRepositoryMock.Object);
         }
-        //Bij deze unittesten wordt niet alleen de toelichting getest, maar ook de gehele Feedback.
+        
         // UC1 / TC1-01.1.1 – Docent kan toelichting invoeren en opslaan 
         [Test]
         public void UC1_HappyPath_ToelichtingWordtOpgeslagen()
