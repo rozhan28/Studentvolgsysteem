@@ -20,34 +20,30 @@ namespace StudentSysteem.Tests
             _formulierService = new FormulierService(_feedbackRepositoryMock.Object);
         }
 
-        //UC1 / TC1-01.1.3 - student kan opslaan zonder toelichting (Unhappy Path)
+        //UC1 / TC1-01.1.3 - Docent kan opslaan zonder toelichting
         [Test]
-        public void UC1_UnhappyPath_LegeToelichting_GooitArgumentException()
+        public void UC1_HappyPath_Docent_ZonderToelichting_WordtOpgeslagen()
         {
-            // Arrange
-            Toelichting toelichting = new Toelichting
-            {
-                Tekst = ""
-            };
-
             Feedback feedback = new Feedback(vaardigheidId: 1)
             {
                 StudentId = 10,
-                DocentId = 5,
+                DocentId = 5,              // 👈 DOCENT
                 FeedbackGeverId = 5,
-                Toelichtingen = new List<Toelichting> { toelichting }
+                Toelichtingen = new List<Toelichting>
+        {
+            new Toelichting { Tekst = "" }
+        }
             };
 
-            List<Feedback> feedbackLijst = new List<Feedback> { feedback };
+            _formulierService.SlaFeedbackOp(new() { feedback });
 
-            // Act + Assert
-            Assert.Throws<ArgumentException>(() =>
-                _formulierService.SlaFeedbackOp(feedbackLijst)
+            _feedbackRepositoryMock.Verify(
+                repo => repo.VoegFeedbackToe(It.IsAny<List<Feedback>>()),
+                Times.Once
             );
         }
 
-
-        // UC1 / TC1-01.1.1 – Docent kan toelichting invoeren en opslaan (Happy Path)
+        // UC1 / TC1-01.1.1 – Docent kan toelichting invoeren en opslaan 
         [Test]
         public void UC1_HappyPath_ToelichtingWordtOpgeslagen()
         {
