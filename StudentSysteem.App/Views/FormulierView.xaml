@@ -33,9 +33,9 @@
 
                             <!-- Expander -->
                             <toolkit:Expander.Header>
-                                <Border Stroke="{StaticResource Grey}"
-                                    BackgroundColor="White"
-                                    Padding="10">
+                                <Border Stroke="{Binding IsPrestatiedoelInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                        BackgroundColor="White"
+                                        Padding="10">
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
 
                                         <Label Text="{Binding ExpanderTitel}"
@@ -211,7 +211,7 @@
                                                                     </MultiBinding>
                                                                 </Border.Stroke>
 
-                                                                <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppel aan...'}"
+                                                                <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppelt aan...'}"
                                                                         Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
                                                                         CommandParameter="{Binding .}"
                                                                         Margin="0"
