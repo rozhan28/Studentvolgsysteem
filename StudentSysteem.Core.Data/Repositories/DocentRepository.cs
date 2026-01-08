@@ -17,8 +17,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     cluster_id INTEGER,
                     FOREIGN KEY(cluster_id) REFERENCES Cluster(cluster_id))");
 
-            List<string> insertQueries = [@"INSERT OR REPLACE INTO Docent(docent_id, naam, email, nummer) 
-                                        VALUES(1, 'Ernst', 'er.bolt@windesheim.nl', '123456')"];
+            List<string> insertQueries = [@"INSERT OR REPLACE INTO Docent(docent_id, naam, email, nummer, cluster_id) 
+                                        VALUES(1, 'Ernst', 'er.bolt@windesheim.nl', '123456', '1')"];
             VoegMeerdereInMetTransactie(insertQueries);
         }
         
@@ -36,7 +36,7 @@ namespace StudentSysteem.Core.Data.Repositories
         {
             List<Docent> docenten = new();
             docenten.Clear();
-            string selectQuery = "SELECT docent_id, naam, email, nummer FROM Docent";
+            string selectQuery = "SELECT docent_id, naam, email, nummer, cluster_id FROM Docent";
             OpenVerbinding();
 
             using (SqliteCommand command = new(selectQuery, Verbinding))
@@ -49,7 +49,8 @@ namespace StudentSysteem.Core.Data.Repositories
                     string DocentNaam = reader.GetString(1);
                     string DocentEmail = reader.GetString(2);
                     int DocentNummer = reader.GetInt32(3);
-                    docenten.Add(new(DocentId, DocentNaam, DocentEmail, DocentNummer));
+                    int DocentClusterId = reader.GetInt32(4);
+                    docenten.Add(new(DocentId, DocentNaam, DocentEmail, DocentNummer, DocentClusterId));
                 }
             }
             SluitVerbinding();
