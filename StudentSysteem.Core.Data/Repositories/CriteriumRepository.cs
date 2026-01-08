@@ -15,16 +15,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 beschrijving TEXT NOT NULL,
                 niveau TEXT NOT NULL
             );");
-
-            // Koppeltabel FeedbackCriterium
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
-                        feedback_id INTEGER NOT NULL,
-                        criterium_id INTEGER NOT NULL,
-                        PRIMARY KEY (feedback_id, criterium_id),
-                        FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
-                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-                    );
-                    ");
             
             List<string> insertQueries =
             [

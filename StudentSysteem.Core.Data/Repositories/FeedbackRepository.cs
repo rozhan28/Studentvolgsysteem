@@ -38,6 +38,15 @@ namespace StudentSysteem.Core.Data.Repositories
                 FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id),
                 FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id)
             )");
+            
+            MaakTabel(@"
+            CREATE TABLE IF NOT EXISTS FeedbackCriterium (
+                        feedback_id INTEGER NOT NULL,
+                        criterium_id INTEGER NOT NULL,
+                        PRIMARY KEY (feedback_id, criterium_id),
+                        FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
+                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
+            )");
         }
         
         public void VoegFeedbackToe(List<Feedback> feedbackLijst)
@@ -75,7 +84,24 @@ namespace StudentSysteem.Core.Data.Repositories
                     cmd.Parameters.AddWithValue("@vaardigheidId", feedback.VaardigheidId);
 
                     int feedbackId = Convert.ToInt32(cmd.ExecuteScalar());
-                    Debug.WriteLine($"Inserted Feedback with ID: {feedbackId}");
+                    
+                    // Geselecteerde criteria opslaan
+                    foreach (Criterium criterium in feedback.Criteria)
+                    {
+                        Debug.WriteLine(criterium.Beschrijving);
+                        using SqliteCommand criteriaCmd = Verbinding.CreateCommand();
+                        criteriaCmd.Transaction = transactie;
+                        
+                        criteriaCmd.CommandText = @"
+                        INSERT INTO FeedbackCriterium 
+                        (feedback_id, criterium_id)
+                        VALUES (@feedbackId, @criteriumId);";
+                        
+                        criteriaCmd.Parameters.AddWithValue("@feedbackId", feedbackId);
+                        criteriaCmd.Parameters.AddWithValue("@criteriumId", criterium.Id);
+                        
+                        criteriaCmd.ExecuteNonQuery();
+                    }
 
                     // Toelichtingen opslaan
                     foreach (Toelichting toelichting in feedback.Toelichtingen)
