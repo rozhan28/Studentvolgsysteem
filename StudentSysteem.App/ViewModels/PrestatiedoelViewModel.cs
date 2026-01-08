@@ -86,7 +86,7 @@ public partial class PrestatiedoelViewModel : BasisViewModel
     // Validatie vanuit de sub-ViewModels
     public bool Valideer()
     {
-        bool validatieSucces = Beoordeling.CheckValidatie() && Toelichting.CheckValidatie();
+        bool validatieSucces = Beoordeling.CheckValidatie() & Toelichting.CheckValidatie();
         
         IsPrestatiedoelInvalid = !validatieSucces;
         return validatieSucces;
