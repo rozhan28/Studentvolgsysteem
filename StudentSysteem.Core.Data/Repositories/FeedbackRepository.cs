@@ -88,7 +88,6 @@ namespace StudentSysteem.Core.Data.Repositories
                     // Geselecteerde criteria opslaan
                     foreach (Criterium criterium in feedback.Criteria)
                     {
-                        Debug.WriteLine(criterium.Beschrijving);
                         using SqliteCommand criteriaCmd = Verbinding.CreateCommand();
                         criteriaCmd.Transaction = transactie;
                         
