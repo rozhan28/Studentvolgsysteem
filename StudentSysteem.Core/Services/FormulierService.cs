@@ -13,34 +13,38 @@ namespace StudentSysteem.Core.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        private void ValideerFeedback(List<Feedback> feedbackLijst)
+        private bool ValideerFeedback(List<Feedback> feedbackLijst)
         {
-            foreach (Feedback feedback in feedbackLijst)
+            try
             {
-                if (feedback.StudentId <= 0)
-                    throw new ArgumentException("StudentId moet groter zijn dan 0.");
-
-                if (feedback.VaardigheidId <= 0)
-                    throw new ArgumentException("PrestatiedoelId is vereist.");
-
-                if (feedback.FeedbackGeverId <= 0 && feedback.DocentId <= 0)
-                    throw new ArgumentException("FeedbackgeverId of DocentId is vereist.");
-
-                foreach (Toelichting toelichting in feedback.Toelichtingen)
+                foreach (Feedback feedback in feedbackLijst)
                 {
-                    if (string.IsNullOrWhiteSpace(toelichting.Tekst))
-                        throw new ArgumentException("Toelichting moet tekst bevatten.");
+                    if (feedback.StudentId <= 0)
+                        throw new ArgumentException("StudentId moet groter zijn dan 0.");
+
+                    if (feedback.VaardigheidId <= 0)
+                        throw new ArgumentException("PrestatiedoelId is vereist.");
+
+                    if (feedback.FeedbackGeverId <= 0 && feedback.DocentId <= 0)
+                        throw new ArgumentException("FeedbackgeverId or DocentId is vereist.");
+                    
+                    feedback.Toelichtingen.RemoveAll(t => string.IsNullOrWhiteSpace(t.Tekst));
                 }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
         public void SlaFeedbackOp(List<Feedback> feedbackLijst)
         {
-            // ValideerFeedback gooit nu een exception als iets fout is
-            ValideerFeedback(feedbackLijst);
-
-            // Alleen hier komt het bij de repository als alles geldig is
-            _feedbackRepository.VoegFeedbackToe(feedbackLijst);
+            if (ValideerFeedback(feedbackLijst))
+            {
+                _feedbackRepository.VoegFeedbackToe(feedbackLijst); 
+            }
         }
 
     }
