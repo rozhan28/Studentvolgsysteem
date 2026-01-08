@@ -52,19 +52,19 @@ namespace StudentSysteem.Tests
         public void UC1_HappyPath_ToelichtingWordtOpgeslagen()
         {
             // Arrange (Preconditie)
-            var criterium = new Criterium(
+            Criterium criterium = new(
                 id: 1,
                 beschrijving: "Domeinmodel",
                 niveau: Niveauaanduiding.OpNiveau
             );
 
-            var toelichting = new Toelichting
+            Toelichting toelichting = new()
             {
                 Tekst = "Domeinmodel is goed gemaakt",
                 GeselecteerdeOptie = criterium
             };
 
-            var feedback = new Feedback(vaardigheidId: 1)
+            Feedback feedback = new(vaardigheidId: 1)
             {
                 StudentId = 10,
                 DocentId = 5,
@@ -72,7 +72,7 @@ namespace StudentSysteem.Tests
                 Toelichtingen = new List<Toelichting> { toelichting }
             };
 
-            var feedbackLijst = new List<Feedback> { feedback };
+            List<Feedback> feedbackLijst = new() { feedback };
 
             // Act (Stappen)
             _formulierService.SlaFeedbackOp(feedbackLijst);

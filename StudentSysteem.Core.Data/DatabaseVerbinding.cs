@@ -40,7 +40,7 @@ namespace StudentSysteem.Core.Data
         public void MaakTabel(string sqlOpdracht)
         {
             OpenVerbinding();
-            using (var command = Verbinding.CreateCommand())
+            using (SqliteCommand command = Verbinding.CreateCommand())
             {
                 command.CommandText = sqlOpdracht;
                 command.ExecuteNonQuery();
@@ -50,14 +50,14 @@ namespace StudentSysteem.Core.Data
         public void VoegMeerdereInMetTransactie(List<string> regels)
         {
             OpenVerbinding();
-            var transactie = Verbinding.BeginTransaction();
+            SqliteTransaction transactie = Verbinding.BeginTransaction();
 
             try
             {
-                using var cmd = Verbinding.CreateCommand();
+                using SqliteCommand cmd = Verbinding.CreateCommand();
                 cmd.Transaction = transactie; 
         
-                foreach (var sql in regels)
+                foreach (String sql in regels)
                 {
                     cmd.CommandText = sql;
                     cmd.ExecuteNonQuery();
@@ -85,7 +85,7 @@ namespace StudentSysteem.Core.Data
             OpenVerbinding();
             try
             {
-                using var command = Verbinding.CreateCommand();
+                using SqliteCommand command = Verbinding.CreateCommand();
                 command.CommandText = $"DELETE FROM {tableName};";
                 command.ExecuteNonQuery();
             }
@@ -104,19 +104,19 @@ namespace StudentSysteem.Core.Data
 
             try
             {
-                using var command = Verbinding.CreateCommand();
+                using SqliteCommand command = Verbinding.CreateCommand();
                 command.CommandText = sql;
 
                 if (parameters != null)
                 {
-                    foreach (var param in parameters)
+                    foreach (KeyValuePair<string, object> param in parameters)
                     {
                         command.Parameters.AddWithValue(param.Key, param.Value);
                     }
                 }
 
-                using var reader = command.ExecuteReader();
-                var resultaten = new List<T>();
+                using SqliteDataReader reader = command.ExecuteReader();
+                List<T> resultaten = new();
 
                 while (reader.Read())
                 {
