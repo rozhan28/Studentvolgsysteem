@@ -118,7 +118,7 @@ public partial class ToelichtingViewModel : BasisViewModel
         }
         
         // Een student moet minimaal 1 toelichting hebben
-        if (!_isDocent && !Toelichtingen.Any(t => !string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null))
+        if (!_isDocent && Toelichtingen.All(t => string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null))
         {
             // De eerste toelichting ongeldig als niks is ingevult
             Toelichting eersteToelichting = Toelichtingen.FirstOrDefault();
