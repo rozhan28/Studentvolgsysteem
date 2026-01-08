@@ -19,7 +19,7 @@ namespace StudentSysteem.Tests
             _feedbackRepositoryMock = new Mock<IFeedbackRepository>();
             _formulierService = new FormulierService(_feedbackRepositoryMock.Object);
         }
-
+        //Bij deze unittesten wordt niet alleen de toelichting getest, maar ook de gehele Feedback.
         // UC1 / TC1-01.1.1 – Docent kan toelichting invoeren en opslaan 
         [Test]
         public void UC1_HappyPath_ToelichtingWordtOpgeslagen()
@@ -58,14 +58,14 @@ namespace StudentSysteem.Tests
             );
         }
 
-        //UC1 / TC1-01.1.3 - Docent kan opslaan zonder toelichting
+        //UC1 / TC1-01.1.3.1 - Docent kan opslaan zonder toelichting
         [Test]
         public void UC1_HappyPath_Docent_ZonderToelichting_WordtOpgeslagen()
         {
             Feedback feedback = new Feedback(vaardigheidId: 1)
             {
                 StudentId = 10,
-                DocentId = 5,              // 👈 DOCENT
+                DocentId = 5,            
                 FeedbackGeverId = 5,
                 Toelichtingen = new List<Toelichting>
         {
@@ -106,7 +106,6 @@ namespace StudentSysteem.Tests
                 _formulierService.SlaFeedbackOp(feedbackLijst)
             );
 
-            // Extra controle: feedback wordt niet opgeslagen
             _feedbackRepositoryMock.Verify(
                 repo => repo.VoegFeedbackToe(It.IsAny<List<Feedback>>()),
                 Times.Never
