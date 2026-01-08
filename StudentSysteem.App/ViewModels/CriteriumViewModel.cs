@@ -20,6 +20,11 @@ public partial class CriteriumViewModel : BasisViewModel
     public ICommand SelecteerCriteriumCommand { get; }
     public ObservableCollection<Criterium> OpNiveauCriteria { get; set; }
     public ObservableCollection<Criterium> BovenNiveauCriteria { get; set; }
+    public List<Criterium> GeselecteerdeCriteria {
+        get {
+            return OpNiveauCriteria.Concat(BovenNiveauCriteria).Where(c => c.IsGeselecteerd).ToList();
+        }
+    }
     
     private bool _isPrestatieNiveauInvalid;
     public bool IsPrestatieNiveauInvalid //Rode box om het criterium menu

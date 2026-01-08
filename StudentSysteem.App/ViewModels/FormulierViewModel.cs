@@ -132,6 +132,7 @@ public partial class FormulierViewModel : BasisViewModel
                 feedback.StudentId = ontvangerId;
                 feedback.FeedbackGeverId = feedbackgeverId;
                 feedback.Niveauaanduiding = prestatiedoelItem.Beoordeling.GeselecteerdNiveau;
+                feedback.Criteria = prestatiedoelItem.Beoordeling.GeselecteerdeCriteria;
                 
                 feedbackLijst.Add(feedback);
             }
