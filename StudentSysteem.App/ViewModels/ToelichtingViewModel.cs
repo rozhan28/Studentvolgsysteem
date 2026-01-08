@@ -108,10 +108,27 @@ public partial class ToelichtingViewModel : BasisViewModel
         HashSet<Toelichting> nieuweTekstFouten = new HashSet<Toelichting>();
         HashSet<Toelichting> nieuweOptieFouten = new HashSet<Toelichting>();
         if (_isDocent)
-        {
-            // Docent hoeft geen toelichting in te vullen, dus hier moet hij false zijn.
-            IsToelichtingInvalid = false;
-            return true;
+        { 
+            //Als er tekst is ingevult maar geen criterium of algemeen, komt een rode box om de criterium selectie
+            foreach (Toelichting t in Toelichtingen)
+            {
+                if (!string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie == null)
+                {
+                    nieuweOptieFouten.Add(t);
+                }
+                else if (string.IsNullOrWhiteSpace(t.Tekst) && t.GeselecteerdeOptie != null)
+                {
+                    nieuweTekstFouten.Add(t);
+                }
+            }
+            
+            OngeldigeTekstVelden = nieuweTekstFouten;
+            OngeldigeOptieVelden = nieuweOptieFouten;
+            
+            // Check of alle toelichtingen correct zijn
+            bool allesCorrectDocent = OngeldigeTekstVelden.Count == 0 && OngeldigeOptieVelden.Count == 0;
+            IsToelichtingInvalid = !allesCorrectDocent;
+            return allesCorrectDocent;
         }
 
         // Als er geen toelichtingen zijn, dan is het invalid.
