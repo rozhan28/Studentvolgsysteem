@@ -52,7 +52,7 @@ public static class MauiProgram
         // Helpers
         builder.Services.AddSingleton<DbConnectieHelper>();
 
-        // Repositories
+        // Repositories - VOLGORDE VAN BELANG!
         builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
         builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
         builder.Services.AddSingleton<IProcesRepository, ProcesRepository>();
