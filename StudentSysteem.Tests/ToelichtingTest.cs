@@ -103,8 +103,8 @@ namespace StudentSysteem.Tests
                 Times.Never
             );
         }
-
-        // UC1 / US4 – Meerdere toelichtingen worden correct opgeslagen
+        
+        // TC1-04.1.1 - Meerdere toelichtingen worden correct opgeslagen
         [Test]
         public void UC1_HappyPath_MeerdereToelichtingenWordenOpgeslagen()
         {
