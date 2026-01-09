@@ -47,6 +47,7 @@ public static class MauiProgram
             .AddJsonStream(stream)
             .Build();
 
+
         builder.Configuration.AddConfiguration(config);
 
         // Helpers
