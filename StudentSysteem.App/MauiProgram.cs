@@ -43,6 +43,8 @@ public static class MauiProgram
             .AddJsonStream(stream)
             .Build();
 
+        //Volgorde is van belang
+
         builder.Configuration.AddConfiguration(config);
 
         // Helpers
