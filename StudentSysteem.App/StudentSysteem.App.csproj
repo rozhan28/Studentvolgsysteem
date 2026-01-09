@@ -60,6 +60,9 @@
     <MauiXaml Update="Views\FormulierView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\VoortgangsDashboardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
   
   <ItemGroup>

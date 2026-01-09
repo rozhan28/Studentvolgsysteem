@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentSysteem.App.Views.VoortgangsDashboardView"
+             Title="VoortgangsDashboardView">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20">
+
+            <!-- TABEL -->
+            <Grid ColumnDefinitions="80,*,*,*,*,*"
+                  RowDefinitions="40,60"
+                  ColumnSpacing="0"
+                  RowSpacing="0">
+
+                <!-- ===== RIJ 0 : HEADERS ===== -->
+
+                <Border Grid.Row="0" Grid.Column="0"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0"/>
+
+                <Border Grid.Row="0" Grid.Column="1"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0">
+                    <Label Text="{Binding Leeruitkomsten[0].HboiActiviteit}"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="2"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0">
+                    <Label Text="{Binding Leeruitkomsten[1].HboiActiviteit}"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="3"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0">
+                    <Label Text="{Binding Leeruitkomsten[2].HboiActiviteit}"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="4"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0">
+                    <Label Text="{Binding Leeruitkomsten[3].HboiActiviteit}"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="5"
+                        Stroke="#ccc"
+                        StrokeThickness="1"
+                        BackgroundColor="#f0f0f0">
+                    <Label Text="{Binding Leeruitkomsten[4].HboiActiviteit}"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <!-- ===== RIJ 1 : LEEG (PLACEHOLDER) ===== -->
+
+                <Border Grid.Row="1" Grid.Column="0"
+                        Stroke="#ccc"
+                        StrokeThickness="1"/>
+
+                <Border Grid.Row="1" Grid.Column="1" Stroke="#ccc" StrokeThickness="1"/>
+                <Border Grid.Row="1" Grid.Column="2" Stroke="#ccc" StrokeThickness="1"/>
+                <Border Grid.Row="1" Grid.Column="3" Stroke="#ccc" StrokeThickness="1"/>
+                <Border Grid.Row="1" Grid.Column="4" Stroke="#ccc" StrokeThickness="1"/>
+                <Border Grid.Row="1" Grid.Column="5" Stroke="#ccc" StrokeThickness="1"/>
+
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
