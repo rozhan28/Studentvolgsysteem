@@ -13,9 +13,10 @@
         <ResourceDictionary>
             <converters:ValidatieRandkleurConverter x:Key="ValidatieRandkleurConverter"/>
             <converters:PrestatieniveauKleurConverter x:Key="PrestatieniveauKleurConverter" />
-            <converters:AiConverter x:Key="AiIconConverter" />
+            <converters:AiConverter x:Key="AiConverter" />
             <converters:LeertakenLeegConverter x:Key="LeertakenLeegConverter" />
             <converters:BoolOmkeerConverter x:Key="BoolOmkeerConverter" />
+            <converters:FoutItemInLijstConverter x:Key="FoutItemInLijstConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -32,9 +33,9 @@
 
                             <!-- Expander -->
                             <toolkit:Expander.Header>
-                                <Border Stroke="#ccc"
-                                    BackgroundColor="White"
-                                    Padding="10">
+                                <Border Stroke="{Binding IsPrestatiedoelInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                        BackgroundColor="White"
+                                        Padding="10">
                                     <Grid ColumnDefinitions="*,Auto" Padding="5">
 
                                         <Label Text="{Binding ExpanderTitel}"
@@ -102,7 +103,7 @@
                                             </VerticalStackLayout>
 
                                             <VerticalStackLayout Spacing="10" HorizontalOptions="Start">
-                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiIconConverter}}" 
+                                                <Image Source="{Binding AiAssessmentScale, Converter={StaticResource AiConverter}}" 
                                                        HeightRequest="150" 
                                                        WidthRequest="150"/>
                                             </VerticalStackLayout>
@@ -110,32 +111,32 @@
 
                                         <!-- Rechterkolom -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="10" BindingContext="{Binding Beoordeling}" x:DataType="viewmodel:CriteriumViewModel">
-                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                            <Border Stroke="{Binding IsPrestatieNiveauInvalid, Converter={StaticResource ValidatieRandkleurConverter},  ConverterParameter=Transparant}"
                                                    BackgroundColor="{Binding ContainerColor}"
                                                    Padding="10">
                                                 <VerticalStackLayout Spacing="15">
                                                     <!-- In ontwikkeling -->
-                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=InOntwikkeling}"
                                                                                  Padding="10">
-                                                            <Label Text="In ontwikkeling" FontFamily="Bold"/>
+                                                            <Label Text="In ontwikkeling" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <HorizontalStackLayout Spacing="10">
-                                                                <CheckBox IsChecked="{Binding InOntwikkeling}"/>
+                                                                <CheckBox IsChecked="{Binding InOntwikkeling}" Margin="25,0,0,0"/>
                                                             </HorizontalStackLayout>
                                                         </VerticalStackLayout>
                                                     </Border>
 
                                                     <!-- Op niveau -->
-                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=OpNiveau}"
                                                                                  Padding="10">
-                                                            <Label Text="Op niveau" FontFamily="Bold"/>
+                                                            <Label Text="Op niveau" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding OpNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
@@ -144,7 +145,8 @@
                                                                                 VerticalOptions="Center"
                                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
                                                                                 Path=SelecteerCriteriumCommand}"
-                                                                                CommandParameter="{Binding .}" />
+                                                                                CommandParameter="{Binding .}"
+                                                                                Margin="25,0,0,0"/>
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>
@@ -154,13 +156,13 @@
                                                     </Border>
 
                                                     <!-- Boven niveau -->
-                                                    <Border Stroke="#D0D0D0" Padding="0" BackgroundColor="Transparent">
+                                                    <Border Stroke="{StaticResource Grey}" Padding="0" BackgroundColor="Transparent" StrokeShape="RoundRectangle 12">
                                                         <VerticalStackLayout Spacing="10"
                                                                                  BackgroundColor="{Binding GeselecteerdNiveau,
                                                                                  Converter={StaticResource PrestatieniveauKleurConverter},
                                                                                  ConverterParameter=BovenNiveau}"
                                                                                  Padding="10">
-                                                            <Label Text="Boven niveau" FontFamily="Bold"/>
+                                                            <Label Text="Boven niveau" FontFamily="Bold" Margin="25,0,0,0"/>
                                                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding BovenNiveauCriteria}">
                                                                 <BindableLayout.ItemTemplate>
                                                                     <DataTemplate x:DataType="models:Criterium">
@@ -169,7 +171,8 @@
                                                                                 VerticalOptions="Center"
                                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CriteriumViewModel}}, 
                                                                                 Path=SelecteerCriteriumCommand}"
-                                                                                CommandParameter="{Binding .}" />
+                                                                                CommandParameter="{Binding .}" 
+                                                                                Margin="25,0,0,0"/>
                                                                             <Label Text="{Binding Beschrijving}" VerticalOptions="Center"/>
                                                                         </HorizontalStackLayout>
                                                                     </DataTemplate>
@@ -183,21 +186,58 @@
                                     </Grid>
 
                                     <!-- Toelichting -->
-                                    <Border Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
-                                            BackgroundColor="White"
-                                            Padding="10">
-                                        <VerticalStackLayout BindingContext="{Binding Toelichting}" x:DataType="viewmodel:ToelichtingViewModel" Spacing="5" x:Name="ToelichtingContext">
-                                            <Label Text="Toelichting" FontFamily="Bold" />
+                                    <Border BindingContext="{Binding Toelichting}"
+                                            x:DataType="viewmodel:ToelichtingViewModel"
+                                            Stroke="{Binding IsToelichtingInvalid, Converter={StaticResource ValidatieRandkleurConverter}}"
+                                            BackgroundColor="{StaticResource Secondary}"
+                                            Padding="10"
+                                            StrokeShape="RoundRectangle 20">
+                                        <VerticalStackLayout Spacing="5" x:Name="ToelichtingContext">
+                                            <Label Text="Toelichting" FontFamily="Bold" Margin="10,0,0,0"/>
 
-                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="10">
+                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Toelichtingen}" Spacing="15">
                                                 <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="models:Toelichting">
-                                                        <VerticalStackLayout Spacing="10">
-                                                            <Button Text="{Binding GeselecteerdeOptie.Beschrijving}"
-                                                                    Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
-                                                                    CommandParameter="{Binding .}"
-                                                                    HorizontalOptions="Start"/>
-                                                            <Editor Text="{Binding Tekst}" HeightRequest="100" Placeholder="Toelichting..."/>
+                                                        <VerticalStackLayout Spacing="8" Margin="0,5">
+                                                            
+                                                            <!-- Criteria opties -->
+                                                            <Border HorizontalOptions="Start">
+                                                                <Border.StrokeShape>
+                                                                    <RoundRectangle CornerRadius="20" />
+                                                                </Border.StrokeShape>
+                                                                
+                                                                <Border.Stroke>
+                                                                    <MultiBinding Converter="{StaticResource FoutItemInLijstConverter}">
+                                                                        <Binding Path="." />
+                                                                        <Binding Source="{x:Reference ToelichtingContext}" Path="BindingContext.OngeldigeOptieVelden" />
+                                                                    </MultiBinding>
+                                                                </Border.Stroke>
+
+                                                                <Button Text="{Binding GeselecteerdeOptie.Beschrijving, FallbackValue='Toelichting gekoppeld aan...'}"
+                                                                        Command="{Binding Source={x:Reference ToelichtingContext}, Path=BindingContext.OptiesCommand}"
+                                                                        CommandParameter="{Binding .}"
+                                                                        Margin="0"
+                                                                        BackgroundColor="{StaticResource White}"
+                                                                        TextColor="{StaticResource Black}"/>
+                                                            </Border>
+
+                                                            <!-- Tekstveld -->
+                                                            <Border>
+                                                                <Border.StrokeShape>
+                                                                    <RoundRectangle CornerRadius="20" />
+                                                                </Border.StrokeShape>
+                                                                <Border.Stroke>
+                                                                    <MultiBinding Converter="{StaticResource FoutItemInLijstConverter}">
+                                                                        <Binding Path="." />
+                                                                        <Binding Source="{x:Reference ToelichtingContext}" Path="BindingContext.OngeldigeTekstVelden" />
+                                                                    </MultiBinding>
+                                                                </Border.Stroke>
+                                                                <Editor Text="{Binding Tekst}" 
+                                                                        HeightRequest="100" 
+                                                                        Placeholder="Toelichting..." 
+                                                                        Margin="0"
+                                                                        BackgroundColor="{StaticResource White}"/>
+                                                            </Border>
                                                         </VerticalStackLayout>
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>

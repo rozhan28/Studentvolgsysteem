@@ -8,14 +8,14 @@ namespace StudentSysteem.App.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not Niveauaanduiding geselecteerd || parameter == null)
-                return Colors.Transparent;
+                return GetColorResource("Secondary");
 
             if (!Enum.TryParse(parameter.ToString(), out Niveauaanduiding blokNiveau))
-                return Colors.Transparent;
+                return GetColorResource("Secondary");
 
             return geselecteerd == blokNiveau
                 ? GetColorResource(blokNiveau.ToString())
-                : Colors.Transparent;
+                : GetColorResource("Secondary");
         }
 
 

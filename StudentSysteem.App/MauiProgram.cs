@@ -1,6 +1,10 @@
-﻿using CommunityToolkit.Maui;
+﻿using System;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 using StudentSysteem.App.Views;
 using StudentSysteem.App.ViewModels;
 using StudentSysteem.Core.Services;
@@ -43,12 +47,13 @@ public static class MauiProgram
             .AddJsonStream(stream)
             .Build();
 
+
         builder.Configuration.AddConfiguration(config);
 
         // Helpers
         builder.Services.AddSingleton<DbConnectieHelper>();
 
-        // Repositories
+        // Repositories - VOLGORDE VAN BELANG!
         builder.Services.AddSingleton<IPrestatiedoelRepository, PrestatiedoelRepository>();
         builder.Services.AddSingleton<ICriteriumRepository, CriteriumRepository>();
         builder.Services.AddSingleton<IProcesRepository, ProcesRepository>();

@@ -8,6 +8,7 @@ public class Feedback
     public int DocentId { get; set; } = 0;
     public List<Toelichting> Toelichtingen { get; set; }
     public int VaardigheidId { get; set; }
+    public List<Criterium> Criteria { get; set; }
 
     public Feedback(int vaardigheidId)
     {

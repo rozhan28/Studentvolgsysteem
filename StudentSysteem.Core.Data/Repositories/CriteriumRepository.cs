@@ -15,16 +15,6 @@ namespace StudentSysteem.Core.Data.Repositories
                 beschrijving TEXT NOT NULL,
                 niveau TEXT NOT NULL
             );");
-
-            // Koppeltabel FeedbackCriterium
-            MaakTabel(@"CREATE TABLE IF NOT EXISTS FeedbackCriterium (
-                        feedback_id INTEGER NOT NULL,
-                        criterium_id INTEGER NOT NULL,
-                        PRIMARY KEY (feedback_id, criterium_id),
-                        FOREIGN KEY (feedback_id) REFERENCES Feedback(feedback_id),
-                        FOREIGN KEY (criterium_id) REFERENCES Criterium(criterium_id)
-                    );
-                    ");
             
             List<string> insertQueries =
             [
@@ -82,13 +72,13 @@ namespace StudentSysteem.Core.Data.Repositories
         public void SlaGeselecteerdeCriteriaOp(int feedbackId, IEnumerable<Criterium> geselecteerdeCriteria)
         {
             OpenVerbinding();
-            using var transactie = Verbinding.BeginTransaction();
+            using SqliteTransaction transactie = Verbinding.BeginTransaction();
 
             try
             {
                 foreach (Criterium criterium in geselecteerdeCriteria)
                 {
-                    using var cmd = Verbinding.CreateCommand();
+                    using SqliteCommand cmd = Verbinding.CreateCommand();
                     cmd.CommandText = @"
                         INSERT OR REPLACE INTO FeedbackCriterium(feedback_id, criterium_id)
                         VALUES (@feedbackId, @criteriumId);

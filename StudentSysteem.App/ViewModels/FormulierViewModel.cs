@@ -102,32 +102,46 @@ public partial class FormulierViewModel : BasisViewModel
     private async Task BewaarIngevuldFormulierAsync()
     {
         // Alles valideren
+        bool validatieSucces = true;
         foreach (PrestatiedoelViewModel item in FormulierItems)
         {
             if (!item.Valideer()) 
             {
                 StatusMelding = "Controleer alle velden a.u.b.";
-                return;
+                validatieSucces = false;
             }
         }
+
+        if (!validatieSucces) { return; }
 
         // Service vragen om op te slaan
         try 
         {
-            int feedbackgeverId = _globaal.IngelogdeGebruiker.Id;
+            int feedbackgeverId = 0;
+            int docentId = 0;
             int ontvangerId = 1;
 
+            if (_globaal.IngelogdeGebruiker.Rol == Role.Docent)
+            { docentId = _globaal.IngelogdeGebruiker.Id; }
+            else
+            { feedbackgeverId = _globaal.IngelogdeGebruiker.Id; }
+
             List<Feedback> feedbackLijst = new();
-            foreach (PrestatiedoelViewModel prestatiedoelItems in FormulierItems)
+            foreach (PrestatiedoelViewModel prestatiedoelItem in FormulierItems)
             {
                 // Pak de toelichtingen uit de rij
-                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItems.Toelichting.Toelichtingen.ToList();
+                List<Toelichting> toelichtingenVanPrestatiedoelItems = prestatiedoelItem.Toelichting.Toelichtingen.ToList();
                 
                 // Maak feedback model
-                Feedback feedback = new(prestatiedoelItems.VaardigheidId);
+                Feedback feedback = new(prestatiedoelItem.VaardigheidId);
                 feedback.Toelichtingen = toelichtingenVanPrestatiedoelItems;
                 feedback.StudentId = ontvangerId;
                 feedback.FeedbackGeverId = feedbackgeverId;
+                feedback.Niveauaanduiding = prestatiedoelItem.Beoordeling.GeselecteerdNiveau;
+                feedback.Criteria = prestatiedoelItem.Beoordeling.GeselecteerdeCriteria;
+                feedback.DocentId = docentId;
+                
+                feedbackLijst.Add(feedback);
             }
             // Sla de feedback op via de service
             _formulierService.SlaFeedbackOp(feedbackLijst);
